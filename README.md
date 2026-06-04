@@ -21,15 +21,26 @@
 
 ---
 
+## v2 Redesign — UX Improvements
+
+After the v1 ship, the experience was refactored end-to-end as a senior full-stack UI/UX pass:
+
+1. **Text no longer animates on scroll** — headings appear once via gentle fade-in, then stay static. No parallax-driven jitter, no movement on body copy. This dramatically improves readability.
+2. **Hero is now a 2-column grid** — text lives in the LEFT column, the 3D scene is contained in the RIGHT column. Text and 3D never overlap on any breakpoint.
+3. **Apple-style Liquid Glass** added (`components/LiquidGlass.tsx`) — true backdrop blur + saturation, cursor-tracked specular highlight via CSS variables, soft 3D tilt, top "light entry" edge highlight, side bevels, neon hover halo.
+4. **Real 3D models per service** (`components/ServiceModels.tsx`) — every service now has its OWN custom React Three Fiber model rendered inside a Liquid Glass card.
+5. **Blank regions filled** — added **Process** (4 phases) and **Testimonials + logo wall** sections, plus a final **CTA panel** in a giant Liquid Glass card.
+
 ## Completed Features
 
 ### 🎬 Hero Section (`components/Hero.tsx`)
-- Fullscreen WebGL canvas with floating 3D structures
-- Massive cinematic typography: `INTELLIGENT / SOLUTIONS. / GLOBAL IMPACT.`
-- Holographic gradient text + neon red glow
-- Status bar, navigation, eyebrow tag, dual CTAs, metrics strip
-- Scroll-driven parallax + opacity transforms
-- Animated scroll indicator
+- **2-column grid layout** — text on left (7 cols), 3D scene on right (5 cols), never overlap
+- Massive typography: `INTELLIGENT / SOLUTIONS. / GLOBAL IMPACT.` with holographic gradient + neon red glow
+- Status bar, navigation, eyebrow tag, dual CTAs
+- **Inline metrics row** under the CTAs (clients / models / uptime / countries)
+- Three floating glass UI labels around the 3D scene (NEURAL.CORE, v3.1.4, POWERED BY ARCLANE OS)
+- Bottom scroll indicator
+- Text appears once via fade-in — **NO scroll-driven movement**
 
 ### 🌌 Three.js Scene (`components/Scene.tsx`)
 - ACES Filmic tone mapping
@@ -55,7 +66,22 @@
 - 4 rotating wireframe torus rings (neural lattice)
 - Low-power GL settings + reduced DPR for performance
 
-### 💎 Glass Card System (`components/GlassCard.tsx`)
+### 🍎 Apple-style Liquid Glass (`components/LiquidGlass.tsx`)
+The flagship glass primitive — modeled after visionOS / iOS 26 liquid glass:
+- 8 layered effect stack:
+  1. **Refracted backdrop** — `backdrop-filter: blur + saturate + brightness`
+  2. **Inner refraction gradient** — radial light bend with screen blend
+  3. **Cursor-tracked specular highlight** — radial gradient at `var(--mx) var(--my)`
+  4. **Top "light entry" edge** — bright 1px highlight at top
+  5. **Bottom shadow edge** — dark 1px line at bottom
+  6. **Side micro-bevels** — vertical 1px highlights on left/right
+  7. **Inset + outset border ring** — multi-layer box-shadow
+  8. **Hover neon halo** — outer glow that appears on hover
+- **3D parallax tilt** on hover (CSS-variable driven, no React re-renders)
+- 3 intensity presets: `light` / `medium` / `strong` (different blur + saturation)
+- Used by: Service cards, Process cards, Testimonials, Manifesto trio, CTA panel
+
+### 💎 Original Glass Card (`components/GlassCard.tsx`)
 - True glassmorphism: `backdrop-filter: blur(24px) saturate(180%)`
 - Mouse-tracked radial reflection (`framer-motion` springs)
 - 3D tilt on hover (`rotateX` / `rotateY` with perspective)
@@ -66,30 +92,55 @@
 - Top edge highlight stripe
 - Spring-based lift animation
 
-### 🛰️ Service Sections (`components/Services.tsx`)
-Six massive premium sections — each with custom animated SVG visual:
+### 🛰️ Service Sections (`components/Services.tsx` + `components/ServiceModels.tsx`)
+Six premium sections — each with its own **real 3D model** rendered in a Liquid Glass card:
 
-| # | Service | Visual Tag |
-|---|---|---|
-| 01 | Premium Brand Strategy | `IDENTITY.SYS` — rotating nested squares |
-| 02 | Website Development | `WEB.ENGINE` — floating browser panels |
-| 03 | Mobile & Web Applications | `APP.RUNTIME` — orbiting devices |
-| 04 | Custom AI Solutions | `NEURAL.CORE` — pulsing neural network |
-| 05 | ERP Systems | `ERP.GRID` — interconnected data cubes |
-| 06 | Cloud Services | `CLOUD.MESH` — global node network |
+| # | Service | Visual Tag | 3D Model |
+|---|---|---|---|
+| 01 | Premium Brand Strategy | `IDENTITY.SYS` | Floating **glass diamond** with glowing core + "A" mark + orbital ring |
+| 02 | Website Development | `WEB.ENGINE` | Three **stacked browser windows** with traffic-light dots + content lines |
+| 03 | Mobile & Web Applications | `APP.RUNTIME` | **Glass phone** with rotating notch, app icon grid, home indicator + smaller phone behind |
+| 04 | Custom AI Solutions | `NEURAL.CORE` | **Brain icosphere** (transmission glass shell + wireframe + pulsing red core + 18 neural nodes) |
+| 05 | ERP Systems | `ERP.GRID` | **3×3 grid of rotating glass cubes** + three intersecting orbital rings |
+| 06 | Cloud Services | `CLOUD.MESH` | **Glass globe** with orbiting trail-satellites + 3 orbital rings + wireframe latitude/longitude lines |
 
-- Alternating left/right layout
-- Giant translucent index numbers (01–06)
+- Alternating left/right layout (no text overlap with 3D)
+- Giant translucent index numbers (01–06) sit behind the title as decoration
 - Capability grid with glowing bullets
+- **Inline metrics** per section (e.g. "AVG. LIGHTHOUSE 98/100", "INFERENCE TIME 23ms")
 - Per-section accent color
-- Live status indicators ("ACTIVE", load %, version tags)
-- `useInView` scroll-triggered reveals with blur + translate
+- Each 3D model only mounts when its section enters viewport (lazy load)
+- All text fades in **once** then stays static (no scroll animation)
+
+### 🧭 Process Section (`components/Process.tsx`)
+- 4 phase cards in a row: **Discover → Architect → Engineer → Amplify**
+- Each card has a custom SVG glyph (magnifier, blueprint, code brackets, ascending chart)
+- 4-segment progress bar at the bottom of each card (fills based on phase index)
+- Liquid Glass medium-intensity cards
+- Connector lines between cards (desktop only)
+
+### 💬 Testimonials Section (`components/Testimonials.tsx`)
+- 3 testimonial cards from C-suite roles at premium brands (Helix, Aurora, Nimbus)
+- Avatar circles (gradient orbs with initials), 5-star ratings, role + company tags
+- **8-logo wall** below — Helix, Aurora, Nimbus, Obsidian, Vanta, Zenith, Nova, Echelon
+- "TRUSTED BY 240+ TEAMS ACROSS 37 COUNTRIES" divider
+
+### 📞 CTA Section (`components/CTASection.tsx`)
+- One giant Liquid Glass panel with strong intensity
+- "Build the future with ARCLANE" — final conversion moment
+- Two CTAs (Request Deployment + Schedule Strategy Call)
+- 3-column info row (Email / Response Time / Timezone)
+- Top "ACCEPTING DEPLOYMENTS — Q3 / 2026" pill badge
 
 ### 🌐 Page Composition (`app/page.tsx`)
 - Custom dual-ring **cursor** with smooth easing
 - **Scroll progress bar** (top, gradient + glow)
-- **Manifesto** section between Hero and Services
+- **Manifesto** section (giant statement + 3 Liquid Glass capability cards)
 - **Marquee** ticker band (infinite scroll)
+- **Process** (4 phases)
+- **Services** (6 sections, each with 3D model)
+- **Testimonials** + logo wall
+- **CTA panel**
 - **Footer** with giant ARCLANE wordmark, ecosystem links, status line
 
 ### 🎨 Design System (`app/globals.css`)
@@ -158,14 +209,19 @@ All Three.js components use `"use client"` and are imported via `next/dynamic({ 
 │   ├── globals.css        — Design system + tokens + utilities
 │   ├── icon.svg           — Brand favicon
 │   ├── layout.tsx         — Root metadata + viewport
-│   └── page.tsx           — Main composition (cursor, progress, manifesto, marquee, footer)
+│   └── page.tsx           — Main composition + cursor + progress + manifesto + marquee + footer
 ├── components/
 │   ├── Background.tsx     — Ambient nebula + neural lattice canvas
-│   ├── FloatingObjects.tsx— AI core, rings, cubes, spheres, particles
-│   ├── GlassCard.tsx      — Tilted glassmorphism card with reflections
-│   ├── Hero.tsx           — Hero section + nav + headline + CTAs
+│   ├── FloatingObjects.tsx— AI core, rings, cubes, spheres, particles (hero scene)
+│   ├── GlassCard.tsx      — Original tilted glassmorphism card
+│   ├── LiquidGlass.tsx    — Apple-style liquid glass primitive (NEW)
+│   ├── Hero.tsx           — 2-column hero (text LEFT + 3D RIGHT)
 │   ├── Scene.tsx          — Hero Three.js canvas + postprocessing
-│   └── Services.tsx       — 6 massive service blocks + SVG visuals
+│   ├── ServiceModels.tsx  — 6 unique 3D models per service (NEW)
+│   ├── Services.tsx       — 6 service blocks with 3D models + Liquid Glass
+│   ├── Process.tsx        — 4-phase process section (NEW)
+│   ├── Testimonials.tsx   — 3 testimonials + 8-logo wall (NEW)
+│   └── CTASection.tsx     — Final big Liquid Glass CTA (NEW)
 ├── ecosystem.config.cjs   — PM2 production config
 ├── next.config.js
 ├── package.json
@@ -240,7 +296,7 @@ fuser -k 3000/tcp
 - **Platform (current)**: Sandbox preview via PM2 + `next start`
 - **Status**: ✅ Active on port 3000
 - **Build size**: First Load JS ≈ 136 kB (page) / 87 kB (shared)
-- **Last Updated**: 2026-06-02
+- **Last Updated**: 2026-06-04 (v2 redesign — Apple-style Liquid Glass + 3D models per service)
 
 ---
 

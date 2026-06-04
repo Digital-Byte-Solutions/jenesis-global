@@ -221,8 +221,8 @@ function ParticleField({ count = 250 }: { count?: number }) {
     const c2 = new THREE.Color("#ff4d8d");
     const c3 = new THREE.Color("#ffffff");
     for (let i = 0; i < count; i++) {
-      // Spherical distribution
-      const r = 6 + Math.random() * 8;
+      // Spherical distribution — tighter for contained hero frame
+      const r = 3.5 + Math.random() * 3.5;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
@@ -347,12 +347,13 @@ function WireframeShape({
 
 /* ----------------------------------------------------
  * Master export — combines all floating objects
+ * Tuned to fit within the hero's RIGHT column (smaller frame)
  * --------------------------------------------------*/
 export default function FloatingObjects() {
   return (
     <>
-      {/* Central AI Core */}
-      <Float speed={1.2} rotationIntensity={0.4} floatIntensity={0.6}>
+      {/* Central AI Core (the hero of the hero) */}
+      <Float speed={1.2} rotationIntensity={0.4} floatIntensity={0.5}>
         <AICore position={[0, 0, 0]} />
       </Float>
 
@@ -362,33 +363,32 @@ export default function FloatingObjects() {
       {/* Orbiting trails */}
       <OrbitingTrails />
 
-      {/* Glass cubes scattered around */}
-      <Float speed={1} rotationIntensity={0.5} floatIntensity={0.8}>
-        <GlassCube position={[-4, 1.5, -2]} scale={0.7} color="#ff1744" />
+      {/* Glass cubes — tighter positions, smaller, closer to center */}
+      <Float speed={1} rotationIntensity={0.4} floatIntensity={0.6}>
+        <GlassCube position={[-2.5, 1.2, -1]} scale={0.45} color="#ff1744" />
       </Float>
-      <Float speed={1.4} rotationIntensity={0.6} floatIntensity={0.7}>
-        <GlassCube position={[4.5, -1, -1]} scale={0.9} color="#ff4d8d" />
+      <Float speed={1.3} rotationIntensity={0.5} floatIntensity={0.6}>
+        <GlassCube position={[2.8, -0.8, -0.5]} scale={0.55} color="#ff4d8d" />
       </Float>
-      <Float speed={0.9} rotationIntensity={0.4} floatIntensity={0.9}>
-        <GlassCube position={[-3.5, -2, 1]} scale={0.5} color="#ffffff" />
-      </Float>
-
-      {/* Glass spheres */}
-      <Float speed={1.1} rotationIntensity={0.2} floatIntensity={0.5}>
-        <GlassSphere position={[3.5, 2, -2]} radius={0.6} />
-      </Float>
-      <Float speed={0.8} rotationIntensity={0.3} floatIntensity={0.6}>
-        <GlassSphere position={[-5, 0.5, 0]} radius={0.4} />
+      <Float speed={0.9} rotationIntensity={0.4} floatIntensity={0.7}>
+        <GlassCube position={[-2.2, -1.6, 0.5]} scale={0.35} color="#ffffff" />
       </Float>
 
-      {/* Wireframe shapes */}
-      <WireframeShape position={[-2, 2.5, 2]} size={0.5} color="#ff4d8d" />
-      <WireframeShape position={[2.5, -2.5, 1]} size={0.7} color="#ff6b9d" />
-      <WireframeShape position={[0, 3.5, -3]} size={0.4} color="#ffffff" />
-      <WireframeShape position={[-1.5, -3, -2]} size={0.6} color="#ff1744" />
+      {/* Glass spheres — small accent orbs */}
+      <Float speed={1.1} rotationIntensity={0.2} floatIntensity={0.4}>
+        <GlassSphere position={[2.4, 1.6, -1.5]} radius={0.32} />
+      </Float>
+      <Float speed={0.8} rotationIntensity={0.3} floatIntensity={0.5}>
+        <GlassSphere position={[-2.8, 0.2, 0.5]} radius={0.25} />
+      </Float>
 
-      {/* Particle field */}
-      <ParticleField count={300} />
+      {/* Wireframe accents */}
+      <WireframeShape position={[-1.5, 2, 1.5]} size={0.3} color="#ff4d8d" />
+      <WireframeShape position={[1.8, -2, 1]} size={0.35} color="#ff6b9d" />
+      <WireframeShape position={[2, 2.4, -2]} size={0.25} color="#ffffff" />
+
+      {/* Particle field (smaller, denser around center) */}
+      <ParticleField count={200} />
     </>
   );
 }

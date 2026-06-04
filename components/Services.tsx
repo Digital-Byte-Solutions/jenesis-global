@@ -1,29 +1,44 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import GlassCard from "./GlassCard";
+import { useRef } from "react";
+import dynamic from "next/dynamic";
+import { motion, useInView } from "framer-motion";
+import LiquidGlass from "./LiquidGlass";
+
+// 3D models — client only
+const ServiceCanvas = dynamic(() => import("./ServiceModels"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <div className="w-8 h-8 rounded-full border border-arc-red/30 border-t-arc-red animate-spin" />
+    </div>
+  ),
+});
 
 /* ----------------------------------------------------
  * Service data
  * --------------------------------------------------*/
+type ServiceId = "brand" | "engineering" | "apps" | "ai" | "erp" | "cloud";
+
 type Service = {
-  id: string;
+  id: ServiceId;
   index: string;
   title: string;
+  italic: string;
   tagline: string;
   description: string;
   capabilities: string[];
-  icon: string;
   accent: string;
   visualTag: string;
+  metric: { label: string; value: string }[];
 };
 
 const SERVICES: Service[] = [
   {
     id: "brand",
     index: "01",
-    title: "Premium Brand Strategy",
+    title: "Premium Brand",
+    italic: "Strategy",
     tagline: "Luxury digital identities for the next era.",
     description:
       "We build luxury digital identities that combine strategic positioning, immersive storytelling, and futuristic visual systems — engineered for global premium audiences.",
@@ -35,14 +50,18 @@ const SERVICES: Service[] = [
       "Enterprise branding architecture",
       "Scalable brand experiences",
     ],
-    icon: "◆",
     accent: "#ff1744",
     visualTag: "IDENTITY.SYS",
+    metric: [
+      { label: "BRANDS LAUNCHED", value: "180+" },
+      { label: "AVG. UPLIFT", value: "+312%" },
+    ],
   },
   {
     id: "engineering",
     index: "02",
-    title: "Website Development",
+    title: "Website",
+    italic: "Development",
     tagline: "Cinematic enterprise web engineering.",
     description:
       "Cinematic enterprise websites powered by immersive UI/UX and advanced frontend engineering — VFX-grade interfaces, hyper-fast architectures, and scalable design systems.",
@@ -54,14 +73,18 @@ const SERVICES: Service[] = [
       "Ultra-fast architectures",
       "Premium digital experiences",
     ],
-    icon: "◈",
     accent: "#ff4d8d",
     visualTag: "WEB.ENGINE",
+    metric: [
+      { label: "AVG. LIGHTHOUSE", value: "98 / 100" },
+      { label: "TIME TO INTERACTIVE", value: "0.8s" },
+    ],
   },
   {
     id: "apps",
     index: "03",
-    title: "Mobile & Web Applications",
+    title: "Mobile & Web",
+    italic: "Applications",
     tagline: "Scalable systems built for performance.",
     description:
       "We craft scalable mobile and web applications designed for performance, automation, and engagement — from SaaS ecosystems to enterprise-grade dashboards.",
@@ -73,14 +96,18 @@ const SERVICES: Service[] = [
       "Real-time applications",
       "Customer engagement platforms",
     ],
-    icon: "▤",
     accent: "#ff6b9d",
     visualTag: "APP.RUNTIME",
+    metric: [
+      { label: "APPS DEPLOYED", value: "420+" },
+      { label: "MONTHLY USERS", value: "9.2M" },
+    ],
   },
   {
     id: "ai",
     index: "04",
-    title: "Custom AI Solutions",
+    title: "Custom AI",
+    italic: "Solutions",
     tagline: "Intelligent automation, engineered.",
     description:
       "We engineer intelligent AI systems for automation, predictive analytics, and machine intelligence — from generative AI ecosystems to enterprise AI infrastructure.",
@@ -92,14 +119,18 @@ const SERVICES: Service[] = [
       "Predictive analytics",
       "Enterprise AI infrastructure",
     ],
-    icon: "◉",
     accent: "#ff1744",
     visualTag: "NEURAL.CORE",
+    metric: [
+      { label: "MODELS TRAINED", value: "1.4K" },
+      { label: "INFERENCE TIME", value: "23ms" },
+    ],
   },
   {
     id: "erp",
     index: "05",
-    title: "ERP Systems",
+    title: "ERP",
+    italic: "Systems",
     tagline: "One operating system for the enterprise.",
     description:
       "Centralized ERP ecosystems connecting operations, analytics, finance, and workflow automation — a single intelligent layer across the business.",
@@ -111,14 +142,18 @@ const SERVICES: Service[] = [
       "Workflow automation",
       "Operational analytics",
     ],
-    icon: "▦",
     accent: "#ff4d8d",
     visualTag: "ERP.GRID",
+    metric: [
+      { label: "ENTERPRISES", value: "67" },
+      { label: "AUTOMATION RATE", value: "94%" },
+    ],
   },
   {
     id: "cloud",
     index: "06",
-    title: "Cloud Services",
+    title: "Cloud",
+    italic: "Services",
     tagline: "Scalable infrastructure at planetary scale.",
     description:
       "Hyperscale cloud infrastructure engineered for security, deployment, and enterprise scalability — distributed architectures with end-to-end automation.",
@@ -130,282 +165,17 @@ const SERVICES: Service[] = [
       "Server automation",
       "Distributed cloud ecosystems",
     ],
-    icon: "❖",
     accent: "#ff6b9d",
     visualTag: "CLOUD.MESH",
+    metric: [
+      { label: "UPTIME SLA", value: "99.99%" },
+      { label: "REGIONS", value: "37" },
+    ],
   },
 ];
 
 /* ----------------------------------------------------
- * Decorative inline SVG visual per service
- * --------------------------------------------------*/
-function ServiceVisual({ service }: { service: Service }) {
-  // A small animated SVG diagram representing each service
-  switch (service.id) {
-    case "brand":
-      return (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <linearGradient id="brand-grad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor={service.accent} stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#ffffff" stopOpacity="0.2" />
-            </linearGradient>
-          </defs>
-          {[0, 1, 2, 3].map((i) => (
-            <motion.rect
-              key={i}
-              x={50 + i * 5}
-              y={50 + i * 5}
-              width={100 - i * 10}
-              height={100 - i * 10}
-              rx="8"
-              fill="none"
-              stroke="url(#brand-grad)"
-              strokeWidth="1.5"
-              animate={{ rotate: [0, 360] }}
-              transition={{
-                duration: 20 + i * 5,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-              style={{ transformOrigin: "100px 100px" }}
-            />
-          ))}
-          <circle cx="100" cy="100" r="4" fill={service.accent} />
-        </svg>
-      );
-    case "engineering":
-      return (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          {[0, 1, 2].map((i) => (
-            <motion.g
-              key={i}
-              animate={{ y: [0, -8, 0] }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                delay: i * 0.3,
-                ease: "easeInOut",
-              }}
-            >
-              <rect
-                x={40}
-                y={50 + i * 35}
-                width="120"
-                height="25"
-                rx="3"
-                fill="none"
-                stroke={service.accent}
-                strokeOpacity={0.6 - i * 0.15}
-                strokeWidth="1.2"
-              />
-              <rect
-                x={48}
-                y={58 + i * 35}
-                width="40"
-                height="3"
-                fill={service.accent}
-                opacity={0.8 - i * 0.2}
-              />
-              <rect
-                x={48}
-                y={64 + i * 35}
-                width="80"
-                height="2"
-                fill="#ffffff"
-                opacity={0.3}
-              />
-            </motion.g>
-          ))}
-        </svg>
-      );
-    case "apps":
-      return (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <motion.g
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            style={{ transformOrigin: "100px 100px" }}
-          >
-            {[0, 1, 2, 3, 4].map((i) => {
-              const a = (i * Math.PI * 2) / 5;
-              const x = 100 + Math.cos(a) * 50;
-              const y = 100 + Math.sin(a) * 50;
-              return (
-                <g key={i}>
-                  <line
-                    x1="100"
-                    y1="100"
-                    x2={x}
-                    y2={y}
-                    stroke={service.accent}
-                    strokeOpacity="0.3"
-                    strokeWidth="0.8"
-                  />
-                  <rect
-                    x={x - 10}
-                    y={y - 14}
-                    width="20"
-                    height="28"
-                    rx="3"
-                    fill="none"
-                    stroke={service.accent}
-                    strokeWidth="1.2"
-                  />
-                </g>
-              );
-            })}
-          </motion.g>
-          <circle
-            cx="100"
-            cy="100"
-            r="8"
-            fill={service.accent}
-            opacity="0.9"
-          />
-        </svg>
-      );
-    case "ai":
-      return (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          {/* Neural network nodes */}
-          {Array.from({ length: 9 }).map((_, i) => {
-            const col = i % 3;
-            const row = Math.floor(i / 3);
-            const x = 50 + col * 50;
-            const y = 50 + row * 50;
-            return (
-              <motion.circle
-                key={i}
-                cx={x}
-                cy={y}
-                r="4"
-                fill={service.accent}
-                animate={{ opacity: [0.3, 1, 0.3] }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  delay: i * 0.15,
-                }}
-              />
-            );
-          })}
-          {/* Connections */}
-          {Array.from({ length: 6 }).map((_, i) => {
-            const col1 = i % 3;
-            const row1 = Math.floor(i / 3);
-            return Array.from({ length: 3 }).map((_, j) => (
-              <line
-                key={`${i}-${j}`}
-                x1={50 + col1 * 50}
-                y1={50 + row1 * 50}
-                x2={50 + j * 50}
-                y2={50 + (row1 + 1) * 50}
-                stroke={service.accent}
-                strokeWidth="0.4"
-                strokeOpacity="0.25"
-              />
-            ));
-          })}
-        </svg>
-      );
-    case "erp":
-      return (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <motion.g
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            style={{ transformOrigin: "100px 100px" }}
-          >
-            {Array.from({ length: 6 }).map((_, i) => {
-              const a = (i * Math.PI * 2) / 6;
-              const x = 100 + Math.cos(a) * 55;
-              const y = 100 + Math.sin(a) * 55;
-              return (
-                <g key={i}>
-                  <rect
-                    x={x - 12}
-                    y={y - 12}
-                    width="24"
-                    height="24"
-                    fill="none"
-                    stroke={service.accent}
-                    strokeOpacity="0.7"
-                    strokeWidth="1.2"
-                  />
-                  <line
-                    x1="100"
-                    y1="100"
-                    x2={x}
-                    y2={y}
-                    stroke={service.accent}
-                    strokeOpacity="0.2"
-                  />
-                </g>
-              );
-            })}
-          </motion.g>
-          <rect
-            x="84"
-            y="84"
-            width="32"
-            height="32"
-            fill="none"
-            stroke="#ffffff"
-            strokeWidth="1.5"
-          />
-        </svg>
-      );
-    case "cloud":
-      return (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <radialGradient id="cloud-grad">
-              <stop offset="0%" stopColor={service.accent} stopOpacity="0.4" />
-              <stop offset="100%" stopColor={service.accent} stopOpacity="0" />
-            </radialGradient>
-          </defs>
-          {Array.from({ length: 12 }).map((_, i) => {
-            const a = (i * Math.PI * 2) / 12;
-            const r = 60;
-            const x = 100 + Math.cos(a) * r;
-            const y = 100 + Math.sin(a) * r;
-            return (
-              <motion.circle
-                key={i}
-                cx={x}
-                cy={y}
-                r="3"
-                fill={service.accent}
-                animate={{ scale: [1, 1.5, 1] }}
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  delay: i * 0.1,
-                }}
-              />
-            );
-          })}
-          <circle cx="100" cy="100" r="80" fill="url(#cloud-grad)" />
-          <motion.circle
-            cx="100"
-            cy="100"
-            r="60"
-            fill="none"
-            stroke={service.accent}
-            strokeOpacity="0.4"
-            strokeDasharray="2 4"
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            style={{ transformOrigin: "100px 100px" }}
-          />
-        </svg>
-      );
-  }
-}
-
-/* ----------------------------------------------------
- * Single Service Block
+ * Single Service Block — TEXT IS STATIC, only fades in once
  * --------------------------------------------------*/
 function ServiceBlock({
   service,
@@ -417,113 +187,106 @@ function ServiceBlock({
   index: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: false, amount: 0.3 });
+  const inView = useInView(ref, { once: true, amount: 0.15 });
 
   return (
-    <div
+    <section
       ref={ref}
       id={service.id}
-      className="relative py-32 md:py-44 px-6 md:px-12 lg:px-20"
+      className="relative py-28 md:py-36 px-6 md:px-12 lg:px-20"
     >
-      <div className="max-w-7xl mx-auto">
-        {/* Section index marker */}
+      {/* Section-specific ambient glow */}
+      <div
+        className="absolute pointer-events-none opacity-30"
+        style={{
+          top: "20%",
+          [reverse ? "right" : "left"]: "-10%",
+          width: "60vw",
+          height: "60vw",
+          background: `radial-gradient(circle, ${service.accent}40 0%, transparent 60%)`,
+          filter: "blur(80px)",
+        }}
+      />
+
+      <div className="relative max-w-7xl mx-auto">
+        {/* Section index marker — fades in, then static */}
         <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="flex items-center gap-4 mb-12 font-mono text-xs tracking-[0.4em] text-white/40"
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.6 }}
+          className="flex items-center gap-4 mb-10 font-mono text-xs tracking-[0.4em] text-white/40"
         >
           <span className="w-16 h-px bg-arc-red" />
           SERVICE / {service.index} — {service.visualTag}
         </motion.div>
 
         <div
-          className={`grid lg:grid-cols-12 gap-10 lg:gap-16 items-center ${
+          className={`grid lg:grid-cols-12 gap-12 lg:gap-16 items-center ${
             reverse ? "lg:[direction:rtl]" : ""
           }`}
         >
-          {/* Text content */}
-          <div className="lg:col-span-7 [direction:ltr] space-y-8">
-            {/* Service number large */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="flex items-baseline gap-6"
-            >
+          {/* ───── TEXT COLUMN ───── */}
+          <div className="lg:col-span-7 [direction:ltr] relative">
+            {/* Giant translucent index number — purely decorative */}
+            <div className="absolute -top-12 left-0 pointer-events-none select-none">
               <span
-                className="font-display text-[8rem] md:text-[12rem] leading-none font-extralight text-white/[0.04] select-none"
-                style={{ textShadow: `0 0 80px ${service.accent}40` }}
+                className="font-display text-[10rem] md:text-[14rem] leading-none font-extralight text-white/[0.035]"
+                style={{ textShadow: `0 0 100px ${service.accent}30` }}
               >
                 {service.index}
               </span>
-            </motion.div>
+            </div>
 
+            {/* Title — appears once, then static */}
             <motion.h2
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 1, delay: 0.2 }}
-              className="font-display text-4xl md:text-6xl lg:text-7xl text-white font-light leading-[1.05] tracking-[-0.02em] -mt-24 md:-mt-32 relative z-10"
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="relative font-display text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-white font-light leading-[1.05] tracking-[-0.02em] mb-6"
             >
-              {service.title.split(" ").map((word, i) => (
-                <span
-                  key={i}
-                  className={
-                    i === service.title.split(" ").length - 1
-                      ? "italic font-normal"
-                      : ""
-                  }
-                  style={
-                    i === service.title.split(" ").length - 1
-                      ? {
-                          background: `linear-gradient(135deg, #ffffff, ${service.accent})`,
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                          backgroundClip: "text",
-                        }
-                      : {}
-                  }
-                >
-                  {word}{" "}
-                </span>
-              ))}
+              {service.title}{" "}
+              <span
+                className="italic font-normal"
+                style={{
+                  background: `linear-gradient(135deg, #ffffff, ${service.accent})`,
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                {service.italic}.
+              </span>
             </motion.h2>
 
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 1, delay: 0.35 }}
-              className="text-lg md:text-xl text-white/80 font-light leading-relaxed max-w-xl"
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="text-lg md:text-xl text-white/85 font-light leading-relaxed max-w-xl mb-5"
             >
               {service.tagline}
             </motion.p>
 
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 1, delay: 0.45 }}
-              className="text-base text-white/55 leading-relaxed max-w-xl"
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="text-base text-white/55 leading-relaxed max-w-xl mb-8"
             >
               {service.description}
             </motion.p>
 
             {/* Capabilities grid */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 1, delay: 0.55 }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 max-w-xl"
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8 max-w-xl"
             >
-              {service.capabilities.map((cap, i) => (
-                <motion.div
-                  key={cap}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.6, delay: 0.6 + i * 0.05 }}
-                  className="flex items-center gap-3 group"
-                >
+              {service.capabilities.map((cap) => (
+                <div key={cap} className="flex items-center gap-3 group">
                   <div
-                    className="w-1.5 h-1.5 rounded-full transition-all group-hover:scale-150"
+                    className="w-1.5 h-1.5 rounded-full transition-all group-hover:scale-150 flex-shrink-0"
                     style={{
                       background: service.accent,
                       boxShadow: `0 0 12px ${service.accent}`,
@@ -532,15 +295,37 @@ function ServiceBlock({
                   <span className="text-sm text-white/70 group-hover:text-white transition-colors">
                     {cap}
                   </span>
-                </motion.div>
+                </div>
               ))}
             </motion.div>
 
+            {/* Inline metrics */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 1, delay: 0.8 }}
-              className="pt-6"
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.7, delay: 0.5 }}
+              className="flex flex-wrap gap-8 pt-6 border-t border-white/8 max-w-xl mb-8"
+            >
+              {service.metric.map((m) => (
+                <div key={m.label} className="flex flex-col">
+                  <span className="text-[9px] font-mono tracking-[0.3em] text-white/40 mb-1">
+                    — {m.label}
+                  </span>
+                  <span
+                    className="metric-number text-2xl"
+                    style={{ color: service.accent }}
+                  >
+                    {m.value}
+                  </span>
+                </div>
+              ))}
+            </motion.div>
+
+            {/* CTA */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.7, delay: 0.6 }}
             >
               <button className="group inline-flex items-center gap-3 text-sm font-mono tracking-widest text-white border-b border-white/20 hover:border-arc-red pb-2 transition-colors">
                 EXPLORE {service.visualTag}
@@ -552,17 +337,17 @@ function ServiceBlock({
             </motion.div>
           </div>
 
-          {/* Visual side */}
+          {/* ───── 3D MODEL COLUMN ───── */}
           <div className="lg:col-span-5 [direction:ltr]">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 40 }}
-              animate={inView ? { opacity: 1, scale: 1, y: 0 } : {}}
-              transition={{ duration: 1.1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={inView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             >
-              <GlassCard glowColor={service.accent} className="aspect-square">
-                <div className="relative w-full h-full p-8 flex flex-col">
+              <LiquidGlass intensity="strong">
+                <div className="relative aspect-square p-6 flex flex-col">
                   {/* Top bar */}
-                  <div className="flex items-center justify-between text-xs font-mono tracking-widest text-white/40">
+                  <div className="flex items-center justify-between text-xs font-mono tracking-widest text-white/50 mb-2">
                     <span>{service.visualTag}</span>
                     <div className="flex items-center gap-2">
                       <span
@@ -576,24 +361,24 @@ function ServiceBlock({
                     </div>
                   </div>
 
-                  {/* Main visual */}
-                  <div className="flex-1 flex items-center justify-center">
-                    <div className="w-full h-full max-w-[280px] max-h-[280px]">
-                      <ServiceVisual service={service} />
-                    </div>
+                  {/* 3D MODEL */}
+                  <div className="flex-1 w-full relative min-h-[280px]">
+                    {inView && (
+                      <ServiceCanvas model={service.id} />
+                    )}
                   </div>
 
                   {/* Bottom data strip */}
-                  <div className="space-y-2.5">
+                  <div className="space-y-2.5 mt-2">
                     <div className="flex items-center justify-between text-[10px] font-mono text-white/50">
-                      <span>LOAD</span>
+                      <span>SYSTEM LOAD</span>
                       <span>{67 + index * 4}%</span>
                     </div>
                     <div className="h-px bg-white/10 relative overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={inView ? { width: `${67 + index * 4}%` } : {}}
-                        transition={{ duration: 1.5, delay: 0.8 }}
+                        transition={{ duration: 1.4, delay: 0.7 }}
                         className="h-full"
                         style={{
                           background: `linear-gradient(90deg, ${service.accent}, #ffffff)`,
@@ -601,7 +386,7 @@ function ServiceBlock({
                         }}
                       />
                     </div>
-                    <div className="grid grid-cols-3 gap-2 pt-2">
+                    <div className="grid grid-cols-3 gap-2 pt-1">
                       {["LIVE", "v3.1", "AI++"].map((tag) => (
                         <div
                           key={tag}
@@ -613,20 +398,20 @@ function ServiceBlock({
                     </div>
                   </div>
                 </div>
-              </GlassCard>
+              </LiquidGlass>
             </motion.div>
           </div>
         </div>
       </div>
 
       {/* Section divider */}
-      <div className="section-divider mt-32 max-w-5xl mx-auto" />
-    </div>
+      <div className="section-divider mt-28 max-w-5xl mx-auto" />
+    </section>
   );
 }
 
 /* ----------------------------------------------------
- * Services section export — heading + all blocks
+ * Services section heading + all blocks
  * --------------------------------------------------*/
 export default function Services() {
   const headingRef = useRef<HTMLDivElement>(null);
@@ -634,16 +419,16 @@ export default function Services() {
 
   return (
     <section className="relative bg-arc-black">
-      {/* Section heading */}
+      {/* Heading */}
       <div
         ref={headingRef}
-        className="relative py-40 px-6 md:px-12 lg:px-20 text-center"
+        className="relative py-32 px-6 md:px-12 lg:px-20 text-center"
       >
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={headingInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1 }}
-          className="inline-flex items-center gap-4 mb-10 font-mono text-xs tracking-[0.4em] text-white/40"
+          initial={{ opacity: 0 }}
+          animate={headingInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.7 }}
+          className="inline-flex items-center gap-4 mb-8 font-mono text-xs tracking-[0.4em] text-white/40"
         >
           <span className="w-12 h-px bg-arc-red" />
           OUR CAPABILITIES — 06 ECOSYSTEMS
@@ -651,12 +436,10 @@ export default function Services() {
         </motion.div>
 
         <motion.h2
-          initial={{ opacity: 0, y: 40, filter: "blur(20px)" }}
-          animate={
-            headingInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}
-          }
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          className="font-display text-5xl md:text-7xl lg:text-8xl font-light tracking-[-0.03em] leading-[1.05] text-white max-w-5xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={headingInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="font-display text-4xl md:text-6xl lg:text-7xl font-light tracking-[-0.03em] leading-[1.05] text-white max-w-5xl mx-auto"
         >
           A complete operating system for{" "}
           <span className="holo-text italic font-normal">
@@ -666,10 +449,10 @@ export default function Services() {
         </motion.h2>
 
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={headingInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1, delay: 0.4 }}
-          className="mt-10 text-base md:text-lg text-white/55 max-w-2xl mx-auto leading-relaxed"
+          initial={{ opacity: 0 }}
+          animate={headingInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="mt-8 text-base md:text-lg text-white/55 max-w-2xl mx-auto leading-relaxed"
         >
           From brand strategy to AI infrastructure — six interconnected
           ecosystems engineered to scale, automate, and amplify every layer of
@@ -677,7 +460,7 @@ export default function Services() {
         </motion.p>
       </div>
 
-      {/* Service blocks alternating layout */}
+      {/* Service blocks */}
       {SERVICES.map((service, i) => (
         <ServiceBlock
           key={service.id}
@@ -686,37 +469,6 @@ export default function Services() {
           index={i}
         />
       ))}
-
-      {/* Bottom CTA */}
-      <div className="relative py-40 px-6 md:px-12 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 1.2 }}
-        >
-          <div className="inline-flex items-center gap-3 mb-8 px-4 py-2 rounded-full glass-surface text-xs font-mono tracking-widest text-white/70">
-            <span className="w-2 h-2 rounded-full bg-arc-red animate-pulse" />
-            READY FOR DEPLOYMENT
-          </div>
-          <h3 className="font-display text-4xl md:text-6xl lg:text-7xl font-light tracking-[-0.02em] text-white max-w-4xl mx-auto leading-[1.05]">
-            Build the future with{" "}
-            <span className="holo-text italic font-normal">ARCLANE</span>.
-          </h3>
-          <p className="mt-8 text-white/55 max-w-xl mx-auto">
-            Schedule a strategic session with our AI engineering team and
-            architect your next-generation transformation.
-          </p>
-          <div className="mt-12 flex flex-col sm:flex-row gap-5 justify-center">
-            <button className="liquid-button px-10 py-5 rounded-full font-mono text-sm tracking-widest text-white">
-              REQUEST DEPLOYMENT ▸
-            </button>
-            <button className="px-10 py-5 rounded-full font-mono text-sm tracking-widest text-white/80 hover:text-white border border-white/15 hover:border-white/40 backdrop-blur-sm transition-all">
-              SCHEDULE CALL
-            </button>
-          </div>
-        </motion.div>
-      </div>
     </section>
   );
 }

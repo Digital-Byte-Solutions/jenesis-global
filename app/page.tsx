@@ -2,55 +2,50 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll, useSpring, useInView } from "framer-motion";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
+import Process from "@/components/Process";
+import Testimonials from "@/components/Testimonials";
+import CTASection from "@/components/CTASection";
+import LiquidGlass from "@/components/LiquidGlass";
 
-// Background (ambient WebGL behind sections) — client only
+// Ambient WebGL background — client only, very lightweight
 const Background = dynamic(() => import("@/components/Background"), {
   ssr: false,
   loading: () => null,
 });
 
 /* ----------------------------------------------------
- * Custom cursor — futuristic dual ring
+ * Custom dual-ring cursor
  * --------------------------------------------------*/
 function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    let dotX = 0,
-      dotY = 0,
-      ringX = 0,
-      ringY = 0;
-    let mouseX = 0,
-      mouseY = 0;
+    let dx = 0, dy = 0, rx = 0, ry = 0, mx = 0, my = 0;
     let raf: number;
 
     const onMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
+      mx = e.clientX;
+      my = e.clientY;
     };
 
-    const animate = () => {
-      dotX += (mouseX - dotX) * 0.45;
-      dotY += (mouseY - dotY) * 0.45;
-      ringX += (mouseX - ringX) * 0.15;
-      ringY += (mouseY - ringY) * 0.15;
+    const tick = () => {
+      dx += (mx - dx) * 0.45;
+      dy += (my - dy) * 0.45;
+      rx += (mx - rx) * 0.15;
+      ry += (my - ry) * 0.15;
       if (dotRef.current)
-        dotRef.current.style.transform = `translate(${dotX - 4}px, ${
-          dotY - 4
-        }px)`;
+        dotRef.current.style.transform = `translate(${dx - 4}px, ${dy - 4}px)`;
       if (ringRef.current)
-        ringRef.current.style.transform = `translate(${ringX - 20}px, ${
-          ringY - 20
-        }px)`;
-      raf = requestAnimationFrame(animate);
+        ringRef.current.style.transform = `translate(${rx - 20}px, ${ry - 20}px)`;
+      raf = requestAnimationFrame(tick);
     };
 
     window.addEventListener("mousemove", onMove);
-    raf = requestAnimationFrame(animate);
+    raf = requestAnimationFrame(tick);
     return () => {
       window.removeEventListener("mousemove", onMove);
       cancelAnimationFrame(raf);
@@ -66,7 +61,7 @@ function CustomCursor() {
 }
 
 /* ----------------------------------------------------
- * Scroll progress bar at the top
+ * Scroll progress bar
  * --------------------------------------------------*/
 function ScrollProgress() {
   const { scrollYProgress } = useScroll();
@@ -75,7 +70,6 @@ function ScrollProgress() {
     damping: 30,
     restDelta: 0.001,
   });
-
   return (
     <motion.div
       className="fixed top-0 left-0 right-0 h-[2px] z-50 origin-left"
@@ -86,6 +80,100 @@ function ScrollProgress() {
         boxShadow: "0 0 20px #ff1744, 0 0 40px #ff4d8d",
       }}
     />
+  );
+}
+
+/* ----------------------------------------------------
+ * Manifesto
+ * --------------------------------------------------*/
+function Manifesto() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.2 });
+
+  return (
+    <section
+      ref={ref}
+      className="relative py-32 px-6 md:px-12 lg:px-20 overflow-hidden"
+    >
+      <div
+        className="absolute pointer-events-none opacity-50"
+        style={{
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "60vw",
+          height: "60vw",
+          background:
+            "radial-gradient(circle, rgba(255,23,68,0.18) 0%, transparent 70%)",
+          filter: "blur(80px)",
+        }}
+      />
+
+      <div className="relative max-w-6xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.7 }}
+          className="flex items-center gap-4 mb-10 font-mono text-xs tracking-[0.4em] text-white/40"
+        >
+          <span className="w-12 h-px bg-arc-red" />
+          MANIFESTO / 00
+        </motion.div>
+
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="font-display text-3xl md:text-5xl lg:text-6xl font-light leading-[1.15] tracking-[-0.025em] max-w-5xl"
+        >
+          We don't build software.{" "}
+          <span className="text-white/40">We architect</span>{" "}
+          <span className="holo-text italic font-normal">
+            intelligent ecosystems
+          </span>{" "}
+          <span className="text-white/40">that learn, evolve, and scale</span>{" "}
+          <span className="text-arc-red neon-glow">at the speed of vision.</span>
+        </motion.h2>
+
+        <div className="mt-20 grid md:grid-cols-3 gap-6">
+          {[
+            {
+              k: "INTELLIGENT",
+              v: "Every system we deploy is engineered with embedded AI — adaptive, predictive, and self-optimizing from day one.",
+            },
+            {
+              k: "IMMERSIVE",
+              v: "Cinematic interfaces, holographic UX, and motion-driven experiences that feel like the future you were promised.",
+            },
+            {
+              k: "ENTERPRISE",
+              v: "Built for global scale — distributed cloud infrastructure, hardened security, and infinite horizontal scalability.",
+            },
+          ].map((item, i) => (
+            <motion.div
+              key={item.k}
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.8, delay: 0.2 + i * 0.1 }}
+            >
+              <LiquidGlass intensity="light" rounded="rounded-2xl">
+                <div className="p-7">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-arc-red text-2xl leading-none">◆</span>
+                    <span className="font-mono text-[10px] tracking-[0.3em] text-arc-red">
+                      0{i + 1} — {item.k}
+                    </span>
+                  </div>
+                  <p className="text-base text-white/70 leading-relaxed">
+                    {item.v}
+                  </p>
+                </div>
+              </LiquidGlass>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -103,7 +191,6 @@ function Marquee() {
     "v3.1.4",
     "EST. 2026",
   ];
-  // Render items twice so the loop is seamless
   const loop = [...items, ...items];
 
   return (
@@ -124,118 +211,28 @@ function Marquee() {
 }
 
 /* ----------------------------------------------------
- * Manifesto / between-sections block
- * --------------------------------------------------*/
-function Manifesto() {
-  return (
-    <section className="relative py-40 px-6 md:px-12 lg:px-20 overflow-hidden">
-      {/* Background accent */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] rounded-full opacity-40"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(255,23,68,0.2) 0%, transparent 70%)",
-            filter: "blur(80px)",
-          }}
-        />
-      </div>
-
-      <div className="relative max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 1 }}
-          className="flex items-center gap-4 mb-12 font-mono text-xs tracking-[0.4em] text-white/40"
-        >
-          <span className="w-12 h-px bg-arc-red" />
-          MANIFESTO / 00
-        </motion.div>
-
-        <motion.h2
-          initial={{ opacity: 0, y: 40, filter: "blur(20px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-          className="font-display text-4xl md:text-6xl lg:text-7xl font-light leading-[1.1] tracking-[-0.03em] max-w-5xl"
-        >
-          We don't build software.{" "}
-          <span className="text-white/40">We architect</span>{" "}
-          <span className="holo-text italic font-normal">
-            intelligent ecosystems
-          </span>{" "}
-          <span className="text-white/40">that learn, evolve, and scale</span>{" "}
-          <span className="text-arc-red neon-glow">at the speed of vision.</span>
-        </motion.h2>
-
-        <div className="mt-24 grid md:grid-cols-3 gap-12">
-          {[
-            {
-              k: "INTELLIGENT",
-              v: "Every system we deploy is engineered with embedded AI — adaptive, predictive, and self-optimizing from day one.",
-            },
-            {
-              k: "IMMERSIVE",
-              v: "Cinematic interfaces, holographic UX, and motion-driven experiences that feel like the future you were promised.",
-            },
-            {
-              k: "ENTERPRISE",
-              v: "Built for global scale — distributed cloud infrastructure, hardened security, and infinite horizontal scalability.",
-            },
-          ].map((item, i) => (
-            <motion.div
-              key={item.k}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.9, delay: 0.2 + i * 0.15 }}
-              className="space-y-4"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-arc-red text-2xl">◆</span>
-                <span className="font-mono text-xs tracking-[0.3em] text-arc-red">
-                  0{i + 1} — {item.k}
-                </span>
-              </div>
-              <p className="text-base text-white/65 leading-relaxed">
-                {item.v}
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ----------------------------------------------------
  * Footer
  * --------------------------------------------------*/
 function Footer() {
   return (
-    <footer className="relative pt-32 pb-12 px-6 md:px-12 lg:px-20 border-t border-white/10 bg-arc-black">
+    <footer className="relative pt-24 pb-10 px-6 md:px-12 lg:px-20 border-t border-white/10 bg-arc-black">
       <div className="max-w-7xl mx-auto">
-        {/* Top gigantic wordmark */}
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 1.2 }}
-          className="font-display text-[18vw] md:text-[14vw] lg:text-[10rem] font-extralight tracking-[-0.05em] leading-none text-white/[0.06]"
+        {/* Giant wordmark */}
+        <h2
+          className="font-display text-[18vw] md:text-[14vw] lg:text-[10rem] font-extralight tracking-[-0.05em] leading-none"
           style={{
             background:
-              "linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 90%)",
+              "linear-gradient(180deg, rgba(255,255,255,0.16) 0%, transparent 90%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             backgroundClip: "text",
           }}
         >
           ARCLANE
-        </motion.h2>
+        </h2>
 
-        <div className="grid lg:grid-cols-12 gap-12 mt-12 pb-16 border-b border-white/10">
-          <div className="lg:col-span-5 space-y-6">
+        <div className="grid lg:grid-cols-12 gap-10 mt-10 pb-14 border-b border-white/10">
+          <div className="lg:col-span-5 space-y-5">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-arc-red to-arc-pink flex items-center justify-center font-display font-bold">
                 A
@@ -249,7 +246,7 @@ function Footer() {
               generation of enterprises — engineered for the world that comes
               after this one.
             </p>
-            <div className="flex items-center gap-3 pt-4">
+            <div className="flex items-center gap-3 pt-2">
               <span className="w-2 h-2 rounded-full bg-arc-red animate-pulse" />
               <span className="text-xs font-mono tracking-widest text-white/50">
                 ACCEPTING NEW DEPLOYMENTS — Q3 / 2026
@@ -315,7 +312,7 @@ function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 text-xs font-mono tracking-widest text-white/40">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 text-xs font-mono tracking-widest text-white/40">
           <span>© 2026 ARCLANE GLOBAL — ALL SYSTEMS RESERVED</span>
           <div className="flex items-center gap-6">
             <span>v3.1.4</span>
@@ -342,26 +339,32 @@ export default function Page() {
 
   return (
     <main className="relative min-h-screen bg-arc-black overflow-x-hidden">
-      {/* Scroll progress indicator */}
       <ScrollProgress />
-
-      {/* Custom cursor (desktop only) */}
       {mounted && <CustomCursor />}
 
-      {/* Ambient WebGL background behind everything except hero */}
+      {/* Ambient background WebGL behind sections (NOT hero) */}
       <Background />
 
-      {/* Hero with its own immersive scene */}
+      {/* Hero with its own scene */}
       <Hero />
 
-      {/* Manifesto break */}
+      {/* Manifesto */}
       <Manifesto />
 
-      {/* Moving marquee band */}
+      {/* Marquee */}
       <Marquee />
 
-      {/* All 6 service sections */}
+      {/* All 6 service sections with 3D models */}
       <Services />
+
+      {/* Process / 04 phases */}
+      <Process />
+
+      {/* Testimonials + logo wall */}
+      <Testimonials />
+
+      {/* Big CTA */}
+      <CTASection />
 
       {/* Footer */}
       <Footer />
