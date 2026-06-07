@@ -2,180 +2,184 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import LiquidGlass from "./LiquidGlass";
 
-const STEPS = [
+/* ----------------------------------------------------
+ * Process — How we work
+ * Linear/Stripe-grade craft: numbered rail + dense detail cards
+ * -------------------------------------------------- */
+
+type Phase = {
+  n: string;
+  title: string;
+  sub: string;
+  body: string;
+  duration: string;
+  outputs: string[];
+};
+
+const PHASES: Phase[] = [
   {
     n: "01",
     title: "Discover",
-    sub: "Deep audit + strategic alignment",
-    body: "We map your business, audience, infrastructure, and existing systems — uncovering opportunities, friction points, and strategic leverage.",
-    glyph: (
-      <svg viewBox="0 0 64 64" className="w-full h-full" fill="none">
-        <circle cx="28" cy="28" r="16" stroke="currentColor" strokeWidth="1.5" />
-        <line x1="40" y1="40" x2="52" y2="52" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="28" cy="28" r="4" fill="currentColor" />
-      </svg>
-    ),
+    sub: "Decode the business behind the brief.",
+    body:
+      "Strategy workshops, stakeholder interviews and a forensic audit of the current stack. We translate ambition into measurable product hypotheses before a single pixel is drawn.",
+    duration: "1–2 weeks",
+    outputs: ["Product North Star", "Audit & gap analysis", "Success metrics"],
   },
   {
     n: "02",
     title: "Architect",
-    sub: "Design systems + technical blueprint",
-    body: "We architect the entire ecosystem — from UX systems and design tokens to data flow, AI models, and cloud topology.",
-    glyph: (
-      <svg viewBox="0 0 64 64" className="w-full h-full" fill="none">
-        <rect x="8" y="14" width="20" height="14" stroke="currentColor" strokeWidth="1.5" />
-        <rect x="36" y="14" width="20" height="14" stroke="currentColor" strokeWidth="1.5" />
-        <rect x="22" y="36" width="20" height="14" stroke="currentColor" strokeWidth="1.5" />
-        <line x1="18" y1="28" x2="32" y2="36" stroke="currentColor" strokeWidth="1" />
-        <line x1="46" y1="28" x2="32" y2="36" stroke="currentColor" strokeWidth="1" />
-      </svg>
-    ),
+    sub: "Map the system, not just the screens.",
+    body:
+      "Information architecture, data models, design tokens and brand foundations are built in parallel. Every decision is captured so engineering inherits a system, never a sketch.",
+    duration: "2–3 weeks",
+    outputs: ["Design system v1", "IA & data schema", "Interactive prototype"],
   },
   {
     n: "03",
     title: "Engineer",
-    sub: "Build, train, deploy at scale",
-    body: "Our engineering and AI teams build production-grade systems — clean code, scalable infrastructure, fine-tuned models, and immersive interfaces.",
-    glyph: (
-      <svg viewBox="0 0 64 64" className="w-full h-full" fill="none">
-        <path d="M20 18 L8 32 L20 46" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M44 18 L56 32 L44 46" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        <line x1="36" y1="14" x2="28" y2="50" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
+    sub: "Ship in fortnightly waves, in production.",
+    body:
+      "Two-week sprints, shared backlog, no agency theatre. You see every commit. Quality is locked in with type-safety, automated tests and CI/CD from sprint one.",
+    duration: "6–14 weeks",
+    outputs: ["Production releases", "Test suite & CI/CD", "Live dashboards"],
   },
   {
     n: "04",
     title: "Amplify",
-    sub: "Iterate, optimize, scale globally",
-    body: "Post-launch, we measure, learn, and amplify — continuous AI training, performance optimization, and global rollouts powered by data.",
-    glyph: (
-      <svg viewBox="0 0 64 64" className="w-full h-full" fill="none">
-        <path d="M8 48 L20 36 L28 42 L40 24 L52 32" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M44 24 L52 24 L52 32" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-        <circle cx="20" cy="36" r="2" fill="currentColor" />
-        <circle cx="28" cy="42" r="2" fill="currentColor" />
-        <circle cx="40" cy="24" r="2" fill="currentColor" />
-      </svg>
-    ),
+    sub: "Compound the launch into a flywheel.",
+    body:
+      "Post-launch we instrument, A/B test and iterate. Quarterly business reviews convert telemetry into roadmap so the product keeps paying back, year after year.",
+    duration: "Ongoing",
+    outputs: ["QBR & roadmap", "Experiment program", "On-call retainer"],
   },
 ];
 
-export default function Process() {
+function PhaseCard({ phase, i }: { phase: Phase; i: number }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.2 });
+  const inView = useInView(ref, { once: true, margin: "-15%" });
 
   return (
-    <section ref={ref} id="process" className="relative py-32 px-6 md:px-12 lg:px-20 overflow-hidden">
-      {/* Ambient glow */}
-      <div
-        className="absolute pointer-events-none opacity-40"
-        style={{
-          top: "30%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "70vw",
-          height: "50vw",
-          background:
-            "radial-gradient(ellipse, rgba(255,77,141,0.15) 0%, transparent 60%)",
-          filter: "blur(80px)",
-        }}
-      />
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      className="relative"
+    >
+      <div className="glass-card p-6 sm:p-7 lg:p-8 h-full flex flex-col">
+        {/* Step header */}
+        <div className="flex items-start justify-between mb-5">
+          <div className="flex items-center gap-3">
+            <span className="font-mono text-xs text-white/40">{phase.n}</span>
+            <span className="h-px w-8 bg-white/15" />
+            <span className="pill text-[10px]">
+              <span className="live-dot" />
+              {phase.duration}
+            </span>
+          </div>
+        </div>
 
-      <div className="relative max-w-7xl mx-auto">
-        {/* Heading */}
+        {/* Title */}
+        <h3 className="text-2xl sm:text-3xl font-medium tracking-tight text-white mb-2">
+          {phase.title}
+        </h3>
+        <p className="text-accent-soft text-sm font-medium mb-4">
+          {phase.sub}
+        </p>
+
+        {/* Body */}
+        <p className="text-white/60 text-[15px] leading-relaxed mb-6 flex-1">
+          {phase.body}
+        </p>
+
+        {/* Outputs */}
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35 mb-2.5 font-mono">
+            Deliverables
+          </div>
+          <ul className="space-y-1.5">
+            {phase.outputs.map((o) => (
+              <li
+                key={o}
+                className="flex items-center gap-2.5 text-sm text-white/75"
+              >
+                <span className="text-accent text-xs">▸</span>
+                {o}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export default function Process() {
+  const headRef = useRef<HTMLDivElement>(null);
+  const headIn = useInView(headRef, { once: true, margin: "-20%" });
+
+  return (
+    <section
+      id="process"
+      className="relative py-28 sm:py-32 lg:py-40 overflow-hidden"
+    >
+      {/* Ambient backdrop */}
+      <div className="ambient-glow ambient-glow--left" />
+
+      <div className="container-wide px-6 lg:px-10 relative z-10">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.7 }}
-          className="flex items-center gap-4 mb-10 font-mono text-xs tracking-[0.4em] text-white/40"
+          ref={headRef}
+          initial={{ opacity: 0, y: 20 }}
+          animate={headIn ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-3xl mb-16 lg:mb-20"
         >
-          <span className="w-12 h-px bg-arc-red" />
-          PROCESS / 04 PHASES
+          <span className="pill mb-6 inline-flex">
+            <span className="text-accent">◆</span>
+            How we work
+          </span>
+          <h2 className="text-h1 text-display-lg gradient-text mb-5">
+            A predictable path from{" "}
+            <span className="font-serif italic text-white/85 font-normal">
+              first call
+            </span>{" "}
+            to compounding outcomes.
+          </h2>
+          <p className="text-white/55 text-lg leading-relaxed max-w-2xl">
+            Four phases. Embedded teams. No black boxes. The same operating
+            model that's shipped 240+ enterprise products in 37 countries.
+          </p>
         </motion.div>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="font-display text-4xl md:text-6xl lg:text-7xl font-light tracking-[-0.03em] leading-[1.05] text-white max-w-4xl mb-6"
-        >
-          From discovery to{" "}
-          <span className="holo-text italic font-normal">launch</span> — in{" "}
-          <span className="text-arc-red neon-glow">four phases</span>.
-        </motion.h2>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="text-base md:text-lg text-white/55 max-w-2xl leading-relaxed mb-20"
-        >
-          A proven engineering methodology refined across 240+ enterprise
-          deployments — built for clarity, speed, and predictable outcomes.
-        </motion.p>
-
-        {/* Process steps grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {STEPS.map((step, i) => (
-            <motion.div
-              key={step.n}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.3 + i * 0.1 }}
-              className="relative"
-            >
-              <LiquidGlass intensity="medium" rounded="rounded-2xl">
-                <div className="p-7 h-full flex flex-col">
-                  {/* Step number badge */}
-                  <div className="flex items-center justify-between mb-6">
-                    <span className="font-mono text-xs tracking-[0.3em] text-arc-red">
-                      PHASE {step.n}
-                    </span>
-                    <div className="w-10 h-10 text-arc-red opacity-80">
-                      {step.glyph}
-                    </div>
-                  </div>
-
-                  <h3 className="font-display text-3xl text-white font-light mb-2 tracking-tight">
-                    {step.title}
-                  </h3>
-                  <p className="text-xs font-mono tracking-widest text-white/40 mb-4">
-                    {step.sub}
-                  </p>
-                  <p className="text-sm text-white/65 leading-relaxed flex-1">
-                    {step.body}
-                  </p>
-
-                  {/* Bottom progress indicator */}
-                  <div className="mt-6 pt-4 border-t border-white/8 flex items-center gap-2">
-                    {[0, 1, 2, 3].map((p) => (
-                      <div
-                        key={p}
-                        className="h-px flex-1 rounded-full"
-                        style={{
-                          background:
-                            p <= i
-                              ? "linear-gradient(90deg, #ff1744, #ff4d8d)"
-                              : "rgba(255,255,255,0.1)",
-                          boxShadow:
-                            p <= i ? "0 0 8px rgba(255,23,68,0.5)" : "none",
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </LiquidGlass>
-
-              {/* Connector line to next step (hidden on last + mobile) */}
-              {i < STEPS.length - 1 && (
-                <div className="hidden lg:block absolute top-1/2 -right-3 w-6 h-px bg-gradient-to-r from-arc-red/40 to-transparent" />
-              )}
-            </motion.div>
+        {/* Phase grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
+          {PHASES.map((p, i) => (
+            <PhaseCard key={p.n} phase={p} i={i} />
           ))}
         </div>
+
+        {/* Footer strip */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={headIn ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="mt-14 lg:mt-16 flex flex-wrap items-center justify-between gap-6 pt-8 border-t border-white/[0.06]"
+        >
+          <div className="flex items-center gap-4 text-sm text-white/50">
+            <span className="live-dot" />
+            <span>
+              Average engagement:{" "}
+              <span className="text-white">12 weeks to first launch</span>
+            </span>
+          </div>
+          <a href="#contact" className="btn btn-ghost text-sm">
+            See a sample roadmap
+            <span aria-hidden>→</span>
+          </a>
+        </motion.div>
       </div>
     </section>
   );

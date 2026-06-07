@@ -3,68 +3,56 @@
 import { useRef } from "react";
 import dynamic from "next/dynamic";
 import { motion, useInView } from "framer-motion";
-import LiquidGlass from "./LiquidGlass";
 
-// 3D models — client only
 const ServiceCanvas = dynamic(() => import("./ServiceModels"), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full flex items-center justify-center">
-      <div className="w-8 h-8 rounded-full border border-arc-red/30 border-t-arc-red animate-spin" />
+      <div className="w-7 h-7 rounded-full border border-accent/30 border-t-accent animate-spin" />
     </div>
   ),
 });
 
-/* ----------------------------------------------------
- * Service data
- * --------------------------------------------------*/
 type ServiceId = "brand" | "engineering" | "apps" | "ai" | "erp" | "cloud";
 
-type Service = {
+interface Service {
   id: ServiceId;
-  index: string;
+  num: string;
   title: string;
-  italic: string;
   tagline: string;
-  description: string;
+  body: string;
   capabilities: string[];
-  accent: string;
-  visualTag: string;
-  metric: { label: string; value: string }[];
-};
+  deliverables: string[];
+  metrics: { value: string; label: string }[];
+}
 
 const SERVICES: Service[] = [
   {
     id: "brand",
-    index: "01",
-    title: "Premium Brand",
-    italic: "Strategy",
-    tagline: "Luxury digital identities for the next era.",
-    description:
-      "We build luxury digital identities that combine strategic positioning, immersive storytelling, and futuristic visual systems — engineered for global premium audiences.",
+    num: "01",
+    title: "Premium Brand Strategy",
+    tagline: "Luxury identities, engineered.",
+    body: "We build luxury digital identities that combine strategic positioning, immersive storytelling, and futuristic visual systems — engineered for global premium audiences.",
     capabilities: [
-      "Premium branding ecosystems",
+      "Brand ecosystems",
       "Visual identity systems",
-      "Luxury digital positioning",
-      "Emotionally driven storytelling",
-      "Enterprise branding architecture",
-      "Scalable brand experiences",
+      "Premium positioning",
+      "Story architecture",
+      "Naming & verbal identity",
+      "Scalable brand systems",
     ],
-    accent: "#ff1744",
-    visualTag: "IDENTITY.SYS",
-    metric: [
-      { label: "BRANDS LAUNCHED", value: "180+" },
-      { label: "AVG. UPLIFT", value: "+312%" },
+    deliverables: ["Brand book", "Design tokens", "Motion system", "Voice guide"],
+    metrics: [
+      { value: "180+", label: "Brands launched" },
+      { value: "+312%", label: "Avg. uplift" },
     ],
   },
   {
     id: "engineering",
-    index: "02",
-    title: "Website",
-    italic: "Development",
+    num: "02",
+    title: "Website Development",
     tagline: "Cinematic enterprise web engineering.",
-    description:
-      "Cinematic enterprise websites powered by immersive UI/UX and advanced frontend engineering — VFX-grade interfaces, hyper-fast architectures, and scalable design systems.",
+    body: "Cinematic enterprise websites powered by immersive UI/UX and advanced frontend engineering — VFX-grade interfaces, hyper-fast architectures, and scalable design systems.",
     capabilities: [
       "Futuristic websites",
       "VFX-inspired interfaces",
@@ -73,67 +61,58 @@ const SERVICES: Service[] = [
       "Ultra-fast architectures",
       "Premium digital experiences",
     ],
-    accent: "#ff4d8d",
-    visualTag: "WEB.ENGINE",
-    metric: [
-      { label: "AVG. LIGHTHOUSE", value: "98 / 100" },
-      { label: "TIME TO INTERACTIVE", value: "0.8s" },
+    deliverables: ["Production code", "CMS setup", "Performance audit", "Analytics"],
+    metrics: [
+      { value: "98", label: "Avg. Lighthouse" },
+      { value: "0.8s", label: "Time-to-interactive" },
     ],
   },
   {
     id: "apps",
-    index: "03",
-    title: "Mobile & Web",
-    italic: "Applications",
+    num: "03",
+    title: "Mobile & Web Applications",
     tagline: "Scalable systems built for performance.",
-    description:
-      "We craft scalable mobile and web applications designed for performance, automation, and engagement — from SaaS ecosystems to enterprise-grade dashboards.",
+    body: "We craft scalable mobile and web applications designed for performance, automation, and engagement — from SaaS ecosystems to enterprise-grade dashboards.",
     capabilities: [
       "SaaS ecosystems",
       "Enterprise applications",
       "Intelligent dashboards",
       "Cloud-connected systems",
-      "Real-time applications",
-      "Customer engagement platforms",
+      "Real-time platforms",
+      "Engagement systems",
     ],
-    accent: "#ff6b9d",
-    visualTag: "APP.RUNTIME",
-    metric: [
-      { label: "APPS DEPLOYED", value: "420+" },
-      { label: "MONTHLY USERS", value: "9.2M" },
+    deliverables: ["iOS / Android", "Web app", "API layer", "Admin console"],
+    metrics: [
+      { value: "420+", label: "Apps shipped" },
+      { value: "9.2M", label: "Monthly users" },
     ],
   },
   {
     id: "ai",
-    index: "04",
-    title: "Custom AI",
-    italic: "Solutions",
+    num: "04",
+    title: "Custom AI Solutions",
     tagline: "Intelligent automation, engineered.",
-    description:
-      "We engineer intelligent AI systems for automation, predictive analytics, and machine intelligence — from generative AI ecosystems to enterprise AI infrastructure.",
+    body: "We engineer intelligent AI systems for automation, predictive analytics, and machine intelligence — from generative AI ecosystems to enterprise AI infrastructure.",
     capabilities: [
       "AI assistants",
-      "Machine learning systems",
-      "Generative AI ecosystems",
+      "ML systems",
+      "Generative AI",
       "Intelligent automation",
       "Predictive analytics",
-      "Enterprise AI infrastructure",
+      "AI infrastructure",
     ],
-    accent: "#ff1744",
-    visualTag: "NEURAL.CORE",
-    metric: [
-      { label: "MODELS TRAINED", value: "1.4K" },
-      { label: "INFERENCE TIME", value: "23ms" },
+    deliverables: ["Fine-tuned model", "Eval suite", "Inference API", "Monitoring"],
+    metrics: [
+      { value: "1.4K", label: "Models trained" },
+      { value: "23ms", label: "Inference time" },
     ],
   },
   {
     id: "erp",
-    index: "05",
-    title: "ERP",
-    italic: "Systems",
+    num: "05",
+    title: "ERP Systems",
     tagline: "One operating system for the enterprise.",
-    description:
-      "Centralized ERP ecosystems connecting operations, analytics, finance, and workflow automation — a single intelligent layer across the business.",
+    body: "Centralized ERP ecosystems connecting operations, analytics, finance, and workflow automation — a single intelligent layer across the business.",
     capabilities: [
       "HR management",
       "Financial systems",
@@ -142,127 +121,155 @@ const SERVICES: Service[] = [
       "Workflow automation",
       "Operational analytics",
     ],
-    accent: "#ff4d8d",
-    visualTag: "ERP.GRID",
-    metric: [
-      { label: "ENTERPRISES", value: "67" },
-      { label: "AUTOMATION RATE", value: "94%" },
+    deliverables: ["Modules suite", "Migration plan", "Integrations", "Training"],
+    metrics: [
+      { value: "67", label: "Enterprises" },
+      { value: "94%", label: "Automation rate" },
     ],
   },
   {
     id: "cloud",
-    index: "06",
-    title: "Cloud",
-    italic: "Services",
+    num: "06",
+    title: "Cloud Services",
     tagline: "Scalable infrastructure at planetary scale.",
-    description:
-      "Hyperscale cloud infrastructure engineered for security, deployment, and enterprise scalability — distributed architectures with end-to-end automation.",
+    body: "Hyperscale cloud infrastructure engineered for security, deployment, and enterprise scalability — distributed architectures with end-to-end automation.",
     capabilities: [
       "Cloud architecture",
       "DevOps systems",
       "Scalable hosting",
-      "Cybersecurity infrastructure",
+      "Cybersecurity",
       "Server automation",
-      "Distributed cloud ecosystems",
+      "Distributed systems",
     ],
-    accent: "#ff6b9d",
-    visualTag: "CLOUD.MESH",
-    metric: [
-      { label: "UPTIME SLA", value: "99.99%" },
-      { label: "REGIONS", value: "37" },
+    deliverables: ["IaC blueprint", "CI/CD pipeline", "Security audit", "SRE handoff"],
+    metrics: [
+      { value: "99.99%", label: "Uptime SLA" },
+      { value: "37", label: "Regions" },
     ],
   },
 ];
 
-/* ----------------------------------------------------
- * Single Service Block — TEXT IS STATIC, only fades in once
- * --------------------------------------------------*/
+/* =========================================
+ * BENTO OVERVIEW — at-a-glance grid
+ * =========================================*/
+function BentoOverview() {
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-32">
+      {SERVICES.map((s, i) => (
+        <motion.a
+          key={s.id}
+          href={`#${s.id}`}
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, delay: i * 0.05 }}
+          className="group glass-card p-5 hover:-translate-y-1 transition-transform"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[10px] font-mono uppercase tracking-widest text-accent">
+              {s.num}
+            </span>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 14 14"
+              fill="none"
+              className="text-white/30 group-hover:text-white group-hover:translate-x-0.5 transition-all"
+              aria-hidden
+            >
+              <path
+                d="M3 11L11 3M11 3H5M11 3v6"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+          <h3 className="text-sm font-medium text-white leading-tight">
+            {s.title}
+          </h3>
+          <p className="text-[11px] text-white/40 mt-1.5 leading-relaxed">
+            {s.tagline}
+          </p>
+        </motion.a>
+      ))}
+    </div>
+  );
+}
+
+/* =========================================
+ * SINGLE SERVICE BLOCK — alternating layout
+ * =========================================*/
 function ServiceBlock({
   service,
   reverse,
-  index,
 }: {
   service: Service;
   reverse: boolean;
-  index: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.15 });
 
   return (
-    <section
+    <article
       ref={ref}
       id={service.id}
-      className="relative py-28 md:py-36 px-6 md:px-12 lg:px-20"
+      className="relative py-20 lg:py-32 scroll-mt-24"
     >
-      {/* Section-specific ambient glow */}
+      {/* Section ambient glow */}
       <div
-        className="absolute pointer-events-none opacity-30"
+        className="ambient-glow opacity-30"
         style={{
-          top: "20%",
-          [reverse ? "right" : "left"]: "-10%",
-          width: "60vw",
-          height: "60vw",
-          background: `radial-gradient(circle, ${service.accent}40 0%, transparent 60%)`,
-          filter: "blur(80px)",
+          top: "30%",
+          [reverse ? "left" : "right"]: "-15%",
+          width: "50vw",
+          height: "50vw",
+          maxWidth: "700px",
+          maxHeight: "700px",
+          background:
+            "radial-gradient(circle, rgba(255,45,85,0.15) 0%, transparent 60%)",
         }}
       />
 
-      <div className="relative max-w-7xl mx-auto">
-        {/* Section index marker — fades in, then static */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6 }}
-          className="flex items-center gap-4 mb-10 font-mono text-xs tracking-[0.4em] text-white/40"
-        >
-          <span className="w-16 h-px bg-arc-red" />
-          SERVICE / {service.index} — {service.visualTag}
-        </motion.div>
-
+      <div className="container-wide relative">
         <div
-          className={`grid lg:grid-cols-12 gap-12 lg:gap-16 items-center ${
-            reverse ? "lg:[direction:rtl]" : ""
+          className={`grid lg:grid-cols-12 gap-10 lg:gap-16 items-center ${
+            reverse ? "lg:flex-row-reverse" : ""
           }`}
         >
-          {/* ───── TEXT COLUMN ───── */}
-          <div className="lg:col-span-7 [direction:ltr] relative">
-            {/* Giant translucent index number — purely decorative */}
-            <div className="absolute -top-12 left-0 pointer-events-none select-none">
-              <span
-                className="font-display text-[10rem] md:text-[14rem] leading-none font-extralight text-white/[0.035]"
-                style={{ textShadow: `0 0 100px ${service.accent}30` }}
-              >
-                {service.index}
-              </span>
-            </div>
-
-            {/* Title — appears once, then static */}
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="relative font-display text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-white font-light leading-[1.05] tracking-[-0.02em] mb-6"
+          {/* Text column */}
+          <div
+            className={`lg:col-span-6 ${
+              reverse ? "lg:order-2" : "lg:order-1"
+            }`}
+          >
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.6 }}
+              className="flex items-center gap-3 mb-6"
             >
-              {service.title}{" "}
-              <span
-                className="italic font-normal"
-                style={{
-                  background: `linear-gradient(135deg, #ffffff, ${service.accent})`,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                {service.italic}.
+              <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-accent">
+                Service · {service.num}
               </span>
+              <span className="h-px w-12 bg-accent/40" />
+            </motion.div>
+
+            <motion.h2
+              initial={{ opacity: 0, y: 12 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.7, delay: 0.05 }}
+              className="text-h1 text-display-lg text-white mb-4"
+            >
+              {service.title}
             </motion.h2>
 
             <motion.p
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-lg md:text-xl text-white/85 font-light leading-relaxed max-w-xl mb-5"
+              transition={{ duration: 0.6, delay: 0.15 }}
+              className="text-xl text-white/80 font-light mb-4"
             >
               {service.tagline}
             </motion.p>
@@ -270,205 +277,231 @@ function ServiceBlock({
             <motion.p
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="text-base text-white/55 leading-relaxed max-w-xl mb-8"
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-base text-white/55 leading-relaxed mb-10 max-w-xl"
             >
-              {service.description}
+              {service.body}
             </motion.p>
 
             {/* Capabilities grid */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.7, delay: 0.4 }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8 max-w-xl"
+              transition={{ duration: 0.6, delay: 0.25 }}
+              className="mb-10"
             >
-              {service.capabilities.map((cap) => (
-                <div key={cap} className="flex items-center gap-3 group">
-                  <div
-                    className="w-1.5 h-1.5 rounded-full transition-all group-hover:scale-150 flex-shrink-0"
-                    style={{
-                      background: service.accent,
-                      boxShadow: `0 0 12px ${service.accent}`,
-                    }}
-                  />
-                  <span className="text-sm text-white/70 group-hover:text-white transition-colors">
-                    {cap}
-                  </span>
-                </div>
-              ))}
+              <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 mb-4">
+                Capabilities
+              </p>
+              <div className="grid grid-cols-2 gap-y-2.5 max-w-xl">
+                {service.capabilities.map((cap) => (
+                  <div key={cap} className="flex items-center gap-2.5">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      className="text-accent flex-shrink-0"
+                      aria-hidden
+                    >
+                      <path
+                        d="M2 6l2.5 2.5L10 3"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <span className="text-sm text-white/75">{cap}</span>
+                  </div>
+                ))}
+              </div>
             </motion.div>
 
-            {/* Inline metrics */}
+            {/* Deliverables */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.7, delay: 0.5 }}
-              className="flex flex-wrap gap-8 pt-6 border-t border-white/8 max-w-xl mb-8"
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="mb-10"
             >
-              {service.metric.map((m) => (
-                <div key={m.label} className="flex flex-col">
-                  <span className="text-[9px] font-mono tracking-[0.3em] text-white/40 mb-1">
-                    — {m.label}
-                  </span>
+              <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 mb-4">
+                Deliverables
+              </p>
+              <div className="flex flex-wrap gap-2 max-w-xl">
+                {service.deliverables.map((d) => (
                   <span
-                    className="metric-number text-2xl"
-                    style={{ color: service.accent }}
+                    key={d}
+                    className="text-xs font-medium text-white/70 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08]"
                   >
-                    {m.value}
+                    {d}
                   </span>
-                </div>
-              ))}
+                ))}
+              </div>
             </motion.div>
 
-            {/* CTA */}
+            {/* Metrics + CTA row */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.7, delay: 0.6 }}
+              transition={{ duration: 0.6, delay: 0.35 }}
+              className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pt-8 border-t border-white/8"
             >
-              <button className="group inline-flex items-center gap-3 text-sm font-mono tracking-widest text-white border-b border-white/20 hover:border-arc-red pb-2 transition-colors">
-                EXPLORE {service.visualTag}
-                <span
-                  className="w-8 h-px transition-all group-hover:w-14"
-                  style={{ background: service.accent }}
-                />
-              </button>
+              <div className="flex gap-8">
+                {service.metrics.map((m) => (
+                  <div key={m.label}>
+                    <div className="text-3xl font-medium text-white tabular">
+                      {m.value}
+                    </div>
+                    <div className="text-[10px] font-mono uppercase tracking-widest text-white/40 mt-1">
+                      {m.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <a
+                href="#contact"
+                className="inline-flex items-center gap-2 text-sm font-medium text-white hover:text-accent transition-colors group"
+              >
+                Start a project
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
+                  fill="none"
+                  className="transition-transform group-hover:translate-x-0.5"
+                  aria-hidden
+                >
+                  <path
+                    d="M3 11L11 3M11 3H5M11 3v6"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </a>
             </motion.div>
           </div>
 
-          {/* ───── 3D MODEL COLUMN ───── */}
-          <div className="lg:col-span-5 [direction:ltr]">
+          {/* 3D model column */}
+          <div
+            className={`lg:col-span-6 ${
+              reverse ? "lg:order-1" : "lg:order-2"
+            }`}
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.96 }}
               animate={inView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              transition={{
+                duration: 0.9,
+                delay: 0.2,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="relative aspect-square max-w-[520px] mx-auto rounded-3xl overflow-hidden glass-strong"
             >
-              <LiquidGlass intensity="strong">
-                <div className="relative aspect-square p-6 flex flex-col">
-                  {/* Top bar */}
-                  <div className="flex items-center justify-between text-xs font-mono tracking-widest text-white/50 mb-2">
-                    <span>{service.visualTag}</span>
-                    <div className="flex items-center gap-2">
+              {/* Top status bar */}
+              <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+                <div className="pill !py-1 !px-2.5 !text-[10px]">
+                  <span className="live-dot" />
+                  {service.id.toUpperCase()}.SYS
+                </div>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-white/40">
+                  ACTIVE
+                </span>
+              </div>
+
+              {/* 3D model */}
+              <div className="absolute inset-0">
+                {inView && <ServiceCanvas model={service.id} />}
+              </div>
+
+              {/* Bottom info bar */}
+              <div className="absolute bottom-4 left-4 right-4 z-10">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono uppercase tracking-widest text-white/50">
+                    {service.title}
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    {[0, 1, 2].map((i) => (
                       <span
-                        className="w-1.5 h-1.5 rounded-full animate-pulse"
+                        key={i}
+                        className="w-1 h-1 rounded-full bg-accent"
                         style={{
-                          background: service.accent,
-                          boxShadow: `0 0 8px ${service.accent}`,
+                          animationDelay: `${i * 0.2}s`,
+                          animation: "subtle-pulse 1.5s ease-in-out infinite",
                         }}
                       />
-                      <span>ACTIVE</span>
-                    </div>
-                  </div>
-
-                  {/* 3D MODEL */}
-                  <div className="flex-1 w-full relative min-h-[280px]">
-                    {inView && (
-                      <ServiceCanvas model={service.id} />
-                    )}
-                  </div>
-
-                  {/* Bottom data strip */}
-                  <div className="space-y-2.5 mt-2">
-                    <div className="flex items-center justify-between text-[10px] font-mono text-white/50">
-                      <span>SYSTEM LOAD</span>
-                      <span>{67 + index * 4}%</span>
-                    </div>
-                    <div className="h-px bg-white/10 relative overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={inView ? { width: `${67 + index * 4}%` } : {}}
-                        transition={{ duration: 1.4, delay: 0.7 }}
-                        className="h-full"
-                        style={{
-                          background: `linear-gradient(90deg, ${service.accent}, #ffffff)`,
-                          boxShadow: `0 0 8px ${service.accent}`,
-                        }}
-                      />
-                    </div>
-                    <div className="grid grid-cols-3 gap-2 pt-1">
-                      {["LIVE", "v3.1", "AI++"].map((tag) => (
-                        <div
-                          key={tag}
-                          className="text-center py-1.5 text-[10px] font-mono tracking-widest text-white/60 border border-white/10 rounded"
-                        >
-                          {tag}
-                        </div>
-                      ))}
-                    </div>
+                    ))}
                   </div>
                 </div>
-              </LiquidGlass>
+              </div>
             </motion.div>
           </div>
         </div>
       </div>
-
-      {/* Section divider */}
-      <div className="section-divider mt-28 max-w-5xl mx-auto" />
-    </section>
+    </article>
   );
 }
 
-/* ----------------------------------------------------
- * Services section heading + all blocks
- * --------------------------------------------------*/
+/* =========================================
+ * SERVICES SECTION
+ * =========================================*/
 export default function Services() {
-  const headingRef = useRef<HTMLDivElement>(null);
-  const headingInView = useInView(headingRef, { once: true, amount: 0.4 });
+  const headRef = useRef<HTMLDivElement>(null);
+  const headInView = useInView(headRef, { once: true, amount: 0.3 });
 
   return (
-    <section className="relative bg-arc-black">
-      {/* Heading */}
-      <div
-        ref={headingRef}
-        className="relative py-32 px-6 md:px-12 lg:px-20 text-center"
-      >
+    <section id="services" className="relative scroll-mt-24">
+      {/* Section heading */}
+      <div ref={headRef} className="container-wide section-y text-center">
         <motion.div
           initial={{ opacity: 0 }}
-          animate={headingInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.7 }}
-          className="inline-flex items-center gap-4 mb-8 font-mono text-xs tracking-[0.4em] text-white/40"
+          animate={headInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.6 }}
+          className="flex justify-center mb-6"
         >
-          <span className="w-12 h-px bg-arc-red" />
-          OUR CAPABILITIES — 06 ECOSYSTEMS
-          <span className="w-12 h-px bg-arc-red" />
+          <span className="pill">
+            <span className="text-accent">◆</span>
+            What we build
+          </span>
         </motion.div>
 
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={headingInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="font-display text-4xl md:text-6xl lg:text-7xl font-light tracking-[-0.03em] leading-[1.05] text-white max-w-5xl mx-auto"
+          initial={{ opacity: 0, y: 12 }}
+          animate={headInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8 }}
+          className="text-h1 text-display-xl max-w-4xl mx-auto gradient-text mb-6"
         >
-          A complete operating system for{" "}
-          <span className="holo-text italic font-normal">
-            next-generation
-          </span>{" "}
-          enterprises.
+          A complete operating system{" "}
+          <span className="font-serif italic text-white/85 font-normal">
+            for next-generation enterprises.
+          </span>
         </motion.h2>
 
         <motion.p
           initial={{ opacity: 0 }}
-          animate={headingInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="mt-8 text-base md:text-lg text-white/55 max-w-2xl mx-auto leading-relaxed"
+          animate={headInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.7, delay: 0.15 }}
+          className="text-lg text-white/55 max-w-2xl mx-auto"
         >
-          From brand strategy to AI infrastructure — six interconnected
-          ecosystems engineered to scale, automate, and amplify every layer of
-          modern business.
+          Six interconnected ecosystems — from brand strategy to AI
+          infrastructure — engineered to scale, automate, and amplify every
+          layer of modern business.
         </motion.p>
+
+        {/* Bento overview grid */}
+        <div className="mt-16">
+          <BentoOverview />
+        </div>
       </div>
 
-      {/* Service blocks */}
-      {SERVICES.map((service, i) => (
-        <ServiceBlock
-          key={service.id}
-          service={service}
-          reverse={i % 2 === 1}
-          index={i}
-        />
-      ))}
+      {/* Alternating detail blocks */}
+      <div className="relative">
+        {SERVICES.map((s, i) => (
+          <ServiceBlock key={s.id} service={s} reverse={i % 2 === 1} />
+        ))}
+      </div>
     </section>
   );
 }

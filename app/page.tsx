@@ -3,62 +3,21 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring, useInView } from "framer-motion";
+import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
 import Process from "@/components/Process";
+import Stats from "@/components/Stats";
 import Testimonials from "@/components/Testimonials";
+import FAQ from "@/components/FAQ";
 import CTASection from "@/components/CTASection";
-import LiquidGlass from "@/components/LiquidGlass";
+import Footer from "@/components/Footer";
 
 // Ambient WebGL background — client only, very lightweight
 const Background = dynamic(() => import("@/components/Background"), {
   ssr: false,
   loading: () => null,
 });
-
-/* ----------------------------------------------------
- * Custom dual-ring cursor
- * --------------------------------------------------*/
-function CustomCursor() {
-  const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let dx = 0, dy = 0, rx = 0, ry = 0, mx = 0, my = 0;
-    let raf: number;
-
-    const onMove = (e: MouseEvent) => {
-      mx = e.clientX;
-      my = e.clientY;
-    };
-
-    const tick = () => {
-      dx += (mx - dx) * 0.45;
-      dy += (my - dy) * 0.45;
-      rx += (mx - rx) * 0.15;
-      ry += (my - ry) * 0.15;
-      if (dotRef.current)
-        dotRef.current.style.transform = `translate(${dx - 4}px, ${dy - 4}px)`;
-      if (ringRef.current)
-        ringRef.current.style.transform = `translate(${rx - 20}px, ${ry - 20}px)`;
-      raf = requestAnimationFrame(tick);
-    };
-
-    window.addEventListener("mousemove", onMove);
-    raf = requestAnimationFrame(tick);
-    return () => {
-      window.removeEventListener("mousemove", onMove);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-
-  return (
-    <>
-      <div ref={dotRef} className="cursor-dot" />
-      <div ref={ringRef} className="cursor-ring" />
-    </>
-  );
-}
 
 /* ----------------------------------------------------
  * Scroll progress bar
@@ -72,103 +31,88 @@ function ScrollProgress() {
   });
   return (
     <motion.div
-      className="fixed top-0 left-0 right-0 h-[2px] z-50 origin-left"
+      className="fixed top-0 left-0 right-0 h-[2px] z-[60] origin-left"
       style={{
         scaleX,
         background:
-          "linear-gradient(90deg, #ff1744, #ff4d8d, #ff6b9d, #ffffff)",
-        boxShadow: "0 0 20px #ff1744, 0 0 40px #ff4d8d",
+          "linear-gradient(90deg, #ff2d55, #ff4d8d, rgba(255,255,255,0.6))",
+        boxShadow: "0 0 12px rgba(255,45,85,0.6)",
       }}
     />
   );
 }
 
 /* ----------------------------------------------------
- * Manifesto
+ * Manifesto — refreshed with new design language
  * --------------------------------------------------*/
 function Manifesto() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.2 });
+  const inView = useInView(ref, { once: true, margin: "-15%" });
+
+  const VALUES = [
+    {
+      k: "Intelligent",
+      v: "Every system we ship has embedded learning loops. Adaptive, predictive, self-optimising from sprint one — not bolted on as a feature.",
+    },
+    {
+      k: "Immersive",
+      v: "Cinematic interfaces and motion-led experiences that make complex products feel inevitable. Craft as a competitive moat.",
+    },
+    {
+      k: "Enterprise",
+      v: "Built for global scale — multi-region cloud, SOC 2 / ISO 27001 by default, and infrastructure that compounds with usage.",
+    },
+  ];
 
   return (
     <section
       ref={ref}
-      className="relative py-32 px-6 md:px-12 lg:px-20 overflow-hidden"
+      id="manifesto"
+      className="relative py-28 sm:py-32 lg:py-40 overflow-hidden"
     >
-      <div
-        className="absolute pointer-events-none opacity-50"
-        style={{
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "60vw",
-          height: "60vw",
-          background:
-            "radial-gradient(circle, rgba(255,23,68,0.18) 0%, transparent 70%)",
-          filter: "blur(80px)",
-        }}
-      />
+      <div className="ambient-glow ambient-glow--left" />
 
-      <div className="relative max-w-6xl mx-auto">
+      <div className="container-wide px-6 lg:px-10 relative z-10">
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.7 }}
-          className="flex items-center gap-4 mb-10 font-mono text-xs tracking-[0.4em] text-white/40"
-        >
-          <span className="w-12 h-px bg-arc-red" />
-          MANIFESTO / 00
-        </motion.div>
-
-        <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="font-display text-3xl md:text-5xl lg:text-6xl font-light leading-[1.15] tracking-[-0.025em] max-w-5xl"
+          transition={{ duration: 0.8 }}
+          className="max-w-4xl mb-16 lg:mb-20"
         >
-          We don't build software.{" "}
-          <span className="text-white/40">We architect</span>{" "}
-          <span className="holo-text italic font-normal">
-            intelligent ecosystems
-          </span>{" "}
-          <span className="text-white/40">that learn, evolve, and scale</span>{" "}
-          <span className="text-arc-red neon-glow">at the speed of vision.</span>
-        </motion.h2>
+          <span className="pill mb-6 inline-flex">
+            <span className="text-accent">◆</span>
+            Manifesto
+          </span>
+          <h2 className="text-h1 text-display-xl gradient-text">
+            We don't build software.{" "}
+            <span className="font-serif italic text-white/85 font-normal">
+              We architect intelligent ecosystems
+            </span>{" "}
+            that learn, evolve and scale at the speed of vision.
+          </h2>
+        </motion.div>
 
-        <div className="mt-20 grid md:grid-cols-3 gap-6">
-          {[
-            {
-              k: "INTELLIGENT",
-              v: "Every system we deploy is engineered with embedded AI — adaptive, predictive, and self-optimizing from day one.",
-            },
-            {
-              k: "IMMERSIVE",
-              v: "Cinematic interfaces, holographic UX, and motion-driven experiences that feel like the future you were promised.",
-            },
-            {
-              k: "ENTERPRISE",
-              v: "Built for global scale — distributed cloud infrastructure, hardened security, and infinite horizontal scalability.",
-            },
-          ].map((item, i) => (
+        <div className="grid md:grid-cols-3 gap-5 lg:gap-6">
+          {VALUES.map((item, i) => (
             <motion.div
               key={item.k}
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.2 + i * 0.1 }}
+              transition={{ duration: 0.7, delay: 0.2 + i * 0.08 }}
+              className="glass-card p-7 lg:p-8"
             >
-              <LiquidGlass intensity="light" rounded="rounded-2xl">
-                <div className="p-7">
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="text-arc-red text-2xl leading-none">◆</span>
-                    <span className="font-mono text-[10px] tracking-[0.3em] text-arc-red">
-                      0{i + 1} — {item.k}
-                    </span>
-                  </div>
-                  <p className="text-base text-white/70 leading-relaxed">
-                    {item.v}
-                  </p>
-                </div>
-              </LiquidGlass>
+              <div className="flex items-center gap-3 mb-5">
+                <span className="font-mono text-[10px] text-white/35 tracking-widest">
+                  0{i + 1}
+                </span>
+                <span className="h-px w-8 bg-white/15" />
+                <span className="text-xs font-medium text-accent-soft tracking-wide uppercase">
+                  {item.k}
+                </span>
+              </div>
+              <p className="text-white/65 text-[15px] leading-relaxed">
+                {item.v}
+              </p>
             </motion.div>
           ))}
         </div>
@@ -178,7 +122,7 @@ function Manifesto() {
 }
 
 /* ----------------------------------------------------
- * Marquee ticker — moving text band
+ * Marquee — refined
  * --------------------------------------------------*/
 function Marquee() {
   const items = [
@@ -187,144 +131,29 @@ function Marquee() {
     "CLOUD INFRASTRUCTURE",
     "ENTERPRISE TRANSFORMATION",
     "NEURAL INTELLIGENCE",
-    "PREMIUM DIGITAL ENGINEERING",
-    "v3.1.4",
+    "PREMIUM ENGINEERING",
     "EST. 2026",
   ];
   const loop = [...items, ...items];
 
   return (
-    <div className="relative border-y border-white/10 py-8 overflow-hidden bg-black/40 backdrop-blur-sm">
-      <div className="flex marquee-track whitespace-nowrap">
+    <div className="relative border-y border-white/[0.06] py-7 lg:py-8 overflow-hidden bg-bg-elevated/40 backdrop-blur-sm">
+      <div className="flex ticker-track whitespace-nowrap">
         {loop.map((item, i) => (
           <div
             key={i}
-            className="inline-flex items-center gap-8 px-8 font-display text-3xl md:text-5xl font-light tracking-[-0.02em] text-white/90"
+            className="inline-flex items-center gap-6 lg:gap-8 px-6 lg:px-8 text-2xl sm:text-3xl lg:text-4xl font-medium tracking-tight text-white/90"
           >
             <span>{item}</span>
-            <span className="text-arc-red text-2xl">◆</span>
+            <span className="text-accent text-xl">◆</span>
           </div>
         ))}
       </div>
+
+      {/* Edge fades */}
+      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-bg to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-bg to-transparent pointer-events-none" />
     </div>
-  );
-}
-
-/* ----------------------------------------------------
- * Footer
- * --------------------------------------------------*/
-function Footer() {
-  return (
-    <footer className="relative pt-24 pb-10 px-6 md:px-12 lg:px-20 border-t border-white/10 bg-arc-black">
-      <div className="max-w-7xl mx-auto">
-        {/* Giant wordmark */}
-        <h2
-          className="font-display text-[18vw] md:text-[14vw] lg:text-[10rem] font-extralight tracking-[-0.05em] leading-none"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(255,255,255,0.16) 0%, transparent 90%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-          }}
-        >
-          ARCLANE
-        </h2>
-
-        <div className="grid lg:grid-cols-12 gap-10 mt-10 pb-14 border-b border-white/10">
-          <div className="lg:col-span-5 space-y-5">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-arc-red to-arc-pink flex items-center justify-center font-display font-bold">
-                A
-              </div>
-              <span className="font-display tracking-[0.3em] text-white">
-                ARCLANE GLOBAL
-              </span>
-            </div>
-            <p className="text-white/55 leading-relaxed max-w-md">
-              Architects of intelligent ecosystems. Designed for the next
-              generation of enterprises — engineered for the world that comes
-              after this one.
-            </p>
-            <div className="flex items-center gap-3 pt-2">
-              <span className="w-2 h-2 rounded-full bg-arc-red animate-pulse" />
-              <span className="text-xs font-mono tracking-widest text-white/50">
-                ACCEPTING NEW DEPLOYMENTS — Q3 / 2026
-              </span>
-            </div>
-          </div>
-
-          <div className="lg:col-span-2">
-            <h4 className="text-xs font-mono tracking-[0.3em] text-white/40 mb-5">
-              ECOSYSTEMS
-            </h4>
-            <ul className="space-y-3 text-sm text-white/70">
-              {["Brand", "Engineering", "AI / ML", "Cloud", "ERP", "Apps"].map(
-                (l) => (
-                  <li
-                    key={l}
-                    className="hover:text-white transition-colors cursor-pointer"
-                  >
-                    {l}
-                  </li>
-                )
-              )}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-2">
-            <h4 className="text-xs font-mono tracking-[0.3em] text-white/40 mb-5">
-              COMPANY
-            </h4>
-            <ul className="space-y-3 text-sm text-white/70">
-              {["About", "Manifesto", "Careers", "Press", "Contact"].map(
-                (l) => (
-                  <li
-                    key={l}
-                    className="hover:text-white transition-colors cursor-pointer"
-                  >
-                    {l}
-                  </li>
-                )
-              )}
-            </ul>
-          </div>
-
-          <div className="lg:col-span-3">
-            <h4 className="text-xs font-mono tracking-[0.3em] text-white/40 mb-5">
-              CONNECT
-            </h4>
-            <p className="text-sm text-white/70 mb-4">
-              hello@arclane.global
-              <br />
-              +1 (415) 555-0199
-            </p>
-            <div className="flex gap-3">
-              {["TW", "IG", "LI", "GH"].map((s) => (
-                <button
-                  key={s}
-                  className="w-10 h-10 rounded-full border border-white/15 hover:border-arc-red hover:text-arc-red transition-all text-xs font-mono tracking-widest text-white/60"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 text-xs font-mono tracking-widest text-white/40">
-          <span>© 2026 ARCLANE GLOBAL — ALL SYSTEMS RESERVED</span>
-          <div className="flex items-center gap-6">
-            <span>v3.1.4</span>
-            <span>NEURAL_CORE: ONLINE</span>
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-arc-red animate-pulse" />
-              LIVE
-            </span>
-          </div>
-        </div>
-      </div>
-    </footer>
   );
 }
 
@@ -338,35 +167,41 @@ export default function Page() {
   }, []);
 
   return (
-    <main className="relative min-h-screen bg-arc-black overflow-x-hidden">
+    <main className="relative min-h-screen bg-bg overflow-x-hidden">
       <ScrollProgress />
-      {mounted && <CustomCursor />}
+      <Navigation />
 
-      {/* Ambient background WebGL behind sections (NOT hero) */}
-      <Background />
+      {/* Ambient background WebGL — sits behind content (low opacity, not in hero) */}
+      {mounted && <Background />}
 
-      {/* Hero with its own scene */}
+      {/* Hero */}
       <Hero />
 
-      {/* Manifesto */}
+      {/* Manifesto / values */}
       <Manifesto />
 
-      {/* Marquee */}
+      {/* Brand marquee */}
       <Marquee />
 
-      {/* All 6 service sections with 3D models */}
+      {/* Services — bento + alternating deep-dives */}
       <Services />
 
       {/* Process / 04 phases */}
       <Process />
 
+      {/* Stats / impact numbers */}
+      <Stats />
+
       {/* Testimonials + logo wall */}
       <Testimonials />
 
-      {/* Big CTA */}
+      {/* FAQ accordion */}
+      <FAQ />
+
+      {/* CTA */}
       <CTASection />
 
-      {/* Footer */}
+      {/* Footer with newsletter */}
       <Footer />
     </main>
   );
