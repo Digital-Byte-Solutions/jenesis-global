@@ -4,9 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion, useScroll, useSpring, useInView } from "framer-motion";
 import SmoothScroll from "@/components/SmoothScroll";
+import CustomCursor from "@/components/CustomCursor";
 import ThemeChooser from "@/components/ThemeChooser";
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
+import ApproachEngine from "@/components/ApproachEngine";
+import ProofSection from "@/components/ProofSection";
 import Services from "@/components/Services";
 import Process from "@/components/Process";
 import Stats from "@/components/Stats";
@@ -47,18 +50,18 @@ function ScrollProgress() {
  * Manifesto — staged headline with subtle typewriter
  * --------------------------------------------------*/
 const LEAD_WORDS = ["We", "don’t", "build", "software."];
-const TYPED_PHRASE = "We architect intelligent ecosystems";
+const TYPED_PHRASE = "We architect omni-channel revenue engines";
 const TAIL_WORDS = [
   "that",
-  "learn,",
-  "evolve",
+  "acquire,",
+  "convert",
   "and",
   "scale",
   "at",
   "the",
   "speed",
   "of",
-  "vision.",
+  "growth.",
 ];
 const WORD_EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -166,15 +169,15 @@ function Manifesto() {
   const VALUES = [
     {
       k: "Intelligent",
-      v: "Every system we ship has embedded learning loops. Adaptive, predictive, self-optimising from sprint one — not bolted on as a feature.",
+      v: "Every system we ship has embedded learning loops. Adaptive, predictive CAC optimization from sprint one — built to maximize blended ROAS.",
     },
     {
       k: "Immersive",
-      v: "Cinematic interfaces and motion-led experiences that make complex products feel inevitable. Craft as a competitive moat.",
+      v: "60 FPS WebGL interfaces and conversion-locked digital flagships that eliminate checkout friction and amplify organic discovery.",
     },
     {
       k: "Enterprise",
-      v: "Built for global scale — multi-region cloud, SOC 2 / ISO 27001 by default, and infrastructure that compounds with usage.",
+      v: "Built for global scale — multi-region cloud, sub-500ms speeds, and infrastructure that compounds client ARR year after year.",
     },
   ];
 
@@ -243,22 +246,22 @@ function Marquee() {
   const loop = [...items, ...items];
 
   return (
-    <div className="relative border-y border-line py-7 lg:py-8 overflow-hidden bg-surface">
+    <div className="relative border-y border-line py-3.5 sm:py-4 overflow-hidden bg-surface/60 backdrop-blur-sm">
       <div className="flex ticker-track whitespace-nowrap">
         {loop.map((item, i) => (
           <div
             key={i}
-            className="inline-flex items-center gap-6 lg:gap-8 px-6 lg:px-8 text-2xl sm:text-3xl lg:text-4xl font-medium tracking-tight text-ink"
+            className="inline-flex items-center gap-4 lg:gap-6 px-4 lg:px-6 text-xs sm:text-sm font-mono tracking-[0.2em] font-medium text-ink/80"
           >
             <span>{item}</span>
-            <span className="text-accent text-xl">◆</span>
+            <span className="text-accent text-xs">◆</span>
           </div>
         ))}
       </div>
 
       {/* Edge fades */}
-      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-bg to-transparent pointer-events-none" />
-      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-bg to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-bg to-transparent pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-bg to-transparent pointer-events-none" />
     </div>
   );
 }
@@ -269,6 +272,7 @@ function Marquee() {
 export default function Page() {
   return (
     <main className="relative min-h-screen bg-bg overflow-x-hidden">
+      <CustomCursor />
       <SmoothScroll />
       <ThemeChooser />
       <ScrollProgress />
@@ -279,6 +283,12 @@ export default function Page() {
 
       {/* Hero — minimal lockup + AI core 3D scene */}
       <Hero />
+
+      {/* The Approach — Omni-Channel Connected Engine */}
+      <ApproachEngine />
+
+      {/* Proof — Real Disguised Revenue Case Studies */}
+      <ProofSection />
 
       {/* Manifesto / values */}
       <Manifesto />

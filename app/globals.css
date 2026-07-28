@@ -37,13 +37,13 @@
 }
 
 .dark {
-  /* Surfaces — the signature dark look */
-  --bg: #050507;
-  --bg-elevated: #0a0a0f;
-  --bg-overlay: rgba(10, 10, 15, 0.7);
+  /* Surfaces — Dark Velvet (Signature Midnight Navy & Crimson) */
+  --bg: #05050c;
+  --bg-elevated: #0b0b14;
+  --bg-overlay: rgba(11, 11, 20, 0.8);
 
   --text-1: #ffffff;
-  --text-2: rgba(255, 255, 255, 0.7);
+  --text-2: rgba(255, 255, 255, 0.72);
   --text-3: rgba(255, 255, 255, 0.45);
 
   --accent: #ff2d55;
@@ -52,13 +52,61 @@
   --accent-deep: #d10037;
 
   --line: rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.16);
+  --line-strong: rgba(255, 255, 255, 0.18);
 
-  --glow-accent: rgba(255, 45, 85, 0.18);
-  --glow-soft: rgba(255, 77, 141, 0.1);
-  --card-bg: rgba(255, 255, 255, 0.025);
+  --glow-accent: rgba(255, 45, 85, 0.2);
+  --glow-soft: rgba(255, 77, 141, 0.12);
+  --card-bg: rgba(255, 255, 255, 0.03);
   --card-shadow: none;
-  --card-shadow-hover: 0 0 60px -20px rgba(255, 45, 85, 0.25);
+  --card-shadow-hover: 0 0 60px -20px rgba(255, 45, 85, 0.3);
+}
+
+.dark.theme-obsidian {
+  /* Surfaces — Obsidian Noir (Pitch OLED Black & Executive Champagne Gold) */
+  --bg: #000000;
+  --bg-elevated: #0a0a0a;
+  --bg-overlay: rgba(10, 10, 10, 0.88);
+
+  --text-1: #ffffff;
+  --text-2: rgba(255, 255, 255, 0.78);
+  --text-3: rgba(255, 255, 255, 0.42);
+
+  --accent: #d4af37;
+  --accent-soft: #f3e5ab;
+  --accent-glow: #ffd700;
+  --accent-deep: #997a15;
+
+  --line: rgba(212, 175, 55, 0.15);
+  --line-strong: rgba(212, 175, 55, 0.32);
+
+  --glow-accent: rgba(212, 175, 55, 0.25);
+  --glow-soft: rgba(243, 229, 171, 0.15);
+  --card-bg: rgba(212, 175, 55, 0.035);
+  --card-shadow-hover: 0 0 60px -20px rgba(212, 175, 55, 0.35);
+}
+
+.dark.theme-cyberpunk {
+  /* Surfaces — Cyberpunk Crimson (Neon Violet & Electric Cyber Cyan) */
+  --bg: #080012;
+  --bg-elevated: #120024;
+  --bg-overlay: rgba(18, 0, 36, 0.88);
+
+  --text-1: #ffffff;
+  --text-2: rgba(220, 245, 255, 0.85);
+  --text-3: rgba(180, 220, 255, 0.55);
+
+  --accent: #00ffcc;
+  --accent-soft: #ff0077;
+  --accent-glow: #00e5ff;
+  --accent-deep: #00b38f;
+
+  --line: rgba(0, 255, 204, 0.2);
+  --line-strong: rgba(0, 255, 204, 0.4);
+
+  --glow-accent: rgba(0, 255, 204, 0.3);
+  --glow-soft: rgba(255, 0, 119, 0.2);
+  --card-bg: rgba(0, 255, 204, 0.04);
+  --card-shadow-hover: 0 0 60px -20px rgba(0, 255, 204, 0.45);
 }
 
 /* ===========================================
@@ -85,6 +133,19 @@ body {
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
   transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+@media (pointer: fine) {
+  html,
+  body,
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  [role="button"] {
+    cursor: none !important;
+  }
 }
 
 ::selection {

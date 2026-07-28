@@ -24,18 +24,31 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Jenesis Global — Building What's Next",
+  title: "Jenesis Global — We Help Brands Grow Revenue Through an Omni-Channel Approach",
   description:
-    "Jenesis — AI ecosystems, intelligent engineering, and premium digital experiences. Global vision. Human future.",
+    "We help brands grow revenue through an omni-channel approach — uniting Performance Marketing, Web & App Engineering, Enterprise AI Systems, and Search Engine Dominance into one connected engine.",
   keywords: [
-    "Jenesis",
-    "AI solutions",
-    "custom AI",
-    "cloud infrastructure",
-    "enterprise AI",
-    "premium engineering",
-    "digital experiences",
+    "Jenesis Global",
+    "Omni-channel growth engine",
+    "Brand revenue growth",
+    "Performance marketing",
+    "Web engineering",
+    "Enterprise AI workflows",
+    "AEO SEO dominance",
   ],
+  openGraph: {
+    title: "Jenesis Global — We Help Brands Grow Revenue Through an Omni-Channel Approach",
+    description:
+      "We help brands grow revenue through an omni-channel approach. One connected growth engine built for measurable ROI.",
+    type: "website",
+    siteName: "Jenesis Global",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Jenesis Global — We Help Brands Grow Revenue Through an Omni-Channel Approach",
+    description:
+      "We help brands grow revenue through an omni-channel approach. One connected growth engine built for measurable ROI.",
+  },
 };
 
 export const viewport: Viewport = {
@@ -53,6 +66,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Jenesis Global",
+    "url": "https://jenesis.global",
+    "description": "We help brands grow revenue through an omni-channel approach.",
+    "slogan": "We help brands grow revenue through an omni-channel approach.",
+  };
+
   return (
     <html
       lang="en"
@@ -61,6 +83,10 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body className="bg-bg text-ink antialiased">{children}</body>
     </html>

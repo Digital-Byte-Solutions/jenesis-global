@@ -33,10 +33,10 @@ const config: Config = {
         mono: ["var(--font-mono)", "monospace"],
       },
       fontSize: {
-        "display-2xl": ["clamp(3.25rem, 8.5vw, 7.5rem)", { lineHeight: "0.98", letterSpacing: "-0.04em" }],
-        "display-xl": ["clamp(2.75rem, 6.5vw, 5.5rem)", { lineHeight: "1.0", letterSpacing: "-0.035em" }],
-        "display-lg": ["clamp(2.25rem, 5vw, 4.25rem)", { lineHeight: "1.05", letterSpacing: "-0.03em" }],
-        "display-md": ["clamp(1.875rem, 4vw, 3rem)", { lineHeight: "1.1", letterSpacing: "-0.02em" }],
+        "display-2xl": ["clamp(1.75rem, 2.8vw, 2.5rem)", { lineHeight: "1.1", letterSpacing: "-0.025em" }],
+        "display-xl": ["clamp(1.6rem, 2.4vw, 2.25rem)", { lineHeight: "1.12", letterSpacing: "-0.02em" }],
+        "display-lg": ["clamp(1.4rem, 2.0vw, 1.85rem)", { lineHeight: "1.15", letterSpacing: "-0.015em" }],
+        "display-md": ["clamp(1.25rem, 1.6vw, 1.5rem)", { lineHeight: "1.2", letterSpacing: "-0.01em" }],
       },
       animation: {
         "fade-up": "fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both",

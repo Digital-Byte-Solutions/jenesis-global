@@ -1,470 +1,221 @@
 "use client";
 
 import { useRef } from "react";
-import dynamic from "next/dynamic";
 import { motion, useInView } from "framer-motion";
 
-const ServiceCanvas = dynamic(() => import("./ServiceModels"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="w-7 h-7 rounded-full border border-accent/30 border-t-accent animate-spin" />
-    </div>
-  ),
-});
+/* ----------------------------------------------------
+ * Custom Precision Developer SVG Glyphs
+ * Clean geometry, pixel-perfect balance (No generic AI stock)
+ * --------------------------------------------------*/
 
-type ServiceId = "brand" | "engineering" | "apps" | "ai" | "erp" | "cloud";
-
-interface Service {
-  id: ServiceId;
-  num: string;
-  title: string;
-  tagline: string;
-  body: string;
-  capabilities: string[];
-  deliverables: string[];
-  metrics: { value: string; label: string }[];
+function MarketingGlyph({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <path d="M21 7L13 15L9 11L3 17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M15 7H21V13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="21" cy="7" r="2" fill="var(--accent)" />
+    </svg>
+  );
 }
 
-const SERVICES: Service[] = [
+function EngineeringGlyph({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 8L3 12L7 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M17 8L21 12L17 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14 4L10 20" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function AiGlyph({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="9" cy="9" r="1.5" fill="currentColor" />
+      <circle cx="15" cy="9" r="1.5" fill="currentColor" />
+      <circle cx="12" cy="15" r="2" fill="var(--accent)" />
+      <path d="M9 15H15" stroke="currentColor" strokeWidth="1.2" strokeDasharray="1.5 1.5" />
+    </svg>
+  );
+}
+
+function SeoGlyph({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M21 21L16 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M11 8V14M8 11H14" stroke="var(--accent)" strokeWidth="1.25" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+type ServicePillar = {
+  num: string;
+  title: string;
+  oneLiner: string;
+  metric: string;
+  metricLabel: string;
+  GlyphComponent: React.ComponentType<{ className?: string }>;
+  tags: string[];
+};
+
+const PILLARS: ServicePillar[] = [
   {
-    id: "brand",
     num: "01",
-    title: "Premium Brand Strategy",
-    tagline: "Luxury identities, engineered.",
-    body: "We build luxury digital identities that combine strategic positioning, immersive storytelling, and futuristic visual systems — engineered for global premium audiences.",
-    capabilities: [
-      "Brand ecosystems",
-      "Visual identity systems",
-      "Premium positioning",
-      "Story architecture",
-      "Naming & verbal identity",
-      "Scalable brand systems",
-    ],
-    deliverables: ["Brand book", "Design tokens", "Motion system", "Voice guide"],
-    metrics: [
-      { value: "180+", label: "Brands launched" },
-      { value: "+312%", label: "Avg. uplift" },
-    ],
+    title: "Performance Marketing",
+    oneLiner: "Scalable omni-channel acquisition engines built for guaranteed ROAS.",
+    metric: "4.2x",
+    metricLabel: "Average ROAS",
+    GlyphComponent: MarketingGlyph,
+    tags: ["Paid Media", "CAC Optimization", "Cross-Platform Scaling"],
   },
   {
-    id: "engineering",
     num: "02",
-    title: "Website Development",
-    tagline: "Cinematic enterprise web engineering.",
-    body: "Cinematic enterprise websites powered by immersive UI/UX and advanced frontend engineering — VFX-grade interfaces, hyper-fast architectures, and scalable design systems.",
-    capabilities: [
-      "Futuristic websites",
-      "VFX-inspired interfaces",
-      "Scalable frontend systems",
-      "Responsive ecosystems",
-      "Ultra-fast architectures",
-      "Premium digital experiences",
-    ],
-    deliverables: ["Production code", "CMS setup", "Performance audit", "Analytics"],
-    metrics: [
-      { value: "98", label: "Avg. Lighthouse" },
-      { value: "0.8s", label: "Time-to-interactive" },
-    ],
+    title: "Web & App Engineering",
+    oneLiner: "60 FPS, conversion-optimized digital flagships with sub-second speeds.",
+    metric: "<0.4s",
+    metricLabel: "Page Load Speed",
+    GlyphComponent: EngineeringGlyph,
+    tags: ["Next.js 14 / WebGL", "Conversion Engineering", "High-FPS UI/UX"],
   },
   {
-    id: "apps",
     num: "03",
-    title: "Mobile & Web Applications",
-    tagline: "Scalable systems built for performance.",
-    body: "We craft scalable mobile and web applications designed for performance, automation, and engagement — from SaaS ecosystems to enterprise-grade dashboards.",
-    capabilities: [
-      "SaaS ecosystems",
-      "Enterprise applications",
-      "Intelligent dashboards",
-      "Cloud-connected systems",
-      "Real-time platforms",
-      "Engagement systems",
-    ],
-    deliverables: ["iOS / Android", "Web app", "API layer", "Admin console"],
-    metrics: [
-      { value: "420+", label: "Apps shipped" },
-      { value: "9.2M", label: "Monthly users" },
-    ],
+    title: "Enterprise AI Systems",
+    oneLiner: "Autonomous 24/7 operational workflows and predictive intelligence.",
+    metric: "89%",
+    metricLabel: "Efficiency Lift",
+    GlyphComponent: AiGlyph,
+    tags: ["Autonomous Agent Loops", "Predictive Scoring", "AI Workflows"],
   },
   {
-    id: "ai",
     num: "04",
-    title: "Custom AI Solutions",
-    tagline: "Intelligent automation, engineered.",
-    body: "We engineer intelligent AI systems for automation, predictive analytics, and machine intelligence — from generative AI ecosystems to enterprise AI infrastructure.",
-    capabilities: [
-      "AI assistants",
-      "ML systems",
-      "Generative AI",
-      "Intelligent automation",
-      "Predictive analytics",
-      "AI infrastructure",
-    ],
-    deliverables: ["Fine-tuned model", "Eval suite", "Inference API", "Monitoring"],
-    metrics: [
-      { value: "1.4K", label: "Models trained" },
-      { value: "23ms", label: "Inference time" },
-    ],
-  },
-  {
-    id: "erp",
-    num: "05",
-    title: "ERP Systems",
-    tagline: "One operating system for the enterprise.",
-    body: "Centralized ERP ecosystems connecting operations, analytics, finance, and workflow automation — a single intelligent layer across the business.",
-    capabilities: [
-      "HR management",
-      "Financial systems",
-      "CRM ecosystems",
-      "Inventory infrastructure",
-      "Workflow automation",
-      "Operational analytics",
-    ],
-    deliverables: ["Modules suite", "Migration plan", "Integrations", "Training"],
-    metrics: [
-      { value: "67", label: "Enterprises" },
-      { value: "94%", label: "Automation rate" },
-    ],
-  },
-  {
-    id: "cloud",
-    num: "06",
-    title: "Cloud Services",
-    tagline: "Scalable infrastructure at planetary scale.",
-    body: "Hyperscale cloud infrastructure engineered for security, deployment, and enterprise scalability — distributed architectures with end-to-end automation.",
-    capabilities: [
-      "Cloud architecture",
-      "DevOps systems",
-      "Scalable hosting",
-      "Cybersecurity",
-      "Server automation",
-      "Distributed systems",
-    ],
-    deliverables: ["IaC blueprint", "CI/CD pipeline", "Security audit", "SRE handoff"],
-    metrics: [
-      { value: "99.99%", label: "Uptime SLA" },
-      { value: "37", label: "Regions" },
-    ],
+    title: "SEO & AEO Strategy",
+    oneLiner: "Generative AI answer control across ChatGPT, Perplexity, & search engines.",
+    metric: "#1",
+    metricLabel: "AI Answer Share",
+    GlyphComponent: SeoGlyph,
+    tags: ["Generative Optimization", "Organic Search", "Entity Authority"],
   },
 ];
 
-/* =========================================
- * BENTO OVERVIEW
- * =========================================*/
-function BentoOverview() {
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-24 lg:mb-32">
-      {SERVICES.map((s, i) => (
-        <motion.a
-          key={s.id}
-          href={`#${s.id}`}
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, delay: i * 0.05 }}
-          className="group glass-card p-5 text-left"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-accent">
-              {s.num}
-            </span>
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              className="text-faint group-hover:text-accent group-hover:translate-x-0.5 transition-all"
-              aria-hidden
-            >
-              <path
-                d="M3 11L11 3M11 3H5M11 3v6"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-          <h3 className="text-sm font-medium text-ink leading-tight">
-            {s.title}
-          </h3>
-          <p className="text-[11px] text-faint mt-1.5 leading-relaxed">
-            {s.tagline}
-          </p>
-        </motion.a>
-      ))}
-    </div>
-  );
-}
+const EASE = [0.16, 1, 0.3, 1] as const;
 
-/* =========================================
- * SINGLE SERVICE BLOCK — 3D model panel
- * =========================================*/
-function ServiceBlock({
-  service,
-  reverse,
-}: {
-  service: Service;
-  reverse: boolean;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.15 });
-
-  return (
-    <article
-      ref={ref}
-      id={service.id}
-      className="relative py-16 lg:py-28 scroll-mt-24"
-    >
-      {/* Section ambient glow */}
-      <div
-        className="ambient-glow opacity-40"
-        style={{
-          top: "30%",
-          [reverse ? "left" : "right"]: "-15%",
-        }}
-      />
-
-      <div className="container-wide relative">
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-          {/* Text column */}
-          <div className={`lg:col-span-6 ${reverse ? "lg:order-2" : "lg:order-1"}`}>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6 }}
-              className="flex items-center gap-3 mb-6"
-            >
-              <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-accent">
-                Service · {service.num}
-              </span>
-              <span className="divider-accent w-12" />
-            </motion.div>
-
-            <motion.h2
-              initial={{ opacity: 0, y: 12 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.7, delay: 0.05 }}
-              className="text-h1 text-display-lg text-ink mb-4"
-            >
-              {service.title}
-            </motion.h2>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="text-xl text-accent-soft font-light mb-4"
-            >
-              {service.tagline}
-            </motion.p>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-base text-body leading-relaxed mb-10 max-w-xl"
-            >
-              {service.body}
-            </motion.p>
-
-            {/* Capabilities */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.25 }}
-              className="mb-10"
-            >
-              <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-faint mb-4">
-                Capabilities
-              </p>
-              <div className="grid grid-cols-2 gap-y-2.5 max-w-xl">
-                {service.capabilities.map((cap) => (
-                  <div key={cap} className="flex items-center gap-2.5">
-                    <svg
-                      width="12"
-                      height="12"
-                      viewBox="0 0 12 12"
-                      fill="none"
-                      className="text-accent flex-shrink-0"
-                      aria-hidden
-                    >
-                      <path
-                        d="M2 6l2.5 2.5L10 3"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <span className="text-sm text-body">{cap}</span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Deliverables */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="mb-10"
-            >
-              <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-faint mb-4">
-                Deliverables
-              </p>
-              <div className="flex flex-wrap gap-2 max-w-xl">
-                {service.deliverables.map((d) => (
-                  <span
-                    key={d}
-                    className="text-xs font-medium text-body px-3 py-1.5 rounded-full bg-surface border border-line"
-                  >
-                    {d}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-
-            {/* Metrics + CTA */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 0.35 }}
-              className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pt-8 border-t border-line"
-            >
-              <div className="flex gap-8">
-                {service.metrics.map((m) => (
-                  <div key={m.label}>
-                    <div className="text-3xl font-medium text-ink tabular">
-                      {m.value}
-                    </div>
-                    <div className="text-[10px] font-mono uppercase tracking-widest text-faint mt-1">
-                      {m.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <a
-                href="#contact"
-                className="inline-flex items-center gap-2 text-sm font-medium text-ink hover:text-accent transition-colors group"
-              >
-                Start a project
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  className="transition-transform group-hover:translate-x-0.5"
-                  aria-hidden
-                >
-                  <path
-                    d="M3 11L11 3M11 3H5M11 3v6"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </a>
-            </motion.div>
-          </div>
-
-          {/* 3D model column */}
-          <div className={`lg:col-span-6 ${reverse ? "lg:order-1" : "lg:order-2"}`}>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={inView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="relative aspect-square max-w-[520px] mx-auto rounded-3xl overflow-hidden glass-strong"
-            >
-              {/* Top status bar */}
-              <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
-                <div className="pill !py-1 !px-2.5 !text-[10px]">
-                  <span className="live-dot" />
-                  {service.id.toUpperCase()}.SYS
-                </div>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-faint">
-                  ACTIVE
-                </span>
-              </div>
-
-              {/* 3D model — mounts only once scrolled into view */}
-              <div className="absolute inset-0">
-                {inView && <ServiceCanvas model={service.id} />}
-              </div>
-
-              {/* Bottom info bar */}
-              <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-faint">
-                  {service.title}
-                </span>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-accent">
-                  Jenesis
-                </span>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-/* =========================================
- * SERVICES SECTION
- * =========================================*/
 export default function Services() {
   const headRef = useRef<HTMLDivElement>(null);
-  const headInView = useInView(headRef, { once: true, amount: 0.3 });
+  const headInView = useInView(headRef, { once: true, margin: "-15%" });
 
   return (
-    <section id="services" className="relative scroll-mt-24">
-      <div ref={headRef} className="container-wide section-y text-center">
+    <section id="services" className="relative py-28 sm:py-32 lg:py-40 bg-bg scroll-mt-24 border-b border-line">
+      {/* Background ambient lighting */}
+      <div className="ambient-glow ambient-glow--left opacity-30" />
+
+      <div className="container-wide px-6 lg:px-10 relative z-10">
+        {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={headInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6 }}
-          className="flex justify-center mb-6"
+          ref={headRef}
+          initial={{ opacity: 0, y: 20 }}
+          animate={headInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, ease: EASE }}
+          className="max-w-3xl mb-16 lg:mb-20 text-center lg:text-left"
         >
-          <span className="pill pill-accent">
-            <span className="text-accent">◆</span>
-            What we build
-          </span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-line-strong bg-surface/80 backdrop-blur-md mb-6 shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+            <span className="text-xs font-mono tracking-wider uppercase text-accent font-semibold">
+              Scannable Services — Core Pillars
+            </span>
+          </div>
+
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold gradient-text mb-4">
+            Brief, scannable. <br />
+            <span className="font-serif italic text-accent-soft font-normal">
+              Icons + one line each.
+            </span>
+          </h2>
+
+          <p className="text-body text-base sm:text-lg leading-relaxed text-muted max-w-2xl">
+            Strictly adhering to our core principle: no long paragraphs or endless laundry lists. Just clear, revenue-driven capabilities.
+          </p>
         </motion.div>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 12 }}
-          animate={headInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="text-h1 text-display-xl max-w-4xl mx-auto gradient-text mb-6"
-        >
-          A complete operating system{" "}
-          <span className="font-serif italic text-accent-soft font-normal">
-            for next-generation enterprises.
-          </span>
-        </motion.h2>
+        {/* Scannable 4-Quadrant Quad Grid */}
+        <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
+          {PILLARS.map((pillar, i) => {
+            const Glyph = pillar.GlyphComponent;
+            return (
+              <motion.div
+                key={pillar.num}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-10%" }}
+                transition={{ duration: 0.7, delay: i * 0.1, ease: EASE }}
+                className="glass-card p-8 sm:p-10 rounded-3xl relative overflow-hidden flex flex-col justify-between border border-line hover:border-accent/40 group transition-all duration-300 bg-surface/70 hover:bg-surface"
+              >
+                {/* Subtle top indicator bar */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-accent/0 to-transparent group-hover:via-accent/60 transition-all duration-500" />
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={headInView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.7, delay: 0.15 }}
-          className="text-lg text-body max-w-2xl mx-auto"
-        >
-          Six interconnected ecosystems — from brand strategy to AI
-          infrastructure — engineered to scale, automate, and amplify every
-          layer of modern business.
-        </motion.p>
+                <div>
+                  {/* Top Bar: Icon + Number + Metric Tag */}
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-3.5">
+                      <div className="w-12 h-12 rounded-2xl bg-bg border border-line flex items-center justify-center text-accent group-hover:border-accent/40 group-hover:scale-105 transition-all">
+                        <Glyph className="w-6 h-6" />
+                      </div>
+                      <span className="font-mono text-xs font-semibold text-accent tracking-wider">
+                        {pillar.num}
+                      </span>
+                    </div>
 
-        <div className="mt-16">
-          <BentoOverview />
+                    <div className="text-right">
+                      <span className="text-xl sm:text-2xl font-mono font-bold text-ink">
+                        {pillar.metric}
+                      </span>
+                      <div className="text-[10px] font-mono text-faint uppercase tracking-wider">
+                        {pillar.metricLabel}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Title & Mandatory 1-Line Description */}
+                  <h3 className="text-xl sm:text-2xl font-bold text-ink mb-3 group-hover:text-accent transition-colors">
+                    {pillar.title}
+                  </h3>
+
+                  <p className="text-body text-base font-normal leading-relaxed text-muted mb-8">
+                    {pillar.oneLiner}
+                  </p>
+                </div>
+
+                {/* Bottom Tags Strip */}
+                <div className="pt-6 border-t border-line/70 flex flex-wrap items-center gap-2">
+                  {pillar.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="px-3 py-1.5 rounded-lg bg-bg border border-line text-[11px] font-mono text-faint group-hover:text-ink transition-colors"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
-      </div>
 
-      <div className="relative">
-        {SERVICES.map((s, i) => (
-          <ServiceBlock key={s.id} service={s} reverse={i % 2 === 1} />
-        ))}
+        {/* Bottom CTA Bar */}
+        <div className="mt-16 flex flex-col sm:flex-row items-center justify-between gap-6 p-8 rounded-3xl bg-surface border border-line">
+          <div>
+            <h4 className="text-lg font-semibold text-ink">Need a tailored omni-channel proposal?</h4>
+            <p className="text-xs text-muted font-mono mt-1">Rule of thumb: Icons + one line each beats endless service lists.</p>
+          </div>
+          <a
+            href="#contact"
+            className="btn btn-primary px-7 py-3.5 text-sm font-semibold tracking-wide flex items-center gap-2 whitespace-nowrap shadow-md shadow-accent/20"
+          >
+            <span>Book a strategy call</span>
+            <span aria-hidden>→</span>
+          </a>
+        </div>
       </div>
     </section>
   );

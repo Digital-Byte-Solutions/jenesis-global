@@ -6,9 +6,11 @@ import BrandMark from "./BrandMark";
 import ThemeToggle from "./ThemeToggle";
 
 const NAV_LINKS = [
+  { label: "Approach", href: "#approach" },
+  { label: "Proof", href: "#proof" },
+  { label: "Manifesto", href: "#manifesto" },
   { label: "Services", href: "#services" },
   { label: "Process", href: "#process" },
-  { label: "Work", href: "#work" },
   { label: "FAQ", href: "#faq" },
   { label: "Contact", href: "#contact" },
 ];
@@ -16,12 +18,35 @@ const NAV_LINKS = [
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    // Active section scroll observer
+    const sectionElements = NAV_LINKS.map((link) =>
+      document.querySelector(link.href)
+    ).filter(Boolean) as HTMLElement[];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(`#${entry.target.id}`);
+          }
+        });
+      },
+      { threshold: 0.35 }
+    );
+
+    sectionElements.forEach((el) => observer.observe(el));
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      observer.disconnect();
+    };
   }, []);
 
   return (
@@ -30,13 +55,17 @@ export default function Navigation() {
         initial={{ y: -16, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
+        className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 flex justify-center ${
           scrolled
-            ? "py-2.5 glass !rounded-none border-x-0 border-t-0"
-            : "py-5"
+            ? "py-3 px-4"
+            : "py-5 px-6"
         }`}
       >
-        <div className="container-wide flex items-center justify-between">
+        <div className={`container-wide flex items-center justify-between transition-all duration-500 ${
+          scrolled
+            ? "bg-surface/85 backdrop-blur-2xl border border-line-strong rounded-full px-5 py-2 shadow-2xl shadow-black/30 max-w-6xl"
+            : "w-full"
+        }`}>
           {/* Logo — Jenesis emphasized, Global subdued */}
           <a href="#" className="flex items-center gap-3 group">
             <BrandMark size={30} />
@@ -47,16 +76,28 @@ export default function Navigation() {
           </a>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1 bg-surface border border-line rounded-full px-2 py-1.5 shadow-sm">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="px-4 py-1.5 text-[13px] font-medium text-body hover:text-ink transition-colors rounded-full"
-              >
-                {link.label}
-              </a>
-            ))}
+          <nav className="hidden md:flex items-center gap-1 bg-surface border border-line rounded-full px-2 py-1.5 shadow-sm relative">
+            {NAV_LINKS.map((link) => {
+              const isActive = activeSection === link.href;
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className={`px-3.5 py-1.5 text-[12px] font-medium transition-colors rounded-full relative z-10 ${
+                    isActive ? "text-ink font-semibold" : "text-body hover:text-ink"
+                  }`}
+                >
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavPill"
+                      className="absolute inset-0 bg-accent/15 border border-accent/40 rounded-full -z-10"
+                      transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                    />
+                  )}
+                  {link.label}
+                </a>
+              );
+            })}
           </nav>
 
           {/* Right side */}
@@ -67,7 +108,7 @@ export default function Navigation() {
               href="#contact"
               className="hidden sm:inline-flex btn btn-primary !py-2 !px-4 text-[13px]"
             >
-              Start a project
+              Book a call
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
                 <path
                   d="M4.5 3l3 3-3 3"

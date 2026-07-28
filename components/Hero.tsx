@@ -64,20 +64,20 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-16 lg:pt-28 lg:pb-20"
+      className="relative min-h-[90vh] lg:min-h-screen flex items-center overflow-hidden pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-32 lg:pb-20"
     >
-      {/* Marble-light backdrop */}
+      {/* Ambient background glows */}
       <div className="absolute inset-0 grid-bg pointer-events-none" />
       <div
-        className="absolute top-[-10%] right-[-15%] w-[70vw] h-[70vw] max-w-[900px] max-h-[900px] rounded-full pointer-events-none"
+        className="absolute top-[-10%] right-[-15%] w-[70vw] h-[70vw] max-w-[900px] max-h-[900px] rounded-full pointer-events-none opacity-60"
         style={{
           background:
             "radial-gradient(circle, var(--glow-accent) 0%, transparent 62%)",
-          filter: "blur(60px)",
+          filter: "blur(70px)",
         }}
       />
       <div
-        className="absolute bottom-[-20%] left-[-10%] w-[45vw] h-[45vw] max-w-[600px] max-h-[600px] rounded-full pointer-events-none"
+        className="absolute bottom-[-20%] left-[-10%] w-[45vw] h-[45vw] max-w-[600px] max-h-[600px] rounded-full pointer-events-none opacity-40"
         style={{
           background:
             "radial-gradient(circle, var(--glow-soft) 0%, transparent 60%)",
@@ -86,113 +86,141 @@ export default function Hero() {
       />
 
       <div className="container-wide relative w-full">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-6 items-center">
-          {/* ------- Left: the lockup ------- */}
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-8 items-center">
+          {/* ------- Left Column: Revenue Headline & Single CTA (7 Cols) ------- */}
           <motion.div
             style={{ y: textY, opacity: textOpacity }}
-            className="order-2 lg:order-1 text-center lg:text-left"
+            className="lg:col-span-7 text-center lg:text-left z-10"
           >
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+            {/* Pill Eyebrow Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: EASE }}
-              className="leading-none"
+              transition={{ duration: 0.6, ease: EASE }}
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-line-strong bg-surface/80 backdrop-blur-md mb-6 shadow-sm"
             >
-              <span className="block wordmark text-[clamp(2.4rem,7vw,4.75rem)]">
-                Jenesis
+              <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+              <span className="text-xs font-mono tracking-wider uppercase text-accent font-semibold">
+                Omni-Channel Revenue Engine
               </span>
-              <span className="block wordmark-sub text-[clamp(0.7rem,1.6vw,1.05rem)] mt-3 opacity-90">
-                Global
-              </span>
+            </motion.div>
+
+            {/* Strategic 5-Second Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.15, ease: EASE }}
+              className="text-2xl sm:text-3xl lg:text-4xl font-semibold leading-tight tracking-tight text-ink mb-5"
+            >
+              We help brands{" "}
+              <span className="gradient-text font-semibold">
+                grow revenue
+              </span>{" "}
+              through an omni-channel approach.
             </motion.h1>
 
+            {/* Single Core Value Sub-statement */}
             <motion.p
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
-              className="eyebrow eyebrow-accent mt-8 !text-[12px]"
+              transition={{ duration: 0.8, delay: 0.3, ease: EASE }}
+              className="text-body text-sm sm:text-base max-w-xl mx-auto lg:mx-0 font-normal leading-relaxed mb-8 text-muted"
             >
-              Building What&rsquo;s Next
+              One unified growth engine uniting Performance Marketing, Web &amp; App Engineering, Enterprise AI Systems, and Search Engine Dominance for maximum ROI.
             </motion.p>
 
+            {/* Strategic Single CTA */}
             <motion.div
-              initial={{ scaleX: 0, opacity: 0 }}
-              animate={{ scaleX: 1, opacity: 1 }}
-              transition={{ duration: 0.9, delay: 0.3, ease: EASE }}
-              className="divider-accent w-16 mt-6 mb-10 mx-auto lg:mx-0 origin-left"
-            />
-
-            {/* Keyword column — the logo's word list */}
-            <ul className="flex flex-wrap justify-center lg:flex-col lg:justify-start gap-x-6 gap-y-3 lg:gap-y-3.5">
-              {KEYWORDS.map((word, i) => (
-                <motion.li
-                  key={word}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.4 + i * 0.08, ease: EASE }}
-                  className="text-[11px] lg:text-[12px] font-medium tracking-[0.3em] uppercase text-body"
-                >
-                  {word}
-                </motion.li>
-              ))}
-            </ul>
-
-            {/* CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.85, ease: EASE }}
-              className="flex flex-col sm:flex-row items-center lg:items-start lg:justify-start justify-center gap-3 mt-12"
+              transition={{ duration: 0.8, delay: 0.45, ease: EASE }}
+              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4"
             >
-              <a href="#contact" className="btn btn-primary px-7 py-3.5">
-                Build with us
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+              <a
+                href="#contact"
+                className="btn btn-primary px-8 py-4 text-sm font-semibold tracking-wide flex items-center gap-3 shadow-lg hover:shadow-accent/20 transition-all"
+              >
+                <span>Book a strategy call</span>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  className="transition-transform group-hover:translate-x-1"
+                  aria-hidden="true"
+                >
                   <path
-                    d="M5 3l4 4-4 4"
+                    d="M6 3.5L10.5 8L6 12.5"
                     stroke="currentColor"
-                    strokeWidth="1.5"
+                    strokeWidth="1.75"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
                 </svg>
               </a>
-              <a href="#services" className="btn btn-secondary px-7 py-3.5">
-                Explore capabilities
-              </a>
+
+              <div className="flex items-center gap-2 text-xs font-mono text-faint tracking-wider">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span>3 slots open for Q3/Q4</span>
+              </div>
             </motion.div>
 
-            <motion.p
+            {/* Proof Teaser Bar */}
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1.1 }}
-              className="eyebrow mt-12 !tracking-[0.3em]"
+              transition={{ duration: 1, delay: 0.65 }}
+              className="mt-14 pt-8 border-t border-line/60 grid grid-cols-3 gap-6 max-w-lg mx-auto lg:mx-0 text-center lg:text-left"
             >
-              Global Vision. Human Future.
-            </motion.p>
+              <div>
+                <div className="text-xl sm:text-2xl font-semibold text-ink font-mono">
+                  $14.2M+
+                </div>
+                <div className="text-[11px] text-muted tracking-wide mt-0.5">
+                  Revenue Generated
+                </div>
+              </div>
+              <div>
+                <div className="text-xl sm:text-2xl font-semibold text-ink font-mono">
+                  4.2x
+                </div>
+                <div className="text-[11px] text-muted tracking-wide mt-0.5">
+                  Average ROAS
+                </div>
+              </div>
+              <div>
+                <div className="text-xl sm:text-2xl font-semibold text-ink font-mono">
+                  +340%
+                </div>
+                <div className="text-[11px] text-muted tracking-wide mt-0.5">
+                  Conversion Boost
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
 
-          {/* ------- Right: the sculpture ------- */}
+          {/* ------- Right Column: 3D Interactive Canvas (5 Cols) ------- */}
           <motion.div
             ref={sceneRef}
             style={{ y: sceneY }}
-            initial={{ opacity: 0, scale: 0.94 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, delay: 0.2, ease: EASE }}
-            className="order-1 lg:order-2 relative h-[300px] sm:h-[380px] lg:h-[620px]"
+            transition={{ duration: 1.1, delay: 0.25, ease: EASE }}
+            className="lg:col-span-5 relative h-[360px] sm:h-[460px] lg:h-[580px] w-full"
           >
             <Scene active={sceneActive} />
           </motion.div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Subtle Scroll Indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1.4 }}
+        transition={{ duration: 1, delay: 1.2 }}
         className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2 text-[10px] font-mono uppercase tracking-[0.25em] text-faint"
       >
-        <span>Scroll</span>
+        <span>Explore Omni-Engine</span>
         <div className="w-px h-8 bg-gradient-to-b from-line-strong to-transparent" />
       </motion.div>
     </section>
