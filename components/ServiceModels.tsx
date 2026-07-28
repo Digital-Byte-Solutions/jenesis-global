@@ -6,6 +6,7 @@ import {
   Float,
   MeshTransmissionMaterial,
   Environment,
+  Lightformer,
   RoundedBox,
   Text,
   Trail,
@@ -27,7 +28,32 @@ function StudioLighting() {
       <pointLight position={[-3, 2, 2]} intensity={1.5} color="#ff1744" />
       <pointLight position={[3, -2, 2]} intensity={1.2} color="#ff4d8d" />
       <pointLight position={[0, 0, 4]} intensity={0.8} color="#ffffff" />
-      <Environment preset="night" />
+      {/* Dim night-studio env generated on the GPU — no CDN HDR download */}
+      <Environment resolution={256} frames={1}>
+        <Lightformer
+          form="rect"
+          intensity={0.5}
+          position={[0, 5, -2]}
+          scale={[10, 4, 1]}
+          color="#b8c4e0"
+        />
+        <Lightformer
+          form="rect"
+          intensity={0.35}
+          position={[-5, 0, 2]}
+          rotation={[0, Math.PI / 2, 0]}
+          scale={[6, 3, 1]}
+          color="#ff4d8d"
+        />
+        <Lightformer
+          form="rect"
+          intensity={0.3}
+          position={[5, -1, 2]}
+          rotation={[0, -Math.PI / 2, 0]}
+          scale={[6, 3, 1]}
+          color="#ff2d55"
+        />
+      </Environment>
     </>
   );
 }
@@ -81,7 +107,7 @@ function BrandModel() {
           />
         </mesh>
 
-        {/* Floating "A" mark */}
+        {/* Floating "J" mark */}
         <Float speed={2} rotationIntensity={0.1} floatIntensity={0.3}>
           <Text
             position={[0, 0, 1.45]}
@@ -90,7 +116,7 @@ function BrandModel() {
             anchorX="center"
             anchorY="middle"
           >
-            A
+            J
           </Text>
         </Float>
 
@@ -638,7 +664,7 @@ export default function ServiceCanvas({
     <div className={`relative w-full h-full ${className}`}>
       <Canvas
         camera={{ position: [0, 0, 5], fov: 45 }}
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
         gl={{
           antialias: true,
           alpha: true,
@@ -654,7 +680,7 @@ export default function ServiceCanvas({
         <Suspense fallback={null}>
           <StudioLighting />
           <Model />
-          <EffectComposer multisampling={0} disableNormalPass>
+          <EffectComposer multisampling={0}>
             <Bloom
               luminanceThreshold={0.5}
               luminanceSmoothing={0.4}

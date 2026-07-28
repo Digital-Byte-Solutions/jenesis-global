@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import BrandMark from "./BrandMark";
+import ThemeToggle from "./ThemeToggle";
 
 const NAV_LINKS = [
   { label: "Services", href: "#services" },
   { label: "Process", href: "#process" },
   { label: "Work", href: "#work" },
-  { label: "Pricing", href: "#pricing" },
+  { label: "FAQ", href: "#faq" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -30,34 +32,27 @@ export default function Navigation() {
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "py-2.5 bg-bg/70 backdrop-blur-xl border-b border-white/[0.06]"
+            ? "py-2.5 glass !rounded-none border-x-0 border-t-0"
             : "py-5"
         }`}
       >
         <div className="container-wide flex items-center justify-between">
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-2.5 group">
-            <div className="relative w-8 h-8">
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-accent to-accent-soft" />
-              <div className="absolute inset-[1.5px] rounded-md bg-bg flex items-center justify-center">
-                <span className="font-medium text-sm tracking-tight text-white">
-                  A
-                </span>
-              </div>
-              <div className="absolute -inset-1 rounded-lg bg-accent/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <span className="text-[15px] font-medium tracking-tight text-white">
-              Arclane
+          {/* Logo — Jenesis emphasized, Global subdued */}
+          <a href="#" className="flex items-center gap-3 group">
+            <BrandMark size={30} />
+            <span className="flex flex-col leading-none">
+              <span className="wordmark text-[15px]">Jenesis</span>
+              <span className="wordmark-sub text-[8px] mt-1">Global</span>
             </span>
           </a>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1 bg-white/[0.03] border border-white/[0.06] rounded-full px-2 py-1.5 backdrop-blur-xl">
+          <nav className="hidden md:flex items-center gap-1 bg-surface border border-line rounded-full px-2 py-1.5 shadow-sm">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="px-4 py-1.5 text-[13px] font-medium text-white/70 hover:text-white transition-colors rounded-full hover:bg-white/[0.04]"
+                className="px-4 py-1.5 text-[13px] font-medium text-body hover:text-ink transition-colors rounded-full"
               >
                 {link.label}
               </a>
@@ -65,19 +60,15 @@ export default function Navigation() {
           </nav>
 
           {/* Right side */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <ThemeToggle />
+
             <a
               href="#contact"
               className="hidden sm:inline-flex btn btn-primary !py-2 !px-4 text-[13px]"
             >
-              Book a call
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                aria-hidden
-              >
+              Start a project
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
                 <path
                   d="M4.5 3l3 3-3 3"
                   stroke="currentColor"
@@ -92,21 +83,21 @@ export default function Navigation() {
             <button
               aria-label="Toggle menu"
               onClick={() => setOpen((v) => !v)}
-              className="md:hidden w-9 h-9 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center"
+              className="md:hidden w-9 h-9 rounded-full bg-surface border border-line flex items-center justify-center"
             >
               <div className="relative w-4 h-3">
                 <span
-                  className={`absolute inset-x-0 top-0 h-px bg-white transition-all ${
+                  className={`absolute inset-x-0 top-0 h-px bg-ink transition-all ${
                     open ? "rotate-45 top-1.5" : ""
                   }`}
                 />
                 <span
-                  className={`absolute inset-x-0 top-1.5 h-px bg-white transition-opacity ${
+                  className={`absolute inset-x-0 top-1.5 h-px bg-ink transition-opacity ${
                     open ? "opacity-0" : ""
                   }`}
                 />
                 <span
-                  className={`absolute inset-x-0 bottom-0 h-px bg-white transition-all ${
+                  className={`absolute inset-x-0 bottom-0 h-px bg-ink transition-all ${
                     open ? "-rotate-45 bottom-1.5" : ""
                   }`}
                 />
@@ -148,7 +139,7 @@ export default function Navigation() {
                     <a
                       href={link.href}
                       onClick={() => setOpen(false)}
-                      className="block py-4 text-3xl font-medium tracking-tight text-white border-b border-white/5"
+                      className="block py-4 text-3xl font-medium tracking-tight text-ink border-b border-line"
                     >
                       {link.label}
                     </a>
@@ -160,7 +151,7 @@ export default function Navigation() {
                 onClick={() => setOpen(false)}
                 className="btn btn-primary w-full justify-center mt-8 py-4"
               >
-                Book a call
+                Start a project
               </a>
             </motion.nav>
           </motion.div>

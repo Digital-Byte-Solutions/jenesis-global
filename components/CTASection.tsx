@@ -10,8 +10,8 @@ import { motion, useInView } from "framer-motion";
 const INFO = [
   {
     label: "Email",
-    value: "hello@arclane.global",
-    href: "mailto:hello@arclane.global",
+    value: "hello@jenesis.global",
+    href: "mailto:hello@jenesis.global",
   },
   {
     label: "Response window",
@@ -46,10 +46,10 @@ export default function CTASection() {
         >
           {/* Outer glow */}
           <div
-            className="absolute -inset-6 sm:-inset-10 rounded-[2.5rem] pointer-events-none opacity-60"
+            className="absolute -inset-6 sm:-inset-10 rounded-[2.5rem] pointer-events-none opacity-70"
             style={{
               background:
-                "radial-gradient(60% 50% at 50% 50%, rgba(255,45,85,0.18), transparent 70%)",
+                "radial-gradient(60% 50% at 50% 50%, var(--glow-accent), transparent 70%)",
               filter: "blur(40px)",
             }}
           />
@@ -57,21 +57,12 @@ export default function CTASection() {
           {/* Main panel */}
           <div className="relative glass-strong rounded-[2rem] sm:rounded-[2.5rem] p-8 sm:p-12 lg:p-16 overflow-hidden">
             {/* Decorative grid */}
-            <div
-              className="absolute inset-0 opacity-[0.06] pointer-events-none"
-              style={{
-                backgroundImage:
-                  "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-                backgroundSize: "48px 48px",
-                maskImage:
-                  "radial-gradient(ellipse 70% 60% at 50% 50%, black 30%, transparent 75%)",
-              }}
-            />
+            <div className="absolute inset-0 grid-bg pointer-events-none" />
 
             <div className="relative">
               {/* Eyebrow */}
               <div className="flex items-center justify-center gap-3 mb-8">
-                <span className="pill">
+                <span className="pill pill-accent">
                   <span className="live-dot" />
                   Now booking Q3 cohorts
                 </span>
@@ -84,8 +75,8 @@ export default function CTASection() {
                 transition={{ duration: 0.9, delay: 0.15 }}
                 className="text-h1 text-display-xl gradient-text text-center mb-6"
               >
-                Build the future{" "}
-                <span className="font-serif italic text-white/85 font-normal">
+                Build what&rsquo;s next{" "}
+                <span className="font-serif italic text-accent-soft font-normal">
                   with us.
                 </span>
               </motion.h2>
@@ -95,10 +86,10 @@ export default function CTASection() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.9, delay: 0.25 }}
-                className="text-white/55 text-lg sm:text-xl text-center max-w-2xl mx-auto leading-relaxed mb-10"
+                className="text-body text-lg sm:text-xl text-center max-w-2xl mx-auto leading-relaxed mb-10"
               >
-                Tell us what you're trying to ship. We'll respond with a tailored
-                proposal — usually inside the same business day.
+                Tell us what you&rsquo;re trying to ship. We&rsquo;ll respond
+                with a tailored proposal — usually inside the same business day.
               </motion.p>
 
               {/* CTAs */}
@@ -109,7 +100,7 @@ export default function CTASection() {
                 className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-14"
               >
                 <a
-                  href="mailto:hello@arclane.global"
+                  href="mailto:hello@jenesis.global"
                   className="btn btn-primary text-base px-7 py-3.5"
                 >
                   Start a project
@@ -128,25 +119,22 @@ export default function CTASection() {
                 initial={{ opacity: 0 }}
                 animate={inView ? { opacity: 1 } : {}}
                 transition={{ duration: 0.9, delay: 0.5 }}
-                className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/[0.06] rounded-2xl overflow-hidden border border-white/[0.06]"
+                className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-line rounded-2xl overflow-hidden border border-line"
               >
                 {INFO.map((item) => (
-                  <div
-                    key={item.label}
-                    className="bg-bg-elevated/60 backdrop-blur-xl px-6 py-5 text-center"
-                  >
-                    <div className="text-[10px] uppercase tracking-[0.2em] text-white/40 font-mono mb-2">
+                  <div key={item.label} className="bg-surface px-6 py-5 text-center">
+                    <div className="text-[10px] uppercase tracking-[0.2em] text-faint font-mono mb-2">
                       {item.label}
                     </div>
                     {item.href ? (
                       <a
                         href={item.href}
-                        className="text-white text-sm sm:text-base font-medium hover:text-accent transition-colors"
+                        className="text-ink text-sm sm:text-base font-medium hover:text-accent transition-colors"
                       >
                         {item.value}
                       </a>
                     ) : (
-                      <div className="text-white text-sm sm:text-base font-medium">
+                      <div className="text-ink text-sm sm:text-base font-medium">
                         {item.value}
                       </div>
                     )}

@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 /* ----------------------------------------------------
- * Testimonials — Social proof at C-suite altitude
+ * Testimonials — social proof
  * -------------------------------------------------- */
 
 type Testimonial = {
@@ -19,7 +19,7 @@ type Testimonial = {
 const TESTIMONIALS: Testimonial[] = [
   {
     quote:
-      "ARCLANE didn't just build us a product — they rebuilt our operating cadence. The platform shipped six weeks ahead of schedule and is now the spine of our European rollout.",
+      "Jenesis didn't just build us a product — they rebuilt our operating cadence. The platform shipped six weeks ahead of schedule and is now the spine of our European rollout.",
     name: "Mira Castellanos",
     role: "Chief Product Officer",
     company: "Helix Logistics",
@@ -28,7 +28,7 @@ const TESTIMONIALS: Testimonial[] = [
   },
   {
     quote:
-      "We've worked with the big consultancies. None matched ARCLANE on velocity or design fidelity. Our retention curve has a visible inflection from the week we shipped their redesign.",
+      "We've worked with the big consultancies. None matched Jenesis on velocity or design fidelity. Our retention curve has a visible inflection from the week we shipped their redesign.",
     name: "Devon Park",
     role: "CEO",
     company: "Aurora Fintech",
@@ -89,26 +89,26 @@ function TCard({ t, i }: { t: Testimonial; i: number }) {
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <StarRow />
-        <span className="font-mono text-[10px] text-white/35">
+        <span className="font-mono text-[10px] text-faint">
           {String(i + 1).padStart(2, "0")} / {String(TESTIMONIALS.length).padStart(2, "0")}
         </span>
       </div>
 
       {/* Quote */}
-      <blockquote className="text-white/85 text-lg leading-relaxed mb-8 flex-1">
+      <blockquote className="text-ink text-lg leading-relaxed mb-8 flex-1">
         <span className="text-accent text-2xl leading-none mr-1 align-top">
-          "
+          &ldquo;
         </span>
         {t.quote}
       </blockquote>
 
       {/* Metric strip */}
-      <div className="mb-6 pb-6 border-b border-white/[0.06]">
-        <div className="text-3xl font-medium text-white tracking-tight">
+      <div className="mb-6 pb-6 border-b border-line">
+        <div className="text-3xl font-medium text-ink tracking-tight">
           {t.metric.value}
           <span className="text-accent ml-1">.</span>
         </div>
-        <div className="text-xs text-white/45 mt-1">{t.metric.label}</div>
+        <div className="text-xs text-faint mt-1">{t.metric.label}</div>
       </div>
 
       {/* Author */}
@@ -117,10 +117,8 @@ function TCard({ t, i }: { t: Testimonial; i: number }) {
           <span className="text-sm font-medium text-white">{t.initials}</span>
         </div>
         <div className="min-w-0">
-          <div className="text-sm font-medium text-white truncate">
-            {t.name}
-          </div>
-          <div className="text-xs text-white/45 truncate">
+          <div className="text-sm font-medium text-ink truncate">{t.name}</div>
+          <div className="text-xs text-faint truncate">
             {t.role} · {t.company}
           </div>
         </div>
@@ -150,13 +148,13 @@ export default function Testimonials() {
           className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16 lg:mb-20"
         >
           <div className="max-w-2xl">
-            <span className="pill mb-6 inline-flex">
+            <span className="pill pill-accent mb-6 inline-flex">
               <span className="text-accent">◆</span>
               Proof in production
             </span>
             <h2 className="text-h1 text-display-lg gradient-text">
-              Operators who've shipped with us{" "}
-              <span className="font-serif italic text-white/85 font-normal">
+              Operators who&rsquo;ve shipped with us{" "}
+              <span className="font-serif italic text-accent-soft font-normal">
                 tell the story
               </span>{" "}
               better than we can.
@@ -165,13 +163,13 @@ export default function Testimonials() {
 
           <div className="flex items-center gap-4 lg:shrink-0">
             <div className="text-right">
-              <div className="text-3xl font-medium text-white">4.97</div>
-              <div className="text-xs text-white/45">avg. client NPS</div>
+              <div className="text-3xl font-medium text-ink">4.97</div>
+              <div className="text-xs text-faint">avg. client NPS</div>
             </div>
-            <div className="h-10 w-px bg-white/10" />
+            <div className="h-10 w-px bg-line-strong" />
             <div className="text-right">
-              <div className="text-3xl font-medium text-white">96%</div>
-              <div className="text-xs text-white/45">renewal rate</div>
+              <div className="text-3xl font-medium text-ink">96%</div>
+              <div className="text-xs text-faint">renewal rate</div>
             </div>
           </div>
         </motion.div>
@@ -188,9 +186,9 @@ export default function Testimonials() {
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ duration: 1, delay: 0.5 }}
-          className="pt-10 border-t border-white/[0.06]"
+          className="pt-10 border-t border-line"
         >
-          <div className="text-[10px] uppercase tracking-[0.2em] text-white/35 font-mono mb-6 text-center">
+          <div className="text-[10px] uppercase tracking-[0.2em] text-faint font-mono mb-6 text-center">
             Trusted by operators in 37 countries
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-x-4 gap-y-6">
@@ -201,7 +199,7 @@ export default function Testimonials() {
                 animate={inView ? { opacity: 0.55, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.6 + i * 0.04 }}
                 whileHover={{ opacity: 1 }}
-                className="text-center font-medium tracking-tight text-white text-base sm:text-lg transition-opacity"
+                className="text-center font-medium tracking-tight text-ink text-base sm:text-lg transition-opacity"
               >
                 {logo}
               </motion.div>

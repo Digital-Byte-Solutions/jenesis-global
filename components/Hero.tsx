@@ -1,211 +1,199 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+
+/* Seamless placeholder — a soft accent bloom, no spinner */
+function ScenePlaceholder() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center" aria-hidden>
+      <div
+        className="w-[60%] aspect-square rounded-full opacity-60"
+        style={{
+          background:
+            "radial-gradient(circle, var(--glow-accent) 0%, transparent 65%)",
+          filter: "blur(30px)",
+        }}
+      />
+    </div>
+  );
+}
 
 const Scene = dynamic(() => import("./Scene"), {
   ssr: false,
-  loading: () => (
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div className="w-10 h-10 rounded-full border border-accent/30 border-t-accent animate-spin" />
-    </div>
-  ),
+  loading: () => <ScenePlaceholder />,
 });
 
-const TRUST_LOGOS = ["Helix", "Aurora", "Nimbus", "Obsidian", "Vanta", "Zenith"];
+const KEYWORDS = [
+  "Innovation",
+  "Intelligence",
+  "Engineering",
+  "Investment",
+  "Impact",
+];
+
+const EASE = [0.16, 1, 0.3, 1] as const;
 
 export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const sceneRef = useRef<HTMLDivElement>(null);
+  const [sceneActive, setSceneActive] = useState(true);
+
+  // Staged scroll-away: content recedes and fades as the hero leaves the viewport
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  const textY = useTransform(scrollYProgress, [0, 1], [0, 70]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.65], [1, 0.08]);
+  const sceneY = useTransform(scrollYProgress, [0, 1], [0, 120]);
+
+  // Pause the WebGL frameloop whenever the sculpture is out of view
+  useEffect(() => {
+    const el = sceneRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      ([entry]) => setSceneActive(entry.isIntersecting),
+      { threshold: 0.05 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <section className="relative min-h-screen pt-32 pb-20 lg:pt-40 lg:pb-32 overflow-hidden">
-      {/* Background layers */}
+    <section
+      ref={sectionRef}
+      className="relative min-h-screen flex items-center overflow-hidden pt-24 pb-16 lg:pt-28 lg:pb-20"
+    >
+      {/* Marble-light backdrop */}
       <div className="absolute inset-0 grid-bg pointer-events-none" />
       <div
-        className="ambient-glow top-[10%] right-[-10%] w-[60vw] h-[60vw] max-w-[800px] max-h-[800px]"
+        className="absolute top-[-10%] right-[-15%] w-[70vw] h-[70vw] max-w-[900px] max-h-[900px] rounded-full pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle, rgba(255,45,85,0.18) 0%, transparent 60%)",
+            "radial-gradient(circle, var(--glow-accent) 0%, transparent 62%)",
+          filter: "blur(60px)",
         }}
       />
       <div
-        className="ambient-glow bottom-[-20%] left-[-10%] w-[50vw] h-[50vw] max-w-[700px] max-h-[700px]"
+        className="absolute bottom-[-20%] left-[-10%] w-[45vw] h-[45vw] max-w-[600px] max-h-[600px] rounded-full pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle, rgba(255,77,141,0.10) 0%, transparent 60%)",
+            "radial-gradient(circle, var(--glow-soft) 0%, transparent 60%)",
+          filter: "blur(60px)",
         }}
       />
-      <div className="noise" />
 
-      <div className="container-wide relative">
-        {/* Status pill */}
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="flex justify-center mb-10"
-        >
-          <div className="pill pill-accent">
-            <span className="live-dot" />
-            <span>AI ecosystem · v3.1.4 · live</span>
-          </div>
-        </motion.div>
-
-        {/* Hero text — centered, balanced */}
-        <div className="max-w-5xl mx-auto text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="text-display text-display-2xl mb-8 gradient-text"
-          >
-            Intelligent solutions.
-            <br />
-            <span className="font-serif italic font-normal text-white/90">
-              Global impact.
-            </span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl text-white/60 leading-relaxed max-w-2xl mx-auto mb-12"
-          >
-            We engineer next-generation AI ecosystems, hyperscale cloud
-            infrastructure, and premium digital experiences for enterprises
-            ready to define the next decade.
-          </motion.p>
-
+      <div className="container-wide relative w-full">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-6 items-center">
+          {/* ------- Left: the lockup ------- */}
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3"
+            style={{ y: textY, opacity: textOpacity }}
+            className="order-2 lg:order-1 text-center lg:text-left"
           >
-            <a href="#contact" className="btn btn-primary px-7 py-3.5">
-              Launch your ecosystem
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
-                <path
-                  d="M5 3l4 4-4 4"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </a>
-            <a href="#services" className="btn btn-secondary px-7 py-3.5">
-              Explore capabilities
-            </a>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, ease: EASE }}
+              className="leading-none"
+            >
+              <span className="block wordmark text-[clamp(2.4rem,7vw,4.75rem)]">
+                Jenesis
+              </span>
+              <span className="block wordmark-sub text-[clamp(0.7rem,1.6vw,1.05rem)] mt-3 opacity-90">
+                Global
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
+              className="eyebrow eyebrow-accent mt-8 !text-[12px]"
+            >
+              Building What&rsquo;s Next
+            </motion.p>
+
+            <motion.div
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 1 }}
+              transition={{ duration: 0.9, delay: 0.3, ease: EASE }}
+              className="divider-accent w-16 mt-6 mb-10 mx-auto lg:mx-0 origin-left"
+            />
+
+            {/* Keyword column — the logo's word list */}
+            <ul className="flex flex-wrap justify-center lg:flex-col lg:justify-start gap-x-6 gap-y-3 lg:gap-y-3.5">
+              {KEYWORDS.map((word, i) => (
+                <motion.li
+                  key={word}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 + i * 0.08, ease: EASE }}
+                  className="text-[11px] lg:text-[12px] font-medium tracking-[0.3em] uppercase text-body"
+                >
+                  {word}
+                </motion.li>
+              ))}
+            </ul>
+
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.85, ease: EASE }}
+              className="flex flex-col sm:flex-row items-center lg:items-start lg:justify-start justify-center gap-3 mt-12"
+            >
+              <a href="#contact" className="btn btn-primary px-7 py-3.5">
+                Build with us
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden>
+                  <path
+                    d="M5 3l4 4-4 4"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </a>
+              <a href="#services" className="btn btn-secondary px-7 py-3.5">
+                Explore capabilities
+              </a>
+            </motion.div>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 1.1 }}
+              className="eyebrow mt-12 !tracking-[0.3em]"
+            >
+              Global Vision. Human Future.
+            </motion.p>
+          </motion.div>
+
+          {/* ------- Right: the sculpture ------- */}
+          <motion.div
+            ref={sceneRef}
+            style={{ y: sceneY }}
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, delay: 0.2, ease: EASE }}
+            className="order-1 lg:order-2 relative h-[300px] sm:h-[380px] lg:h-[620px]"
+          >
+            <Scene active={sceneActive} />
           </motion.div>
         </div>
-
-        {/* 3D scene panel — contained below text, NOT overlapping */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-20 lg:mt-24 relative"
-        >
-          {/* Hero visual frame */}
-          <div className="relative mx-auto max-w-5xl aspect-[16/10] sm:aspect-[16/9] lg:aspect-[2/1] rounded-3xl overflow-hidden glass-strong">
-            {/* The 3D scene */}
-            <div className="absolute inset-0">
-              <Scene />
-            </div>
-
-            {/* HUD overlays on the scene */}
-            <div className="absolute top-5 left-5 flex items-center gap-2 px-3 py-1.5 rounded-full bg-bg/60 backdrop-blur-md border border-white/10">
-              <span className="live-dot" />
-              <span className="text-[10px] font-mono uppercase tracking-widest text-white/80">
-                Neural.core / online
-              </span>
-            </div>
-
-            <div className="absolute top-5 right-5 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-bg/60 backdrop-blur-md border border-white/10">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-white/60">
-                v3.1.4
-              </span>
-            </div>
-
-            <div className="absolute bottom-5 left-5 right-5 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-bg/60 backdrop-blur-md border border-white/10">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-white/60">
-                  Powered by Arclane OS
-                </span>
-              </div>
-
-              {/* Mini stats inside the hero card */}
-              <div className="hidden sm:flex items-center gap-5">
-                {[
-                  { v: "240+", k: "Clients" },
-                  { v: "1.4K", k: "Models" },
-                  { v: "99.99%", k: "Uptime" },
-                ].map((s) => (
-                  <div key={s.k} className="text-right">
-                    <div className="text-base font-medium text-white tabular leading-none">
-                      {s.v}
-                    </div>
-                    <div className="text-[9px] font-mono uppercase tracking-widest text-white/40 mt-1">
-                      {s.k}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Subtle scan line gradient overlay */}
-            <div
-              className="absolute inset-0 pointer-events-none opacity-40"
-              style={{
-                background:
-                  "linear-gradient(180deg, transparent 0%, transparent 70%, rgba(0,0,0,0.4) 100%)",
-              }}
-            />
-          </div>
-
-          {/* Floating glow behind card */}
-          <div
-            className="absolute inset-x-10 -bottom-10 h-32 -z-10 opacity-60"
-            style={{
-              background:
-                "radial-gradient(ellipse at center, rgba(255,45,85,0.4) 0%, transparent 70%)",
-              filter: "blur(40px)",
-            }}
-          />
-        </motion.div>
-
-        {/* Trusted by row */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="mt-20 lg:mt-24"
-        >
-          <p className="text-center text-[11px] font-mono uppercase tracking-[0.25em] text-white/40 mb-6">
-            Trusted by industry leaders
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-60">
-            {TRUST_LOGOS.map((logo) => (
-              <span
-                key={logo}
-                className="text-lg font-serif italic text-white/50 hover:text-white/90 transition-colors cursor-default"
-              >
-                {logo}
-              </span>
-            ))}
-          </div>
-        </motion.div>
       </div>
 
       {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1 }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2 text-[10px] font-mono uppercase tracking-[0.25em] text-white/30"
+        transition={{ duration: 1, delay: 1.4 }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden lg:flex flex-col items-center gap-2 text-[10px] font-mono uppercase tracking-[0.25em] text-faint"
       >
         <span>Scroll</span>
-        <div className="w-px h-8 bg-gradient-to-b from-white/30 to-transparent" />
+        <div className="w-px h-8 bg-gradient-to-b from-line-strong to-transparent" />
       </motion.div>
     </section>
   );

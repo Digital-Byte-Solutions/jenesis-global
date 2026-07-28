@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import BrandMark from "./BrandMark";
 
 /* ----------------------------------------------------
  * Footer — info architecture + newsletter
@@ -31,10 +32,10 @@ const COLS = [
   {
     title: "Contact",
     links: [
-      { label: "hello@arclane.global", href: "mailto:hello@arclane.global" },
-      { label: "Book a call", href: "#contact" },
-      { label: "Partnership", href: "mailto:partners@arclane.global" },
-      { label: "Support", href: "mailto:support@arclane.global" },
+      { label: "hello@jenesis.global", href: "mailto:hello@jenesis.global" },
+      { label: "Start a project", href: "#contact" },
+      { label: "Partnership", href: "mailto:partners@jenesis.global" },
+      { label: "Support", href: "mailto:support@jenesis.global" },
     ],
   },
 ];
@@ -59,33 +60,28 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative pt-24 lg:pt-28 pb-10 overflow-hidden border-t border-white/[0.06]">
+    <footer className="relative pt-24 lg:pt-28 pb-10 overflow-hidden border-t border-line">
       <div className="container-wide px-6 lg:px-10 relative z-10">
         {/* Top: brand + newsletter */}
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 mb-16 lg:mb-20">
           {/* Brand block */}
           <div className="lg:col-span-5">
-            <a
-              href="#"
-              className="inline-flex items-center gap-2.5 mb-6 group"
-            >
-              <span className="relative inline-grid place-items-center h-9 w-9 rounded-xl bg-gradient-to-br from-accent to-accent-soft shadow-lg shadow-accent/30">
-                <span className="text-white font-bold text-sm">A</span>
-                <span className="absolute inset-0 rounded-xl ring-1 ring-white/20" />
-              </span>
-              <span className="text-xl font-medium tracking-tight text-white">
-                ARCLANE<span className="text-accent">.</span>
+            <a href="#" className="inline-flex items-center gap-3 mb-6 group">
+              <BrandMark size={34} />
+              <span className="flex flex-col leading-none">
+                <span className="wordmark text-[17px]">Jenesis</span>
+                <span className="wordmark-sub text-[9px] mt-1">Global</span>
               </span>
             </a>
-            <p className="text-white/55 text-base leading-relaxed max-w-md mb-8">
+            <p className="text-body text-base leading-relaxed max-w-md mb-8">
               An intelligence-first studio building the operating systems for
-              tomorrow's category leaders. Independent. Global. Relentlessly
-              shipping.
+              tomorrow&rsquo;s category leaders. Independent. Global.
+              Relentlessly shipping.
             </p>
 
             {/* Newsletter */}
             <div>
-              <div className="text-[10px] uppercase tracking-[0.18em] text-white/40 font-mono mb-3">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-faint font-mono mb-3">
                 The Briefing · Monthly
               </div>
               <form
@@ -97,7 +93,7 @@ export default function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@company.com"
-                  className="flex-1 bg-white/[0.03] border border-white/[0.08] rounded-full px-5 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-accent/40 focus:bg-white/[0.05] transition-all"
+                  className="flex-1 bg-surface border border-line rounded-full px-5 py-3 text-sm text-ink placeholder:text-faint focus:outline-none focus:border-accent transition-all"
                   required
                 />
                 <button
@@ -107,7 +103,7 @@ export default function Footer() {
                   {sent ? "Subscribed ✓" : "Subscribe"}
                 </button>
               </form>
-              <div className="mt-3 text-xs text-white/35">
+              <div className="mt-3 text-xs text-faint">
                 One letter a month. Engineering, design and AI from the field.
                 Unsubscribe anytime.
               </div>
@@ -118,7 +114,7 @@ export default function Footer() {
           <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8 lg:gap-10">
             {COLS.map((col) => (
               <div key={col.title}>
-                <div className="text-[10px] uppercase tracking-[0.18em] text-white/40 font-mono mb-4">
+                <div className="text-[10px] uppercase tracking-[0.18em] text-faint font-mono mb-4">
                   {col.title}
                 </div>
                 <ul className="space-y-2.5">
@@ -126,7 +122,7 @@ export default function Footer() {
                     <li key={l.label}>
                       <a
                         href={l.href}
-                        className="text-sm text-white/70 hover:text-white transition-colors"
+                        className="text-sm text-body hover:text-ink transition-colors"
                       >
                         {l.label}
                       </a>
@@ -141,26 +137,30 @@ export default function Footer() {
         {/* Big wordmark */}
         <div className="relative mb-10 lg:mb-14 select-none pointer-events-none">
           <div
-            className="text-[20vw] lg:text-[16vw] font-medium tracking-tighter leading-[0.85] text-transparent text-center"
+            className="text-[17vw] lg:text-[13vw] font-semibold tracking-[0.18em] leading-[0.85] text-transparent text-center uppercase"
             style={{
-              WebkitTextStroke: "1px rgba(255,255,255,0.08)",
+              WebkitTextStroke: "1px var(--line-strong)",
             }}
           >
-            ARCLANE
+            Jenesis
           </div>
         </div>
 
         {/* Bottom strip */}
-        <div className="flex flex-col lg:flex-row gap-6 lg:items-center lg:justify-between pt-8 border-t border-white/[0.06]">
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-white/45">
-            <span>© {new Date().getFullYear()} ARCLANE GLOBAL</span>
-            <a href="#" className="hover:text-white transition-colors">
+        <div className="flex flex-col lg:flex-row gap-6 lg:items-center lg:justify-between pt-8 border-t border-line">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-faint">
+            <span>
+              © {new Date().getFullYear()}{" "}
+              <span className="text-body font-medium">JENESIS</span>{" "}
+              <span className="tracking-widest">GLOBAL</span>
+            </span>
+            <a href="#" className="hover:text-ink transition-colors">
               Privacy
             </a>
-            <a href="#" className="hover:text-white transition-colors">
+            <a href="#" className="hover:text-ink transition-colors">
               Terms
             </a>
-            <a href="#" className="hover:text-white transition-colors">
+            <a href="#" className="hover:text-ink transition-colors">
               Security
             </a>
             <span className="flex items-center gap-2">
@@ -174,7 +174,7 @@ export default function Footer() {
               <a
                 key={s.label}
                 href={s.href}
-                className="text-xs text-white/50 hover:text-accent transition-colors"
+                className="text-xs text-body hover:text-accent transition-colors"
               >
                 {s.label}
               </a>

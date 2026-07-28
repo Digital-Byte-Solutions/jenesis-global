@@ -150,11 +150,11 @@ const SERVICES: Service[] = [
 ];
 
 /* =========================================
- * BENTO OVERVIEW — at-a-glance grid
+ * BENTO OVERVIEW
  * =========================================*/
 function BentoOverview() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-32">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-24 lg:mb-32">
       {SERVICES.map((s, i) => (
         <motion.a
           key={s.id}
@@ -163,7 +163,7 @@ function BentoOverview() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, delay: i * 0.05 }}
-          className="group glass-card p-5 hover:-translate-y-1 transition-transform"
+          className="group glass-card p-5 text-left"
         >
           <div className="flex items-center justify-between mb-4">
             <span className="text-[10px] font-mono uppercase tracking-widest text-accent">
@@ -174,7 +174,7 @@ function BentoOverview() {
               height="14"
               viewBox="0 0 14 14"
               fill="none"
-              className="text-white/30 group-hover:text-white group-hover:translate-x-0.5 transition-all"
+              className="text-faint group-hover:text-accent group-hover:translate-x-0.5 transition-all"
               aria-hidden
             >
               <path
@@ -186,10 +186,10 @@ function BentoOverview() {
               />
             </svg>
           </div>
-          <h3 className="text-sm font-medium text-white leading-tight">
+          <h3 className="text-sm font-medium text-ink leading-tight">
             {s.title}
           </h3>
-          <p className="text-[11px] text-white/40 mt-1.5 leading-relaxed">
+          <p className="text-[11px] text-faint mt-1.5 leading-relaxed">
             {s.tagline}
           </p>
         </motion.a>
@@ -199,7 +199,7 @@ function BentoOverview() {
 }
 
 /* =========================================
- * SINGLE SERVICE BLOCK — alternating layout
+ * SINGLE SERVICE BLOCK — 3D model panel
  * =========================================*/
 function ServiceBlock({
   service,
@@ -215,35 +215,21 @@ function ServiceBlock({
     <article
       ref={ref}
       id={service.id}
-      className="relative py-20 lg:py-32 scroll-mt-24"
+      className="relative py-16 lg:py-28 scroll-mt-24"
     >
       {/* Section ambient glow */}
       <div
-        className="ambient-glow opacity-30"
+        className="ambient-glow opacity-40"
         style={{
           top: "30%",
           [reverse ? "left" : "right"]: "-15%",
-          width: "50vw",
-          height: "50vw",
-          maxWidth: "700px",
-          maxHeight: "700px",
-          background:
-            "radial-gradient(circle, rgba(255,45,85,0.15) 0%, transparent 60%)",
         }}
       />
 
       <div className="container-wide relative">
-        <div
-          className={`grid lg:grid-cols-12 gap-10 lg:gap-16 items-center ${
-            reverse ? "lg:flex-row-reverse" : ""
-          }`}
-        >
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
           {/* Text column */}
-          <div
-            className={`lg:col-span-6 ${
-              reverse ? "lg:order-2" : "lg:order-1"
-            }`}
-          >
+          <div className={`lg:col-span-6 ${reverse ? "lg:order-2" : "lg:order-1"}`}>
             <motion.div
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
@@ -253,14 +239,14 @@ function ServiceBlock({
               <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-accent">
                 Service · {service.num}
               </span>
-              <span className="h-px w-12 bg-accent/40" />
+              <span className="divider-accent w-12" />
             </motion.div>
 
             <motion.h2
               initial={{ opacity: 0, y: 12 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.05 }}
-              className="text-h1 text-display-lg text-white mb-4"
+              className="text-h1 text-display-lg text-ink mb-4"
             >
               {service.title}
             </motion.h2>
@@ -269,7 +255,7 @@ function ServiceBlock({
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="text-xl text-white/80 font-light mb-4"
+              className="text-xl text-accent-soft font-light mb-4"
             >
               {service.tagline}
             </motion.p>
@@ -278,19 +264,19 @@ function ServiceBlock({
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-base text-white/55 leading-relaxed mb-10 max-w-xl"
+              className="text-base text-body leading-relaxed mb-10 max-w-xl"
             >
               {service.body}
             </motion.p>
 
-            {/* Capabilities grid */}
+            {/* Capabilities */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.6, delay: 0.25 }}
               className="mb-10"
             >
-              <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 mb-4">
+              <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-faint mb-4">
                 Capabilities
               </p>
               <div className="grid grid-cols-2 gap-y-2.5 max-w-xl">
@@ -312,7 +298,7 @@ function ServiceBlock({
                         strokeLinejoin="round"
                       />
                     </svg>
-                    <span className="text-sm text-white/75">{cap}</span>
+                    <span className="text-sm text-body">{cap}</span>
                   </div>
                 ))}
               </div>
@@ -325,14 +311,14 @@ function ServiceBlock({
               transition={{ duration: 0.6, delay: 0.3 }}
               className="mb-10"
             >
-              <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40 mb-4">
+              <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-faint mb-4">
                 Deliverables
               </p>
               <div className="flex flex-wrap gap-2 max-w-xl">
                 {service.deliverables.map((d) => (
                   <span
                     key={d}
-                    className="text-xs font-medium text-white/70 px-3 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08]"
+                    className="text-xs font-medium text-body px-3 py-1.5 rounded-full bg-surface border border-line"
                   >
                     {d}
                   </span>
@@ -340,20 +326,20 @@ function ServiceBlock({
               </div>
             </motion.div>
 
-            {/* Metrics + CTA row */}
+            {/* Metrics + CTA */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.6, delay: 0.35 }}
-              className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pt-8 border-t border-white/8"
+              className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pt-8 border-t border-line"
             >
               <div className="flex gap-8">
                 {service.metrics.map((m) => (
                   <div key={m.label}>
-                    <div className="text-3xl font-medium text-white tabular">
+                    <div className="text-3xl font-medium text-ink tabular">
                       {m.value}
                     </div>
-                    <div className="text-[10px] font-mono uppercase tracking-widest text-white/40 mt-1">
+                    <div className="text-[10px] font-mono uppercase tracking-widest text-faint mt-1">
                       {m.label}
                     </div>
                   </div>
@@ -361,7 +347,7 @@ function ServiceBlock({
               </div>
               <a
                 href="#contact"
-                className="inline-flex items-center gap-2 text-sm font-medium text-white hover:text-accent transition-colors group"
+                className="inline-flex items-center gap-2 text-sm font-medium text-ink hover:text-accent transition-colors group"
               >
                 Start a project
                 <svg
@@ -385,19 +371,11 @@ function ServiceBlock({
           </div>
 
           {/* 3D model column */}
-          <div
-            className={`lg:col-span-6 ${
-              reverse ? "lg:order-1" : "lg:order-2"
-            }`}
-          >
+          <div className={`lg:col-span-6 ${reverse ? "lg:order-1" : "lg:order-2"}`}>
             <motion.div
               initial={{ opacity: 0, scale: 0.96 }}
               animate={inView ? { opacity: 1, scale: 1 } : {}}
-              transition={{
-                duration: 0.9,
-                delay: 0.2,
-                ease: [0.16, 1, 0.3, 1],
-              }}
+              transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
               className="relative aspect-square max-w-[520px] mx-auto rounded-3xl overflow-hidden glass-strong"
             >
               {/* Top status bar */}
@@ -406,35 +384,24 @@ function ServiceBlock({
                   <span className="live-dot" />
                   {service.id.toUpperCase()}.SYS
                 </div>
-                <span className="text-[10px] font-mono uppercase tracking-widest text-white/40">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-faint">
                   ACTIVE
                 </span>
               </div>
 
-              {/* 3D model */}
+              {/* 3D model — mounts only once scrolled into view */}
               <div className="absolute inset-0">
                 {inView && <ServiceCanvas model={service.id} />}
               </div>
 
               {/* Bottom info bar */}
-              <div className="absolute bottom-4 left-4 right-4 z-10">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono uppercase tracking-widest text-white/50">
-                    {service.title}
-                  </span>
-                  <div className="flex items-center gap-1.5">
-                    {[0, 1, 2].map((i) => (
-                      <span
-                        key={i}
-                        className="w-1 h-1 rounded-full bg-accent"
-                        style={{
-                          animationDelay: `${i * 0.2}s`,
-                          animation: "subtle-pulse 1.5s ease-in-out infinite",
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
+              <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-between">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-faint">
+                  {service.title}
+                </span>
+                <span className="text-[10px] font-mono uppercase tracking-widest text-accent">
+                  Jenesis
+                </span>
               </div>
             </motion.div>
           </div>
@@ -453,7 +420,6 @@ export default function Services() {
 
   return (
     <section id="services" className="relative scroll-mt-24">
-      {/* Section heading */}
       <div ref={headRef} className="container-wide section-y text-center">
         <motion.div
           initial={{ opacity: 0 }}
@@ -461,7 +427,7 @@ export default function Services() {
           transition={{ duration: 0.6 }}
           className="flex justify-center mb-6"
         >
-          <span className="pill">
+          <span className="pill pill-accent">
             <span className="text-accent">◆</span>
             What we build
           </span>
@@ -474,7 +440,7 @@ export default function Services() {
           className="text-h1 text-display-xl max-w-4xl mx-auto gradient-text mb-6"
         >
           A complete operating system{" "}
-          <span className="font-serif italic text-white/85 font-normal">
+          <span className="font-serif italic text-accent-soft font-normal">
             for next-generation enterprises.
           </span>
         </motion.h2>
@@ -483,20 +449,18 @@ export default function Services() {
           initial={{ opacity: 0 }}
           animate={headInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.7, delay: 0.15 }}
-          className="text-lg text-white/55 max-w-2xl mx-auto"
+          className="text-lg text-body max-w-2xl mx-auto"
         >
           Six interconnected ecosystems — from brand strategy to AI
           infrastructure — engineered to scale, automate, and amplify every
           layer of modern business.
         </motion.p>
 
-        {/* Bento overview grid */}
         <div className="mt-16">
           <BentoOverview />
         </div>
       </div>
 
-      {/* Alternating detail blocks */}
       <div className="relative">
         {SERVICES.map((s, i) => (
           <ServiceBlock key={s.id} service={s} reverse={i % 2 === 1} />

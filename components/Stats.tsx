@@ -4,8 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
 
 /* ----------------------------------------------------
- * Stats — impact numbers row
- * Counts up when in view
+ * Stats — impact numbers, counts up when in view
  * -------------------------------------------------- */
 
 type Stat = {
@@ -82,7 +81,7 @@ export default function Stats() {
   return (
     <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden">
       <div className="container-wide px-6 lg:px-10 relative z-10">
-        {/* Subtle header */}
+        {/* Header */}
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 16 }}
@@ -95,7 +94,7 @@ export default function Stats() {
               <span className="live-dot" />
               Live · updated daily
             </span>
-            <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-white max-w-xl">
+            <h2 className="text-3xl sm:text-4xl font-medium tracking-tight text-ink max-w-xl">
               Numbers we run the business by.
             </h2>
           </div>
@@ -106,27 +105,23 @@ export default function Stats() {
         </motion.div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/[0.06] rounded-3xl overflow-hidden border border-white/[0.06]">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-line rounded-3xl overflow-hidden border border-line">
           {STATS.map((s, i) => (
             <motion.div
               key={s.label}
               initial={{ opacity: 0, y: 16 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.15 + i * 0.08 }}
-              className="relative bg-bg-elevated/60 backdrop-blur-xl p-6 sm:p-8 lg:p-10 group"
+              className="relative bg-surface p-6 sm:p-8 lg:p-10 group"
             >
               {/* Hover accent line */}
               <div className="absolute top-0 left-0 h-px w-0 bg-accent transition-all duration-500 group-hover:w-full" />
 
               {/* Big number */}
               <div className="flex items-baseline gap-1 mb-3">
-                <span className="text-4xl sm:text-5xl lg:text-6xl font-medium text-white tracking-tight tabular-nums">
+                <span className="text-4xl sm:text-5xl lg:text-6xl font-medium text-ink tracking-tight tabular-nums">
                   {s.prefix}
-                  <CountUp
-                    to={s.value}
-                    decimals={s.decimals ?? 0}
-                    start={inView}
-                  />
+                  <CountUp to={s.value} decimals={s.decimals ?? 0} start={inView} />
                 </span>
                 {s.suffix && (
                   <span className="text-2xl sm:text-3xl text-accent font-medium">
@@ -136,12 +131,8 @@ export default function Stats() {
               </div>
 
               {/* Label */}
-              <div className="text-sm font-medium text-white mb-1">
-                {s.label}
-              </div>
-              <div className="text-xs text-white/45 leading-relaxed">
-                {s.sub}
-              </div>
+              <div className="text-sm font-medium text-ink mb-1">{s.label}</div>
+              <div className="text-xs text-faint leading-relaxed">{s.sub}</div>
             </motion.div>
           ))}
         </div>

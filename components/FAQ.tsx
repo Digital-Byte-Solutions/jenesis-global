@@ -4,8 +4,7 @@ import { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 
 /* ----------------------------------------------------
- * FAQ — Common enterprise objections, answered
- * Accordion with single-open behaviour
+ * FAQ — accordion with single-open behaviour
  * -------------------------------------------------- */
 
 const FAQS = [
@@ -51,7 +50,7 @@ function FAQItem({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: i * 0.05 }}
-      className="border-b border-white/[0.06] last:border-b-0"
+      className="border-b border-line last:border-b-0"
     >
       <button
         onClick={onToggle}
@@ -59,16 +58,18 @@ function FAQItem({
         aria-expanded={open}
       >
         <div className="flex items-start gap-4 flex-1 min-w-0">
-          <span className="font-mono text-xs text-white/35 pt-1 shrink-0">
+          <span className="font-mono text-xs text-faint pt-1 shrink-0">
             {String(i + 1).padStart(2, "0")}
           </span>
-          <span className="text-lg sm:text-xl font-medium text-white group-hover:text-accent-soft transition-colors">
+          <span className="text-lg sm:text-xl font-medium text-ink group-hover:text-accent transition-colors">
             {item.q}
           </span>
         </div>
         <span
-          className={`shrink-0 mt-1 h-7 w-7 rounded-full grid place-items-center border border-white/15 transition-all ${
-            open ? "bg-accent border-accent rotate-45" : "bg-white/[0.02]"
+          className={`shrink-0 mt-1 h-7 w-7 rounded-full grid place-items-center border transition-all ${
+            open
+              ? "bg-accent border-accent rotate-45 text-white"
+              : "bg-surface border-line-strong text-ink"
           }`}
           aria-hidden
         >
@@ -78,7 +79,6 @@ function FAQItem({
               stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
-              className="text-white"
             />
           </svg>
         </span>
@@ -93,7 +93,7 @@ function FAQItem({
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <div className="pb-6 pl-10 pr-12 text-white/60 text-[15px] leading-relaxed">
+            <div className="pb-6 pl-10 pr-12 text-body text-[15px] leading-relaxed">
               {item.a}
             </div>
           </motion.div>
@@ -123,23 +123,23 @@ export default function FAQ() {
           className="grid lg:grid-cols-12 gap-10 mb-14 lg:mb-16"
         >
           <div className="lg:col-span-5">
-            <span className="pill mb-6 inline-flex">
+            <span className="pill pill-accent mb-6 inline-flex">
               <span className="text-accent">◆</span>
               FAQ
             </span>
             <h2 className="text-h1 text-display-lg gradient-text">
               The questions{" "}
-              <span className="font-serif italic text-white/85 font-normal">
+              <span className="font-serif italic text-accent-soft font-normal">
                 every CTO
               </span>{" "}
               asks us.
             </h2>
           </div>
           <div className="lg:col-span-6 lg:col-start-7 self-end">
-            <p className="text-white/55 text-lg leading-relaxed">
+            <p className="text-body text-lg leading-relaxed">
               Six things we explain on every introductory call. If something
-              else is on your mind, write to us — we'll get back inside the same
-              business day.
+              else is on your mind, write to us — we&rsquo;ll get back inside
+              the same business day.
             </p>
           </div>
         </motion.div>
@@ -159,10 +159,8 @@ export default function FAQ() {
 
         {/* Bottom note */}
         <div className="mt-10 flex flex-wrap items-center justify-between gap-4 text-sm">
-          <div className="text-white/50">
-            Can't find what you're looking for?
-          </div>
-          <a href="mailto:hello@arclane.global" className="btn btn-ghost">
+          <div className="text-body">Can&rsquo;t find what you&rsquo;re looking for?</div>
+          <a href="mailto:hello@jenesis.global" className="btn btn-ghost">
             Email the team
             <span aria-hidden>→</span>
           </a>

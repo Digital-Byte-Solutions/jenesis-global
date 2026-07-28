@@ -5,7 +5,6 @@ import { motion, useInView } from "framer-motion";
 
 /* ----------------------------------------------------
  * Process — How we work
- * Linear/Stripe-grade craft: numbered rail + dense detail cards
  * -------------------------------------------------- */
 
 type Phase = {
@@ -72,8 +71,8 @@ function PhaseCard({ phase, i }: { phase: Phase; i: number }) {
         {/* Step header */}
         <div className="flex items-start justify-between mb-5">
           <div className="flex items-center gap-3">
-            <span className="font-mono text-xs text-white/40">{phase.n}</span>
-            <span className="h-px w-8 bg-white/15" />
+            <span className="font-mono text-xs text-faint">{phase.n}</span>
+            <span className="h-px w-8 bg-line-strong" />
             <span className="pill text-[10px]">
               <span className="live-dot" />
               {phase.duration}
@@ -82,29 +81,24 @@ function PhaseCard({ phase, i }: { phase: Phase; i: number }) {
         </div>
 
         {/* Title */}
-        <h3 className="text-2xl sm:text-3xl font-medium tracking-tight text-white mb-2">
+        <h3 className="text-2xl sm:text-3xl font-medium tracking-tight text-ink mb-2">
           {phase.title}
         </h3>
-        <p className="text-accent-soft text-sm font-medium mb-4">
-          {phase.sub}
-        </p>
+        <p className="text-accent text-sm font-medium mb-4">{phase.sub}</p>
 
         {/* Body */}
-        <p className="text-white/60 text-[15px] leading-relaxed mb-6 flex-1">
+        <p className="text-body text-[15px] leading-relaxed mb-6 flex-1">
           {phase.body}
         </p>
 
         {/* Outputs */}
         <div>
-          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35 mb-2.5 font-mono">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-faint mb-2.5 font-mono">
             Deliverables
           </div>
           <ul className="space-y-1.5">
             {phase.outputs.map((o) => (
-              <li
-                key={o}
-                className="flex items-center gap-2.5 text-sm text-white/75"
-              >
+              <li key={o} className="flex items-center gap-2.5 text-sm text-body">
                 <span className="text-accent text-xs">▸</span>
                 {o}
               </li>
@@ -125,7 +119,6 @@ export default function Process() {
       id="process"
       className="relative py-28 sm:py-32 lg:py-40 overflow-hidden"
     >
-      {/* Ambient backdrop */}
       <div className="ambient-glow ambient-glow--left" />
 
       <div className="container-wide px-6 lg:px-10 relative z-10">
@@ -137,20 +130,20 @@ export default function Process() {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-3xl mb-16 lg:mb-20"
         >
-          <span className="pill mb-6 inline-flex">
+          <span className="pill pill-accent mb-6 inline-flex">
             <span className="text-accent">◆</span>
             How we work
           </span>
           <h2 className="text-h1 text-display-lg gradient-text mb-5">
             A predictable path from{" "}
-            <span className="font-serif italic text-white/85 font-normal">
+            <span className="font-serif italic text-accent-soft font-normal">
               first call
             </span>{" "}
             to compounding outcomes.
           </h2>
-          <p className="text-white/55 text-lg leading-relaxed max-w-2xl">
+          <p className="text-body text-lg leading-relaxed max-w-2xl">
             Four phases. Embedded teams. No black boxes. The same operating
-            model that's shipped 240+ enterprise products in 37 countries.
+            model that&rsquo;s shipped 240+ enterprise products in 37 countries.
           </p>
         </motion.div>
 
@@ -166,13 +159,13 @@ export default function Process() {
           initial={{ opacity: 0, y: 16 }}
           animate={headIn ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="mt-14 lg:mt-16 flex flex-wrap items-center justify-between gap-6 pt-8 border-t border-white/[0.06]"
+          className="mt-14 lg:mt-16 flex flex-wrap items-center justify-between gap-6 pt-8 border-t border-line"
         >
-          <div className="flex items-center gap-4 text-sm text-white/50">
+          <div className="flex items-center gap-4 text-sm text-body">
             <span className="live-dot" />
             <span>
               Average engagement:{" "}
-              <span className="text-white">12 weeks to first launch</span>
+              <span className="text-ink font-medium">12 weeks to first launch</span>
             </span>
           </div>
           <a href="#contact" className="btn btn-ghost text-sm">
