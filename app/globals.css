@@ -269,20 +269,20 @@ body {
 }
 
 /* ===========================================
-   SURFACES
+   SURFACES — Optimized for 60 FPS Smooth Scroll
    =========================================== */
 .glass {
   background: var(--bg-overlay);
-  backdrop-filter: blur(20px) saturate(160%);
-  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--line);
   border-radius: 16px;
 }
 
 .glass-strong {
   background: var(--bg-overlay);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--line-strong);
   border-radius: 20px;
   box-shadow: var(--card-shadow);
@@ -291,18 +291,19 @@ body {
 .glass-card {
   position: relative;
   background: var(--card-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--line);
   border-radius: 20px;
   box-shadow: var(--card-shadow);
-  transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateZ(0);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 }
 
 .glass-card:hover {
   border-color: var(--line-strong);
   box-shadow: var(--card-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-2px) translateZ(0);
 }
 
 /* ===========================================

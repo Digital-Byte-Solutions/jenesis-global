@@ -4,11 +4,10 @@ import { useEffect } from "react";
 import Lenis from "lenis";
 
 /* ----------------------------------------------------
- * Premium inertial scrolling (Lenis) with Igloo.inc Scroll Velocity tracking.
- * - Eases wheel/touch scrolling so sections arrive in stages
- * - Calculates scroll velocity & updates --scroll-velocity CSS token for motion effects
- * - Handles #anchor links with offset for fixed glass header
- * - Disabled for prefers-reduced-motion users
+ * High-Performance Inertial Smooth Scroll (Lenis)
+ * - Lightweight lerp for 60 FPS smooth momentum scroll
+ * - Zero CSS variable mutations on scroll to prevent repaints
+ * - Respects prefers-reduced-motion
  * --------------------------------------------------*/
 export default function SmoothScroll() {
   useEffect(() => {
@@ -17,20 +16,14 @@ export default function SmoothScroll() {
     }
 
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential easeOut
+      duration: 1.0,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
-      wheelMultiplier: 0.95,
-      touchMultiplier: 1.5,
-      anchors: { offset: -76 }, // Clear fixed glass pill navigation
-    });
-
-    // Velocity listener to inject dynamic CSS scroll velocity
-    lenis.on("scroll", (e: { velocity: number }) => {
-      const velocity = Math.min(Math.max(e.velocity, -15), 15);
-      document.documentElement.style.setProperty("--scroll-velocity", `${velocity}`);
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.2,
+      anchors: { offset: -76 },
     });
 
     let rafId = 0;
@@ -43,7 +36,6 @@ export default function SmoothScroll() {
     return () => {
       cancelAnimationFrame(rafId);
       lenis.destroy();
-      document.documentElement.style.removeProperty("--scroll-velocity");
     };
   }, []);
 

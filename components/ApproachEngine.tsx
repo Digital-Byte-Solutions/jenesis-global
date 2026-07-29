@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { motion, useInView, AnimatePresence } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 
 /* ----------------------------------------------------
  * Custom Precision Developer SVG Icons
@@ -122,7 +122,7 @@ export default function ApproachEngine() {
   const sectionRef = useRef<HTMLElement>(null);
   const inView = useInView(sectionRef, { once: true, margin: "-15%" });
 
-  // Guaranteed fallback ensures no blank state ever occurs
+  // Guaranteed fallback ensures correct item active data is always rendered
   const activeNode = CHANNELS.find((c) => c.id === activeId) || CHANNELS[0];
   const ActiveIcon = activeNode.IconComponent;
 
@@ -167,7 +167,7 @@ export default function ApproachEngine() {
         {/* Main Grid Layout */}
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
           {/* Left Column: 4 Interactive Channel Selector Cards (5 Cols) */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-4">
+          <div className="lg:col-span-5 flex flex-col justify-between space-y-3">
             {CHANNELS.map((node, i) => {
               const isActive = node.id === activeId;
               const NodeIcon = node.IconComponent;
@@ -183,28 +183,24 @@ export default function ApproachEngine() {
                     type="button"
                     onClick={() => setActiveId(node.id)}
                     onMouseEnter={() => setActiveId(node.id)}
-                    className={`w-full text-left p-3.5 sm:p-4 rounded-xl transition-all duration-300 relative border overflow-hidden group ${
+                    className={`w-full text-left p-3.5 sm:p-4 rounded-xl transition-colors duration-200 relative border overflow-hidden group ${
                       isActive
-                        ? "bg-surface border-accent shadow-md shadow-accent/10 translate-x-1"
+                        ? "bg-surface border-accent shadow-md shadow-accent/10"
                         : "bg-surface/50 border-line hover:border-line-strong hover:bg-surface/80"
                     }`}
                   >
-                    {/* Active Accent Indicator Strip */}
+                    {/* Active Accent Indicator Strip (No layout shift) */}
                     {isActive && (
-                      <motion.div
-                        layoutId="activeIndicator"
-                        className="absolute left-0 top-0 bottom-0 w-1.5 bg-accent"
-                        transition={{ duration: 0.3, ease: EASE }}
-                      />
+                      <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-accent" />
                     )}
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div
-                          className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
                             isActive
-                              ? "bg-accent/15 border border-accent/30 text-accent scale-105"
-                              : "bg-line/40 border border-line text-body group-hover:text-ink group-hover:scale-105"
+                              ? "bg-accent/15 border border-accent/30 text-accent"
+                              : "bg-line/40 border border-line text-body group-hover:text-ink"
                           }`}
                         >
                           <NodeIcon className="w-5 h-5" />
@@ -220,17 +216,17 @@ export default function ApproachEngine() {
                             </span>
                           </div>
 
-                          <h3 className="text-base sm:text-lg font-medium text-ink">
+                          <h3 className="text-base font-medium text-ink">
                             {node.name}
                           </h3>
                         </div>
                       </div>
 
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs transition-all duration-300 ${
+                        className={`w-7 h-7 rounded-full flex items-center justify-center text-xs transition-colors duration-200 ${
                           isActive
-                            ? "bg-accent text-white shadow-md shadow-accent/30 translate-x-0"
-                            : "bg-line/60 text-faint group-hover:text-ink -translate-x-1"
+                            ? "bg-accent text-white shadow-md shadow-accent/30"
+                            : "bg-line/60 text-faint group-hover:text-ink"
                         }`}
                       >
                         →
@@ -248,109 +244,106 @@ export default function ApproachEngine() {
               initial={{ opacity: 0, scale: 0.97 }}
               animate={inView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.8, delay: 0.2, ease: EASE }}
-              className="glass-card w-full p-8 sm:p-10 lg:p-11 rounded-3xl relative overflow-hidden flex flex-col justify-between border border-line-strong bg-surface/90 shadow-2xl"
+              className="glass-card w-full p-7 sm:p-8 lg:p-9 rounded-3xl relative overflow-hidden flex flex-col justify-between border border-line-strong bg-surface/90 shadow-2xl"
             >
               {/* Subtle background mesh grid */}
               <div className="absolute inset-0 grid-bg opacity-20 pointer-events-none" />
 
-              {/* Dynamic Animated Panel Content */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeNode.id}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
-                  transition={{ duration: 0.35, ease: EASE }}
-                  className="relative z-10 flex-1 flex flex-col justify-between"
-                >
-                  {/* Top Status & Telemetry Header */}
-                  <div>
-                    <div className="flex items-center justify-between border-b border-line pb-6 mb-7">
-                      <div className="flex items-center gap-3.5">
-                        <div className="p-3 rounded-2xl bg-bg border border-line text-accent">
-                          <ActiveIcon className="w-7 h-7" />
-                        </div>
-                        <div>
-                          <span className="text-[11px] font-mono uppercase tracking-widest text-accent font-semibold">
-                            Channel Stream {activeNode.number}
-                          </span>
-                          <h4 className="text-xl sm:text-2xl font-bold text-ink">
-                            {activeNode.name}
-                          </h4>
-                        </div>
+              {/* Dynamic Keyed Panel Content (Instant updates, zero hover freeze) */}
+              <motion.div
+                key={activeNode.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, ease: EASE }}
+                className="relative z-10 flex-1 flex flex-col justify-between"
+              >
+                {/* Top Status & Telemetry Header */}
+                <div>
+                  <div className="flex items-center justify-between border-b border-line pb-5 mb-6">
+                    <div className="flex items-center gap-3.5">
+                      <div className="p-2.5 rounded-2xl bg-bg border border-line text-accent">
+                        <ActiveIcon className="w-6 h-6" />
                       </div>
-
-                      <div className="text-right">
-                        <div className="text-2xl sm:text-3xl font-mono font-bold text-accent">
-                          {activeNode.metric}
-                        </div>
-                        <div className="text-[10px] font-mono text-faint uppercase tracking-wider">
-                          {activeNode.metricLabel}
-                        </div>
+                      <div>
+                        <span className="text-[11px] font-mono uppercase tracking-widest text-accent font-semibold">
+                          Channel Stream {activeNode.number}
+                        </span>
+                        <h4 className="text-lg sm:text-xl font-bold text-ink">
+                          {activeNode.name}
+                        </h4>
                       </div>
                     </div>
 
-                    {/* Tagline & Summary */}
-                    <div className="mb-8">
-                      <div className="text-xs font-mono uppercase tracking-wider text-accent font-medium mb-2">
-                        ◆ {activeNode.tagline}
+                    <div className="text-right">
+                      <div className="text-2xl sm:text-3xl font-mono font-bold text-accent">
+                        {activeNode.metric}
                       </div>
-                      <p className="text-ink text-base sm:text-lg leading-relaxed">
-                        {activeNode.summary}
-                      </p>
+                      <div className="text-[10px] font-mono text-faint uppercase tracking-wider">
+                        {activeNode.metricLabel}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Connected Data Flow Diagram Visual */}
-                  <div className="my-6 p-5 rounded-2xl bg-bg border border-line flex flex-col sm:flex-row items-center justify-between gap-4 shadow-inner">
-                    <div className="flex items-center gap-3">
-                      <span className="w-2.5 h-2.5 rounded-full bg-accent animate-ping" />
-                      <span className="text-xs font-mono text-ink font-semibold uppercase tracking-wider">
-                        {activeNode.category} Input
-                      </span>
+                  {/* Tagline & Summary */}
+                  <div className="mb-6">
+                    <div className="text-xs font-mono uppercase tracking-wider text-accent font-medium mb-1.5">
+                      ◆ {activeNode.tagline}
                     </div>
+                    <p className="text-ink text-sm sm:text-base leading-relaxed">
+                      {activeNode.summary}
+                    </p>
+                  </div>
+                </div>
 
-                    {/* Animated Connection Arrow Stream */}
-                    <div className="flex-1 flex items-center justify-center gap-2 w-full px-2">
-                      <span className="h-px flex-1 bg-gradient-to-r from-accent to-accent-soft" />
-                      <span className="font-mono text-[9px] text-accent tracking-widest uppercase font-semibold px-2 py-0.5 rounded bg-accent/10 border border-accent/20">
-                        LIVE TELEMETRY
-                      </span>
-                      <span className="h-px flex-1 bg-gradient-to-r from-accent-soft to-accent" />
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono text-accent font-bold uppercase tracking-wider">
-                        JENESIS REVENUE HUB
-                      </span>
-                    </div>
+                {/* Connected Data Flow Diagram Visual */}
+                <div className="my-5 p-4 rounded-2xl bg-bg border border-line flex flex-col sm:flex-row items-center justify-between gap-3 shadow-inner">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-accent animate-ping" />
+                    <span className="text-xs font-mono text-ink font-semibold uppercase tracking-wider">
+                      {activeNode.category} Input
+                    </span>
                   </div>
 
-                  {/* Deliverables List */}
-                  <div>
-                    <div className="text-[11px] uppercase tracking-widest text-faint font-mono mb-3">
-                      System Deliverables &amp; Output
-                    </div>
-                    <div className="grid sm:grid-cols-3 gap-3">
-                      {activeNode.outputs.map((item) => (
-                        <div
-                          key={item}
-                          className="px-3.5 py-3 rounded-xl bg-surface border border-line text-xs font-medium text-ink flex items-center gap-2.5 shadow-sm"
-                        >
-                          <span className="text-accent text-xs">◆</span>
-                          <span className="leading-snug">{item}</span>
-                        </div>
-                      ))}
-                    </div>
+                  {/* Animated Connection Arrow Stream */}
+                  <div className="flex-1 flex items-center justify-center gap-2 w-full px-2">
+                    <span className="h-px flex-1 bg-gradient-to-r from-accent to-accent-soft" />
+                    <span className="font-mono text-[9px] text-accent tracking-widest uppercase font-semibold px-2 py-0.5 rounded bg-accent/10 border border-accent/20">
+                      LIVE TELEMETRY
+                    </span>
+                    <span className="h-px flex-1 bg-gradient-to-r from-accent-soft to-accent" />
                   </div>
-                </motion.div>
-              </AnimatePresence>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-mono text-accent font-bold uppercase tracking-wider">
+                      JENESIS REVENUE HUB
+                    </span>
+                  </div>
+                </div>
+
+                {/* Deliverables List */}
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-faint font-mono mb-2.5">
+                    System Deliverables &amp; Output
+                  </div>
+                  <div className="grid sm:grid-cols-3 gap-2.5">
+                    {activeNode.outputs.map((item) => (
+                      <div
+                        key={item}
+                        className="px-3 py-2.5 rounded-xl bg-surface border border-line text-xs font-medium text-ink flex items-center gap-2 shadow-sm"
+                      >
+                        <span className="text-accent text-xs">◆</span>
+                        <span className="leading-snug">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           </div>
         </div>
 
         {/* Bottom Strategic Note */}
-        <div className="mt-14 text-center">
+        <div className="mt-10 text-center">
           <span className="text-xs font-mono text-faint uppercase tracking-widest">
             Strategic Direction: One Integrated Omni-Channel System &gt; Disjointed Service Agencies
           </span>

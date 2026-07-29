@@ -3,6 +3,11 @@
 import { useEffect, useState } from "react";
 import { motion, useSpring, useMotionValue } from "framer-motion";
 
+/* ----------------------------------------------------
+ * High-Performance Magnetic Glow Cursor
+ * Throttled position updates & lightweight hover detection
+ * --------------------------------------------------*/
+
 export default function CustomCursor() {
   const [hovered, setHovered] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -10,41 +15,49 @@ export default function CustomCursor() {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
 
-  const springConfig = { damping: 28, stiffness: 350, mass: 0.5 };
+  const springConfig = { damping: 30, stiffness: 400, mass: 0.3 };
   const smoothX = useSpring(cursorX, springConfig);
   const smoothY = useSpring(cursorY, springConfig);
 
   useEffect(() => {
-    // Disable custom cursor on touch devices for performance & standard touch UX
     if (typeof window === "undefined" || window.matchMedia("(pointer: coarse)").matches) {
       return;
     }
 
+    let ticking = false;
+
     const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          cursorX.set(e.clientX);
+          cursorY.set(e.clientY);
+          ticking = false;
+        });
+        ticking = true;
+      }
       if (!visible) setVisible(true);
     };
 
     const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target) return;
+      const el = e.target as HTMLElement;
+      if (!el) return;
+      const tagName = el.tagName;
       const isInteractive =
-        target.closest("a") ||
-        target.closest("button") ||
-        target.closest(".glass-card") ||
-        target.closest("input") ||
-        target.closest("select") ||
-        target.closest("[role='button']");
+        tagName === "A" ||
+        tagName === "BUTTON" ||
+        tagName === "INPUT" ||
+        tagName === "SELECT" ||
+        el.classList.contains("glass-card") ||
+        el.getAttribute("role") === "button";
 
       setHovered(!!isInteractive);
     };
 
     const handleMouseLeave = () => setVisible(false);
 
-    window.addEventListener("mousemove", moveCursor);
-    window.addEventListener("mouseover", handleMouseOver);
-    document.body.addEventListener("mouseleave", handleMouseLeave);
+    window.addEventListener("mousemove", moveCursor, { passive: true });
+    window.addEventListener("mouseover", handleMouseOver, { passive: true });
+    document.body.addEventListener("mouseleave", handleMouseLeave, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", moveCursor);
@@ -66,11 +79,11 @@ export default function CustomCursor() {
           translateY: "-50%",
         }}
         animate={{
-          scale: hovered ? 1.8 : 1,
-          opacity: hovered ? 0.9 : 0.45,
+          scale: hovered ? 1.6 : 1,
+          opacity: hovered ? 0.85 : 0.4,
         }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
-        className="fixed w-9 h-9 rounded-full border border-accent/60 bg-accent/5 backdrop-blur-[2px]"
+        transition={{ type: "spring", stiffness: 450, damping: 28 }}
+        className="fixed w-8 h-8 rounded-full border border-accent/60 bg-accent/5 backdrop-blur-[1px] will-change-transform"
       />
 
       {/* Inner Precision Glowing Dot */}
@@ -84,7 +97,7 @@ export default function CustomCursor() {
         animate={{
           scale: hovered ? 0.6 : 1,
         }}
-        className="fixed w-2 h-2 rounded-full bg-accent shadow-[0_0_10px_var(--accent)]"
+        className="fixed w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_var(--accent)] will-change-transform"
       />
     </div>
   );
