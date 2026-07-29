@@ -1,52 +1,28 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
-const instrumentSerif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
-  variable: "--font-serif",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-mono",
-  display: "swap",
-});
-
 export const metadata: Metadata = {
-  title: "Jenesis Global — Building What's Next",
+  title: "JENESIS GLOBAL // Autonomous Engine & Strategic Advisory",
   description:
-    "Jenesis — AI ecosystems, intelligent engineering, and premium digital experiences. Global vision. Human future.",
+    "Jenesis Global — Architecting high-stakes digital ecosystems, enterprise AI infrastructure, and next-generation capital strategies at the intersection of Strategy, AI, and Capital.",
   keywords: [
-    "Jenesis",
-    "AI solutions",
-    "custom AI",
-    "cloud infrastructure",
-    "enterprise AI",
-    "premium engineering",
-    "digital experiences",
+    "Jenesis Global",
+    "WebGL",
+    "Igloo Inc Clone",
+    "AI Systems",
+    "Strategic Advisory",
+    "Venture Capital",
+    "Enterprise Infrastructure",
   ],
 };
 
 export const viewport: Viewport = {
-  themeColor: "#050507",
+  themeColor: "#07090e",
   width: "device-width",
   initialScale: 1,
 };
 
-// Dark is the brand default; light applies only when explicitly chosen.
-// Runs before first paint — no flash of wrong theme.
-const themeInit = `try{if(localStorage.getItem("theme")!=="light")document.documentElement.classList.add("dark")}catch(e){document.documentElement.classList.add("dark")}`;
+const themeInit = `try{document.documentElement.classList.add("dark")}catch(e){}`;
 
 export default function RootLayout({
   children,
@@ -54,15 +30,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${inter.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`}
-    >
+    <html lang="en" suppressHydrationWarning className="dark font-mono">
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body className="bg-bg text-ink antialiased">{children}</body>
+      <body className="bg-[#07090e] text-white antialiased selection:bg-[#00f0ff] selection:text-black">
+        {children}
+      </body>
     </html>
   );
 }
