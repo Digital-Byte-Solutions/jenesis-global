@@ -135,7 +135,7 @@ export default function PortfolioMonoliths({
   scrollProgress,
   onSelectPortfolio,
 }: PortfolioMonolithsProps) {
-  const isVisible = scrollProgress >= 0.45 && scrollProgress <= 0.82;
+  const isVisible = scrollProgress >= 0.32 && scrollProgress <= 0.44;
 
   const activeIndex = Math.min(
     PORTFOLIO_ITEMS.length - 1,

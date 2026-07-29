@@ -17,7 +17,7 @@ export default function ParticleHologramPedestal({ scrollProgress }: PedestalPro
   const groupRef = useRef<THREE.Group>(null);
   const particleMeshRef = useRef<THREE.Points>(null);
 
-  const isVisible = scrollProgress >= 0.75 && scrollProgress <= 0.92;
+  const isVisible = scrollProgress >= 0.65 && scrollProgress <= 0.76;
 
   const [positions, originalY] = useMemo(() => {
     const particleCount = 3500;
