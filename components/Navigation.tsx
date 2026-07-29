@@ -8,8 +8,8 @@ import ThemeToggle from "./ThemeToggle";
 const NAV_LINKS = [
   { label: "Approach", href: "#approach" },
   { label: "Proof", href: "#proof" },
-  { label: "Manifesto", href: "#manifesto" },
   { label: "Services", href: "#services" },
+  { label: "Why Jenesis", href: "#manifesto" },
   { label: "Process", href: "#process" },
   { label: "FAQ", href: "#faq" },
   { label: "Contact", href: "#contact" },
@@ -61,30 +61,40 @@ export default function Navigation() {
             : "py-5 px-6"
         }`}
       >
-        <div className={`container-wide flex items-center justify-between transition-all duration-500 ${
-          scrolled
-            ? "bg-surface/85 backdrop-blur-2xl border border-line-strong rounded-full px-5 py-2 shadow-2xl shadow-black/30 max-w-6xl"
-            : "w-full"
-        }`}>
+        <div
+          className={`container-wide flex items-center justify-between transition-all duration-500 ${
+            scrolled
+              ? "bg-surface/80 backdrop-blur-2xl border border-line-strong rounded-full px-6 py-2.5 shadow-2xl shadow-black/40 max-w-5xl gap-6 lg:gap-10"
+              : "w-full gap-8"
+          }`}
+        >
           {/* Logo — Jenesis emphasized, Global subdued */}
-          <a href="#" className="flex items-center gap-3 group">
-            <BrandMark size={30} />
+          <a href="#" className="flex items-center gap-3 group shrink-0">
+            <BrandMark size={28} />
             <span className="flex flex-col leading-none">
-              <span className="wordmark text-[15px]">Jenesis</span>
-              <span className="wordmark-sub text-[8px] mt-1">Global</span>
+              <span className="wordmark text-[14px]">Jenesis</span>
+              <span className="wordmark-sub text-[7.5px] mt-0.5">Global</span>
             </span>
           </a>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1 bg-surface border border-line rounded-full px-2 py-1.5 shadow-sm relative">
+          {/* Desktop nav — Clean & spacious without heavy double-pill enclosure */}
+          <nav
+            className={`hidden md:flex items-center gap-1 lg:gap-2 relative transition-all ${
+              scrolled
+                ? "bg-transparent border-0 px-0 py-0"
+                : "bg-surface/60 border border-line/60 rounded-full px-3 py-1 shadow-sm"
+            }`}
+          >
             {NAV_LINKS.map((link) => {
               const isActive = activeSection === link.href;
               return (
                 <a
                   key={link.label}
                   href={link.href}
-                  className={`px-3.5 py-1.5 text-[12px] font-medium transition-colors rounded-full relative z-10 ${
-                    isActive ? "text-ink font-semibold" : "text-body hover:text-ink"
+                  className={`px-3 py-1.5 text-[13px] font-medium transition-all rounded-full relative z-10 ${
+                    isActive
+                      ? "text-ink font-semibold"
+                      : "text-body/80 hover:text-ink"
                   }`}
                 >
                   {isActive && (
@@ -100,13 +110,13 @@ export default function Navigation() {
             })}
           </nav>
 
-          {/* Right side */}
-          <div className="flex items-center gap-2.5">
+          {/* Right side controls */}
+          <div className="flex items-center gap-4.5 shrink-0">
             <ThemeToggle />
 
             <a
               href="#contact"
-              className="hidden sm:inline-flex btn btn-primary !py-2 !px-4 text-[13px]"
+              className="hidden sm:inline-flex btn btn-primary !py-2 !px-4.5 text-[13px] font-medium shadow-md"
             >
               Book a call
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>

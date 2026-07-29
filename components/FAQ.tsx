@@ -111,7 +111,7 @@ export default function FAQ() {
   return (
     <section
       id="faq"
-      className="relative py-28 sm:py-32 lg:py-36 overflow-hidden"
+      className="relative py-12 sm:py-16 lg:py-20 overflow-hidden"
     >
       <div className="container-narrow px-6 lg:px-10 relative z-10">
         {/* Header */}

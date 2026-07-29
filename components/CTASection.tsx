@@ -60,7 +60,7 @@ export default function CTASection() {
   return (
     <section
       id="contact"
-      className="relative py-28 sm:py-32 lg:py-40 overflow-hidden bg-bg border-t border-line"
+      className="relative py-12 sm:py-16 lg:py-20 overflow-hidden bg-bg border-t border-line"
     >
       {/* Background ambient lighting */}
       <div className="ambient-glow ambient-glow--center opacity-40" />

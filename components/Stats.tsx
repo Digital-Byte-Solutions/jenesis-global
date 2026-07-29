@@ -79,7 +79,7 @@ export default function Stats() {
   const inView = useInView(ref, { once: true, margin: "-20%" });
 
   return (
-    <section className="relative py-20 sm:py-24 lg:py-28 overflow-hidden">
+    <section className="relative py-12 sm:py-16 lg:py-20 overflow-hidden">
       <div className="container-wide px-6 lg:px-10 relative z-10">
         {/* Header */}
         <motion.div

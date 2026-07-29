@@ -13,10 +13,10 @@ function MouseCamera() {
   const target = useRef(new THREE.Vector3(0, 0, 8));
 
   useFrame(() => {
-    target.current.x = mouse.x * 0.4;
-    target.current.y = mouse.y * 0.3;
-    camera.position.x += (target.current.x - camera.position.x) * 0.04;
-    camera.position.y += (target.current.y - camera.position.y) * 0.04;
+    target.current.x = mouse.x * 0.65;
+    target.current.y = mouse.y * 0.45;
+    camera.position.x += (target.current.x - camera.position.x) * 0.05;
+    camera.position.y += (target.current.y - camera.position.y) * 0.05;
     camera.lookAt(0, 0, 0);
   });
 

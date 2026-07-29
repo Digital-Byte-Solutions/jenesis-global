@@ -134,7 +134,7 @@ export default function Testimonials() {
   return (
     <section
       id="work"
-      className="relative py-28 sm:py-32 lg:py-40 overflow-hidden"
+      className="relative py-12 sm:py-16 lg:py-20 overflow-hidden"
     >
       <div className="ambient-glow ambient-glow--right" />
 

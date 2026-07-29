@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useMemo } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import {
   Float,
   MeshTransmissionMaterial,
@@ -347,11 +347,35 @@ function WireframeShape({
 
 /* ----------------------------------------------------
  * Master export — combines all floating objects
+/* ----------------------------------------------------
+ * Interactive Mouse-Driven 3D Rotation Container
+ * Rotates the entire sculpture smoothly following mouse cursor position
+ * --------------------------------------------------*/
+function Interactive3DGroup({ children }: { children: React.ReactNode }) {
+  const groupRef = useRef<THREE.Group>(null);
+  const { mouse } = useThree();
+
+  useFrame(() => {
+    if (!groupRef.current) return;
+    // Balanced medium 3D motion: Y-rotation up to ±0.45 rad (~25°), X-tilt up to ±0.35 rad (~20°)
+    const targetRotY = mouse.x * 0.45;
+    const targetRotX = -mouse.y * 0.35;
+
+    // Smooth lerp for refined, elegant cursor tracking
+    groupRef.current.rotation.y += (targetRotY - groupRef.current.rotation.y) * 0.06;
+    groupRef.current.rotation.x += (targetRotX - groupRef.current.rotation.x) * 0.06;
+  });
+
+  return <group ref={groupRef}>{children}</group>;
+}
+
+/* ----------------------------------------------------
+ * Master export — combines all floating objects
  * Tuned to fit within the hero's RIGHT column (smaller frame)
  * --------------------------------------------------*/
 export default function FloatingObjects() {
   return (
-    <>
+    <Interactive3DGroup>
       {/* Central AI Core (the hero of the hero) */}
       <Float speed={1.2} rotationIntensity={0.4} floatIntensity={0.5}>
         <AICore position={[0, 0, 0]} />
@@ -389,6 +413,6 @@ export default function FloatingObjects() {
 
       {/* Particle field (smaller, denser around center) */}
       <ParticleField count={200} />
-    </>
+    </Interactive3DGroup>
   );
 }

@@ -281,25 +281,25 @@ export default function Page() {
       {/* Ambient particle nebula behind all content */}
       <Background />
 
-      {/* Hero — minimal lockup + AI core 3D scene */}
+      {/* Hero — 5-second revenue headline + AI core 3D scene */}
       <Hero />
 
-      {/* The Approach — Omni-Channel Connected Engine */}
+      {/* 03. The Approach — Omni-Channel Connected Engine */}
       <ApproachEngine />
 
-      {/* Proof — Real Disguised Revenue Case Studies */}
+      {/* 04. Proof — Real Disguised Revenue Case Studies */}
       <ProofSection />
 
-      {/* Manifesto / values */}
+      {/* 05. Services — Scannable 4-quadrant bento grid */}
+      <Services />
+
+      {/* 06. Why Jenesis / Manifesto */}
       <Manifesto />
 
       {/* Brand marquee */}
       <Marquee />
 
-      {/* Services */}
-      <Services />
-
-      {/* Process */}
+      {/* 07. Process — 12-Week Roadmap */}
       <Process />
 
       {/* Stats */}
