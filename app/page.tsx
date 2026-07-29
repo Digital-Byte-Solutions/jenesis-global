@@ -9,13 +9,12 @@ import { PortfolioItem } from "@/lib/data";
 import { audioEngine } from "@/lib/AudioEngine";
 import Lenis from "lenis";
 
-// Dynamically import Canvas component with SSR disabled for optimal WebGL performance
 const IglooCanvas = dynamic(() => import("@/components/IglooCanvas"), {
   ssr: false,
   loading: () => (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#07090e] text-white font-mono">
-      <div className="w-12 h-12 border-2 border-[#00f0ff] border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_20px_#00f0ff]" />
-      <div className="text-xs tracking-widest text-[#00f0ff] animate-pulse">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#050507] text-white font-mono">
+      <div className="w-12 h-12 border-2 border-[#ff1744] border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_25px_#ff1744]" />
+      <div className="text-xs tracking-widest text-[#ff4d8d] animate-pulse">
         INITIALIZING JENESIS WEBGL ENGINE...
       </div>
     </div>
@@ -28,7 +27,6 @@ export default function Home() {
   const [soundActive, setSoundActive] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Initialize smooth scroll & scroll progress tracker
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -38,6 +36,7 @@ export default function Home() {
 
     function onScroll(e: { progress: number }) {
       setScrollProgress(e.progress);
+      audioEngine.updateScrollPitch(e.progress);
     }
 
     lenis.on("scroll", onScroll);
@@ -60,7 +59,7 @@ export default function Home() {
   };
 
   return (
-    <main className="relative bg-[#07090e] text-white min-h-screen selection:bg-[#00f0ff] selection:text-black">
+    <main className="relative bg-[#050507] text-white min-h-screen selection:bg-[#ff1744] selection:text-white">
       {/* HUD Telemetry UI Overlay */}
       <HUDOverlay
         scrollProgress={scrollProgress}
@@ -80,23 +79,12 @@ export default function Home() {
         onClose={() => setSelectedPortfolio(null)}
       />
 
-      {/* Scrollable Height Canvas (500vh to accommodate all 6 visual stages smoothly!) */}
+      {/* Scrollable Height Canvas (500vh for smooth 6-stage scroll transitions) */}
       <div ref={scrollContainerRef} className="relative z-10 w-full">
-        {/* Stage 1: Core Hero Section */}
-        <section className="h-screen w-full flex items-center justify-center pointer-events-none">
-          {/* Subtle hero overlay if needed */}
-        </section>
-
-        {/* Stage 2: Deconstruction / Explosion */}
+        <section className="h-screen w-full flex items-center justify-center pointer-events-none" />
         <section className="h-screen w-full pointer-events-none" />
-
-        {/* Stage 3: Crystalline Portfolio Monoliths */}
         <section className="h-screen w-full pointer-events-none" />
-
-        {/* Stage 4: Particle Hologram Pedestal */}
         <section className="h-screen w-full pointer-events-none" />
-
-        {/* Stage 5: Spherical Ring Portal & Strategic Consultation Footer */}
         <section className="min-h-screen w-full relative z-20">
           <FooterSection />
         </section>

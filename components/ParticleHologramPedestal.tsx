@@ -13,27 +13,24 @@ interface PedestalProps {
 }
 
 export default function ParticleHologramPedestal({ scrollProgress }: PedestalProps) {
-  const [activePlatformIndex, setActivePlatformIndex] = useState(1); // Default LinkedIn
+  const [activePlatformIndex, setActivePlatformIndex] = useState(1);
   const groupRef = useRef<THREE.Group>(null);
   const particleMeshRef = useRef<THREE.Points>(null);
 
   const isVisible = scrollProgress >= 0.75 && scrollProgress <= 0.92;
 
-  // Generate 3D point cloud particles for the hologram mascot/core
   const [positions, originalY] = useMemo(() => {
     const particleCount = 3500;
     const posArr = new Float32Array(particleCount * 3);
     const origYArr = new Float32Array(particleCount);
 
     for (let i = 0; i < particleCount; i++) {
-      // Create a humanoid / mascot outline with head, body, ears/headphones, and arms
       const layer = Math.random();
       let x = 0;
       let y = 0;
       let z = 0;
 
       if (layer < 0.3) {
-        // Head sphere
         const u = Math.random();
         const v = Math.random();
         const theta = u * 2.0 * Math.PI;
@@ -43,14 +40,12 @@ export default function ParticleHologramPedestal({ scrollProgress }: PedestalPro
         y = 0.9 + r * Math.cos(phi);
         z = r * Math.sin(phi) * Math.sin(theta);
       } else if (layer < 0.4) {
-        // Headphones ring around head (matching screenshot 6 mascot!)
         const angle = Math.random() * Math.PI * 2;
         const r = 0.62;
         x = Math.cos(angle) * r;
         y = 0.9 + Math.sin(angle) * r;
         z = (Math.random() - 0.5) * 0.2;
       } else if (layer < 0.85) {
-        // Body / pear shape
         const u = Math.random();
         const v = Math.random();
         const theta = u * 2.0 * Math.PI;
@@ -60,7 +55,6 @@ export default function ParticleHologramPedestal({ scrollProgress }: PedestalPro
         y = 0.0 + r * Math.cos(phi) * 0.75;
         z = r * Math.sin(phi) * Math.sin(theta) * 0.85;
       } else {
-        // Pedestal base aura glow
         const angle = Math.random() * Math.PI * 2;
         const r = Math.random() * 1.5;
         x = Math.cos(angle) * r;
@@ -81,10 +75,8 @@ export default function ParticleHologramPedestal({ scrollProgress }: PedestalPro
     if (!particleMeshRef.current) return;
     const t = state.clock.elapsedTime;
 
-    // Slow rotation
     particleMeshRef.current.rotation.y = t * 0.25;
 
-    // Wave displacement effect on particles
     const pos = particleMeshRef.current.geometry.attributes.position.array as Float32Array;
     for (let i = 0; i < pos.length / 3; i++) {
       const origY = originalY[i];
@@ -109,38 +101,35 @@ export default function ParticleHologramPedestal({ scrollProgress }: PedestalPro
 
   return (
     <group ref={groupRef} position={[0, -0.6, 0]}>
-      {/* 3D Point Cloud Mascot / Emblem (Matching Screenshot 6!) */}
+      {/* 3D Point Cloud Mascot / Emblem (Crimson & Pink Theme) */}
       <points ref={particleMeshRef}>
         <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            args={[positions, 3]}
-          />
+          <bufferAttribute attach="attributes-position" args={[positions, 3]} />
         </bufferGeometry>
         <pointsMaterial
           size={0.035}
-          color="#00f0ff"
+          color="#ff1744"
           transparent
           opacity={0.85}
           blending={THREE.AdditiveBlending}
         />
       </points>
 
-      {/* Concentric Metallic Pedestal Ring Platform (Matching Screenshot 6!) */}
+      {/* Concentric Metallic Pedestal Ring Platform (Matching Crimson Theme) */}
       <group position={[0, -0.85, 0]}>
         {/* Outer Ring */}
         <mesh rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[1.8, 2.3, 64]} />
-          <meshStandardMaterial color="#1a1e24" roughness={0.1} metalness={0.9} />
+          <meshStandardMaterial color="#1a1215" roughness={0.1} metalness={0.9} />
         </mesh>
 
-        {/* Middle Glowing Ring */}
+        {/* Middle Glowing Crimson Ring */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
           <ringGeometry args={[1.2, 1.4, 64]} />
           <meshStandardMaterial
-            color="#00f0ff"
-            emissive="#00f0ff"
-            emissiveIntensity={2}
+            color="#ff1744"
+            emissive="#ff1744"
+            emissiveIntensity={2.5}
             roughness={0.1}
           />
         </mesh>
@@ -148,18 +137,18 @@ export default function ParticleHologramPedestal({ scrollProgress }: PedestalPro
         {/* Center Disc */}
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
           <circleGeometry args={[1.1, 64]} />
-          <meshStandardMaterial color="#0b0e14" roughness={0.2} metalness={0.8} />
+          <meshStandardMaterial color="#0b0709" roughness={0.2} metalness={0.8} />
         </mesh>
       </group>
 
-      {/* Hologram Pedestal UI Controls (Matching Screenshot 6!) */}
+      {/* Hologram Pedestal UI Controls */}
       <Html distanceFactor={7} position={[0, -1.2, 0]} center>
         <div className="flex flex-col items-center select-none">
-          <div className="flex items-center gap-6 bg-black/80 border border-[#00f0ff]/50 px-6 py-2 rounded-full backdrop-blur-md shadow-[0_0_20px_rgba(0,240,255,0.3)]">
+          <div className="flex items-center gap-6 bg-black/85 border border-[#ff1744]/60 px-6 py-2 rounded-full backdrop-blur-md shadow-[0_0_25px_rgba(255,23,68,0.4)]">
             <button
               onClick={handlePrev}
               onMouseEnter={() => audioEngine.playHoverSound()}
-              className="text-[#00f0ff] hover:text-white transition-colors p-1"
+              className="text-[#ff4d8d] hover:text-white transition-colors p-1"
             >
               <ChevronLeft size={20} />
             </button>
@@ -172,9 +161,9 @@ export default function ParticleHologramPedestal({ scrollProgress }: PedestalPro
               onMouseEnter={() => audioEngine.playHoverSound()}
               className="group flex flex-col items-center px-4"
             >
-              <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-widest text-white group-hover:text-[#00f0ff] transition-colors">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold tracking-widest text-white group-hover:text-[#ff1744] transition-colors">
                 <span>[</span>
-                <span className="text-[#00f0ff]">{currentPlatform.name}</span>
+                <span className="text-[#ff4d8d]">{currentPlatform.name}</span>
                 <span>]</span>
               </div>
               <div className="text-[9px] font-mono text-gray-400 mt-0.5">
@@ -185,7 +174,7 @@ export default function ParticleHologramPedestal({ scrollProgress }: PedestalPro
             <button
               onClick={handleNext}
               onMouseEnter={() => audioEngine.playHoverSound()}
-              className="text-[#00f0ff] hover:text-white transition-colors p-1"
+              className="text-[#ff4d8d] hover:text-white transition-colors p-1"
             >
               <ChevronRight size={20} />
             </button>

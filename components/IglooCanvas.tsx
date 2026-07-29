@@ -23,21 +23,16 @@ function DynamicCameraController({ scrollProgress }: { scrollProgress: number })
   const targetLook = useRef(new THREE.Vector3(0, 0, 0));
 
   useFrame(() => {
-    // Determine target camera positions across scroll sections
     if (scrollProgress < 0.4) {
-      // Stage 1 & 2: Frontal view of Globe Core
       targetPos.current.set(mouse.x * 0.5, mouse.y * 0.4 + 0.2, 7.8);
       targetLook.current.set(0, 0, 0);
     } else if (scrollProgress < 0.75) {
-      // Stage 3 & 4: Monolith fly-through in space
       targetPos.current.set(mouse.x * 0.8, mouse.y * 0.5, 6.5);
       targetLook.current.set(0, 0, 0);
     } else if (scrollProgress < 0.88) {
-      // Stage 5: Hologram Pedestal View
       targetPos.current.set(mouse.x * 0.4, -0.2, 6.0);
       targetLook.current.set(0, -0.6, 0);
     } else {
-      // Stage 6: Top-Down Spherical Portal View (Matching Screenshot 7!)
       targetPos.current.set(0, 4.5, 2.5);
       targetLook.current.set(0, 0, 0);
     }
@@ -49,19 +44,30 @@ function DynamicCameraController({ scrollProgress }: { scrollProgress: number })
   return null;
 }
 
-/* Floating Snow / Atmospheric Dust Particle Snowfall System */
-function AtmosphericParticles() {
+/* Crimson & Pink Star Field Snowfall System */
+function CrimsonAtmosphericParticles() {
   const pointsRef = useRef<THREE.Points>(null);
 
-  const [positions] = useMemo(() => {
+  const [positions, colors] = useMemo(() => {
     const count = 1200;
     const posArr = new Float32Array(count * 3);
+    const colArr = new Float32Array(count * 3);
+    const c1 = new THREE.Color("#ff1744");
+    const c2 = new THREE.Color("#ff4d8d");
+    const c3 = new THREE.Color("#ffffff");
+
     for (let i = 0; i < count; i++) {
       posArr[i * 3] = (Math.random() - 0.5) * 20;
       posArr[i * 3 + 1] = (Math.random() - 0.5) * 20;
       posArr[i * 3 + 2] = (Math.random() - 0.5) * 20;
+
+      const pick = Math.random();
+      const col = pick < 0.5 ? c1 : pick < 0.8 ? c2 : c3;
+      colArr[i * 3] = col.r;
+      colArr[i * 3 + 1] = col.g;
+      colArr[i * 3 + 2] = col.b;
     }
-    return [posArr];
+    return [posArr, colArr];
   }, []);
 
   useFrame((state) => {
@@ -81,37 +87,16 @@ function AtmosphericParticles() {
     <points ref={pointsRef}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+        <bufferAttribute attach="attributes-color" args={[colors, 3]} />
       </bufferGeometry>
       <pointsMaterial
         size={0.035}
-        color="#00f0ff"
+        vertexColors
         transparent
-        opacity={0.6}
+        opacity={0.7}
         blending={THREE.AdditiveBlending}
       />
     </points>
-  );
-}
-
-/* Atmospheric Mountain / Terrain Ground Plane */
-function GroundTerrain({ scrollProgress }: { scrollProgress: number }) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const opacity = Math.max(0, 1 - scrollProgress * 2.2); // Fades out as we fly into space
-
-  if (opacity <= 0.01) return null;
-
-  return (
-    <mesh ref={meshRef} position={[0, -1.8, -2]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
-      <planeGeometry args={[30, 30, 64, 64]} />
-      <meshStandardMaterial
-        color="#0d1117"
-        roughness={0.8}
-        metalness={0.2}
-        wireframe={false}
-        transparent
-        opacity={opacity}
-      />
-    </mesh>
   );
 }
 
@@ -129,15 +114,16 @@ export default function IglooCanvas({ scrollProgress, onSelectPortfolio }: Igloo
         }}
       >
         <Suspense fallback={null}>
-          {/* Lighting Rig matching Igloo.inc style */}
-          <ambientLight intensity={0.6} color="#cce7ff" />
-          <directionalLight position={[5, 8, 5]} intensity={1.5} color="#ffffff" />
-          <directionalLight position={[-5, -4, -5]} intensity={0.5} color="#00f0ff" />
-          <pointLight position={[0, 2, 3]} intensity={2.0} color="#00d4ff" />
+          {/* Signature Crimson & Pink Lighting Rig */}
+          <ambientLight intensity={0.5} color="#ffffff" />
+          <directionalLight position={[3, 3, 3]} intensity={0.9} color="#ffffff" />
+          <directionalLight position={[-3, -2, -3]} intensity={0.4} color="#ff4d8d" />
+          <pointLight position={[0, 0, 4]} intensity={2.0} color="#ff1744" />
+          <pointLight position={[-4, 3, 2]} intensity={1.2} color="#ff4d8d" />
+          <pointLight position={[4, -3, 2]} intensity={1.0} color="#ff6b9d" />
 
           <DynamicCameraController scrollProgress={scrollProgress} />
-          <AtmosphericParticles />
-          <GroundTerrain scrollProgress={scrollProgress} />
+          <CrimsonAtmosphericParticles />
 
           {/* 3D Visual Stages */}
           <JenesisGlobeCore scrollProgress={scrollProgress} />
@@ -148,12 +134,12 @@ export default function IglooCanvas({ scrollProgress, onSelectPortfolio }: Igloo
           <ParticleHologramPedestal scrollProgress={scrollProgress} />
           <SphericalPortal scrollProgress={scrollProgress} />
 
-          {/* Post-Processing Shaders (Bloom & Vignette) */}
+          {/* Post-Processing Shaders (Crimson Bloom & Vignette) */}
           <EffectComposer multisampling={0}>
             <Bloom
               luminanceThreshold={0.4}
-              luminanceSmoothing={0.5}
-              intensity={1.5}
+              luminanceSmoothing={0.4}
+              intensity={1.6}
               mipmapBlur
             />
             <Vignette eskil={false} offset={0.15} darkness={0.7} />

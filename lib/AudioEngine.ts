@@ -5,13 +5,33 @@ class SoundManager {
   private isMuted: boolean = true;
   private droneOsc1: OscillatorNode | null = null;
   private droneOsc2: OscillatorNode | null = null;
+  private droneFilter: BiquadFilterNode | null = null;
   private droneGain: GainNode | null = null;
+  private initialized: boolean = false;
+
+  constructor() {
+    if (typeof window !== "undefined") {
+      const unlockAudio = () => {
+        this.init();
+        if (this.ctx && this.ctx.state === "suspended") {
+          this.ctx.resume();
+        }
+        window.removeEventListener("pointerdown", unlockAudio);
+        window.removeEventListener("keydown", unlockAudio);
+      };
+      window.addEventListener("pointerdown", unlockAudio);
+      window.addEventListener("keydown", unlockAudio);
+    }
+  }
 
   public init() {
-    if (this.ctx) return;
+    if (this.initialized && this.ctx) return;
     try {
-      const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const AudioContextClass =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       this.ctx = new AudioContextClass();
+      this.initialized = true;
     } catch {
       console.warn("Web Audio API not supported");
     }
@@ -27,7 +47,7 @@ class SoundManager {
 
     if (!this.isMuted) {
       this.startAmbientDrone();
-      this.playClickSound(800, 0.05);
+      this.playClickSound(880, 0.08);
     } else {
       this.stopAmbientDrone();
     }
@@ -39,91 +59,123 @@ class SoundManager {
     return this.isMuted;
   }
 
-  private startAmbientDrone() {
-    if (!this.ctx || this.droneOsc1) return;
+  public startAmbientDrone() {
+    if (!this.ctx) return;
+    if (this.ctx.state === "suspended") {
+      this.ctx.resume();
+    }
+    if (this.droneOsc1) return;
 
-    // Ambient sci-fi drone
-    const osc1 = this.ctx.createOscillator();
-    const osc2 = this.ctx.createOscillator();
-    const filter = this.ctx.createBiquadFilter();
-    const gain = this.ctx.createGain();
+    try {
+      const osc1 = this.ctx.createOscillator();
+      const osc2 = this.ctx.createOscillator();
+      const filter = this.ctx.createBiquadFilter();
+      const gain = this.ctx.createGain();
 
-    osc1.type = "sine";
-    osc1.frequency.setValueAtTime(55, this.ctx.currentTime); // Low A
+      osc1.type = "sawtooth";
+      osc1.frequency.setValueAtTime(55, this.ctx.currentTime); // Low A
 
-    osc2.type = "triangle";
-    osc2.frequency.setValueAtTime(110.5, this.ctx.currentTime); // Slightly detuned A
+      osc2.type = "sine";
+      osc2.frequency.setValueAtTime(110.5, this.ctx.currentTime); // Detuned octave
 
-    filter.type = "lowpass";
-    filter.frequency.setValueAtTime(240, this.ctx.currentTime);
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(180, this.ctx.currentTime);
 
-    gain.gain.setValueAtTime(0.01, this.ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.08, this.ctx.currentTime + 2);
+      gain.gain.setValueAtTime(0.001, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.12, this.ctx.currentTime + 1.2);
 
-    osc1.connect(filter);
-    osc2.connect(filter);
-    filter.connect(gain);
-    gain.connect(this.ctx.destination);
+      osc1.connect(filter);
+      osc2.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.ctx.destination);
 
-    osc1.start();
-    osc2.start();
+      osc1.start();
+      osc2.start();
 
-    this.droneOsc1 = osc1;
-    this.droneOsc2 = osc2;
-    this.droneGain = gain;
+      this.droneOsc1 = osc1;
+      this.droneOsc2 = osc2;
+      this.droneFilter = filter;
+      this.droneGain = gain;
+    } catch (e) {
+      console.warn("Drone audio error", e);
+    }
   }
 
-  private stopAmbientDrone() {
+  public stopAmbientDrone() {
     if (this.droneGain && this.ctx) {
-      this.droneGain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.5);
-      setTimeout(() => {
-        if (this.droneOsc1) {
-          this.droneOsc1.stop();
-          this.droneOsc1.disconnect();
-          this.droneOsc1 = null;
-        }
-        if (this.droneOsc2) {
-          this.droneOsc2.stop();
-          this.droneOsc2.disconnect();
-          this.droneOsc2 = null;
-        }
+      try {
+        this.droneGain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.3);
+        setTimeout(() => {
+          if (this.droneOsc1) {
+            this.droneOsc1.stop();
+            this.droneOsc1.disconnect();
+            this.droneOsc1 = null;
+          }
+          if (this.droneOsc2) {
+            this.droneOsc2.stop();
+            this.droneOsc2.disconnect();
+            this.droneOsc2 = null;
+          }
+          this.droneFilter = null;
+          this.droneGain = null;
+        }, 350);
+      } catch {
+        this.droneOsc1 = null;
+        this.droneOsc2 = null;
         this.droneGain = null;
-      }, 550);
+      }
+    }
+  }
+
+  public updateScrollPitch(progress: number) {
+    if (this.isMuted || !this.ctx || !this.droneFilter) return;
+    try {
+      // Modulate filter cutoff frequency with scroll position (180Hz -> 650Hz)
+      const freq = 180 + progress * 470;
+      this.droneFilter.frequency.setTargetAtTime(freq, this.ctx.currentTime, 0.1);
+    } catch {
+      // Ignore
     }
   }
 
   public playHoverSound() {
     if (this.isMuted || !this.ctx) return;
+    if (this.ctx.state === "suspended") this.ctx.resume();
+
     try {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(1200, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(600, this.ctx.currentTime + 0.03);
 
-      gain.gain.setValueAtTime(0.015, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.03);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(1400, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(700, this.ctx.currentTime + 0.04);
+
+      gain.gain.setValueAtTime(0.03, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.04);
 
       osc.connect(gain);
       gain.connect(this.ctx.destination);
 
       osc.start();
-      osc.stop(this.ctx.currentTime + 0.035);
+      osc.stop(this.ctx.currentTime + 0.045);
     } catch {
-      // Ignore audio glitches
+      // Ignore
     }
   }
 
-  public playClickSound(freq = 900, duration = 0.08) {
+  public playClickSound(freq = 960, duration = 0.08) {
     if (this.isMuted || !this.ctx) return;
+    if (this.ctx.state === "suspended") this.ctx.resume();
+
     try {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
+
       osc.type = "triangle";
       osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(freq / 2, this.ctx.currentTime + duration);
+      osc.frequency.exponentialRampToValueAtTime(freq / 2.5, this.ctx.currentTime + duration);
 
-      gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+      gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
 
       osc.connect(gain);
@@ -138,21 +190,24 @@ class SoundManager {
 
   public playModalSound() {
     if (this.isMuted || !this.ctx) return;
+    if (this.ctx.state === "suspended") this.ctx.resume();
+
     try {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(300, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1200, this.ctx.currentTime + 0.15);
 
-      gain.gain.setValueAtTime(0.03, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.15);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(320, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1400, this.ctx.currentTime + 0.18);
+
+      gain.gain.setValueAtTime(0.06, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.18);
 
       osc.connect(gain);
       gain.connect(this.ctx.destination);
 
       osc.start();
-      osc.stop(this.ctx.currentTime + 0.16);
+      osc.stop(this.ctx.currentTime + 0.19);
     } catch {
       // Ignore
     }

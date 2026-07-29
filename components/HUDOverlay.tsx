@@ -15,11 +15,10 @@ export default function HUDOverlay({
   soundActive,
   onToggleSound,
 }: HUDOverlayProps) {
-  const [hoveredSound, setHoveredSound] = useState(false);
+  const [, setHoveredSound] = useState(false);
 
-  // Active section name based on scroll position
   const getActiveSectionName = () => {
-    if (scrollProgress < 0.2) return "01 // CORE APEX";
+    if (scrollProgress < 0.2) return "01 // CRIMSON CORE APEX";
     if (scrollProgress < 0.45) return "02 // BLUEPRINT EXPLOSION";
     if (scrollProgress < 0.75) return "03 // STRATEGIC MONOLITHS";
     if (scrollProgress < 0.9) return "04 // HOLOGRAM PEDESTAL";
@@ -28,8 +27,8 @@ export default function HUDOverlay({
 
   return (
     <div className="fixed inset-0 z-10 pointer-events-none flex flex-col justify-between p-6 md:p-10 select-none">
-      {/* Background Telemetry Grid & Watermark (Matching Screenshots!) */}
-      <div className="absolute inset-0 opacity-15 pointer-events-none flex items-center justify-center font-mono text-[100px] md:text-[160px] font-extrabold text-[#00f0ff] overflow-hidden whitespace-nowrap blur-sm">
+      {/* Background Telemetry Grid & Watermark (Crimson Theme) */}
+      <div className="absolute inset-0 opacity-15 pointer-events-none flex items-center justify-center font-mono text-[100px] md:text-[160px] font-extrabold text-[#ff1744] overflow-hidden whitespace-nowrap blur-sm">
         JENESIS GLOBAL (55) DATA 90.901.22
       </div>
 
@@ -38,8 +37,8 @@ export default function HUDOverlay({
         {/* Top Left: Logo & Copyright */}
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-3">
-            <div className="text-2xl md:text-3xl font-extrabold font-mono tracking-widest text-white drop-shadow-[0_0_12px_rgba(0,240,255,0.8)]">
-              JENESIS <span className="text-[#00f0ff]">//</span> GLOBAL
+            <div className="text-2xl md:text-3xl font-extrabold font-mono tracking-widest text-white drop-shadow-[0_0_15px_rgba(255,23,68,0.9)]">
+              JENESIS <span className="text-[#ff1744]">//</span> GLOBAL
             </div>
           </div>
           <div className="text-[10px] md:text-[11px] font-mono text-gray-400 tracking-wider">
@@ -49,7 +48,7 @@ export default function HUDOverlay({
 
         {/* Top Right: Manifesto */}
         <div className="max-w-[280px] md:max-w-[340px] text-right hidden sm:flex flex-col gap-1">
-          <div className="text-[11px] font-mono text-[#00f0ff] tracking-widest uppercase font-bold">
+          <div className="text-[11px] font-mono text-[#ff4d8d] tracking-widest uppercase font-bold">
             ////// Manifesto
           </div>
           <div className="text-[11px] md:text-[12px] font-mono text-gray-300 leading-relaxed">
@@ -60,13 +59,13 @@ export default function HUDOverlay({
 
       {/* CENTER WATERMARK RETICLE TICKS */}
       <div className="absolute top-1/2 left-6 right-6 -translate-y-1/2 flex justify-between items-center opacity-30 pointer-events-none">
-        <div className="w-4 h-4 border-l border-t border-[#00f0ff]" />
-        <div className="w-4 h-4 border-r border-t border-[#00f0ff]" />
+        <div className="w-4 h-4 border-l border-t border-[#ff1744]" />
+        <div className="w-4 h-4 border-r border-t border-[#ff1744]" />
       </div>
 
       {/* RIGHT SECTION INDICATOR TELEMETRY */}
       <div className="absolute right-6 md:right-10 top-1/2 -translate-y-1/2 flex flex-col items-end gap-3 pointer-events-auto">
-        <div className="text-[10px] font-mono text-[#00f0ff] tracking-widest mb-1">
+        <div className="text-[10px] font-mono text-[#ff4d8d] tracking-widest mb-1">
           {getActiveSectionName()}
         </div>
         {[
@@ -83,13 +82,13 @@ export default function HUDOverlay({
               key={idx}
               className="flex items-center gap-2 text-[9px] font-mono tracking-widest transition-all duration-300"
             >
-              <span className={isActive ? "text-[#00f0ff] font-bold" : "text-gray-500"}>
+              <span className={isActive ? "text-[#ff1744] font-bold" : "text-gray-500"}>
                 {sec.label}
               </span>
               <div
                 className={`w-2 h-2 rounded-full transition-all ${
                   isActive
-                    ? "bg-[#00f0ff] shadow-[0_0_10px_#00f0ff] scale-125"
+                    ? "bg-[#ff1744] shadow-[0_0_12px_#ff1744] scale-125"
                     : "bg-gray-700"
                 }`}
               />
@@ -103,7 +102,7 @@ export default function HUDOverlay({
         {/* Bottom Left: Scroll Prompt & Sound Toggle */}
         <div className="flex flex-col gap-3">
           <div className="text-[11px] font-mono text-gray-400 tracking-widest animate-pulse flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00f0ff]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#ff1744]" />
             Scroll down to discover.
           </div>
 
@@ -116,10 +115,10 @@ export default function HUDOverlay({
               audioEngine.playHoverSound();
             }}
             onMouseLeave={() => setHoveredSound(false)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded bg-black/60 border border-white/20 hover:border-[#00f0ff] text-xs font-mono text-gray-300 hover:text-[#00f0ff] backdrop-blur-md transition-all duration-300 w-fit"
+            className="flex items-center gap-2 px-3 py-1.5 rounded bg-black/60 border border-white/20 hover:border-[#ff1744] text-xs font-mono text-gray-300 hover:text-[#ff1744] backdrop-blur-md transition-all duration-300 w-fit"
           >
             {soundActive ? (
-              <Volume2 size={14} className="text-[#00f0ff]" />
+              <Volume2 size={14} className="text-[#ff1744]" />
             ) : (
               <VolumeX size={14} className="text-gray-400" />
             )}
@@ -131,7 +130,7 @@ export default function HUDOverlay({
         <div className="text-[10px] font-mono text-gray-500 tracking-widest text-right">
           <div>LAT: 37.7749° N</div>
           <div>LON: 122.4194° W</div>
-          <div className="text-[#00f0ff]/80 font-bold mt-0.5">SYS.VER // 2.026.4</div>
+          <div className="text-[#ff4d8d]/80 font-bold mt-0.5">SYS.VER // 2.026.4</div>
         </div>
       </div>
     </div>
