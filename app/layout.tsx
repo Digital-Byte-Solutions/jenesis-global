@@ -16,12 +16,18 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#050507",
+  themeColor: "#f5f3ef",
   width: "device-width",
   initialScale: 1,
 };
 
-const themeInit = `try{document.documentElement.classList.add("dark")}catch(e){}`;
+/* Immediately apply light theme class to avoid FOUC */
+const themeInit = `try{
+  var t=localStorage.getItem('jg-theme')||'light';
+  document.documentElement.classList.add(t);
+}catch(e){document.documentElement.classList.add('light')}`;
+
+import CinematicGrain from "@/components/CinematicGrain";
 
 export default function RootLayout({
   children,
@@ -29,11 +35,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className="dark font-mono">
+    <html lang="en" suppressHydrationWarning className="light">
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
       </head>
-      <body className="bg-[#050507] text-white antialiased selection:bg-[#ff1744] selection:text-white">
+      <body
+        className="antialiased"
+        style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+      >
+        <CinematicGrain />
         {children}
       </body>
     </html>

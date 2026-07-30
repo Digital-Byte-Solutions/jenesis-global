@@ -3,176 +3,281 @@
 import { useMemo, useRef, Suspense } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { AdaptiveDpr } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, Vignette, ChromaticAberration, Noise } from "@react-three/postprocessing";
 import * as THREE from "three";
+
 import JenesisGlobeCore from "./JenesisGlobeCore";
-import PortfolioMonoliths from "./PortfolioMonoliths";
-import ParticleHologramPedestal from "./ParticleHologramPedestal";
-import SphericalPortal from "./SphericalPortal";
+import LiquidBackground from "./LiquidBackground";
 import { PortfolioItem } from "@/lib/data";
 
 interface IglooCanvasProps {
   scrollProgress: number;
-  themeMode?: "dark" | "light" | "cyberpunk";
+  themeMode?: "dark" | "light";
   onSelectPortfolio: (item: PortfolioItem) => void;
 }
 
-/* Dynamic WebGL Atmosphere: ALWAYS keep dark obsidian background for the globe */
-function WebGLAtmosphere({ themeMode = "dark" }: { themeMode?: string }) {
-  const { scene } = useThree();
-
-  const [bgColor, fogColor] = useMemo(() => {
-    if (themeMode === "cyberpunk") {
-      return ["#050012", "#050012"];
-    }
-    // In light and dark modes, keep signature dark obsidian space background for the globe
-    return ["#050507", "#050507"];
-  }, [themeMode]);
+/* ─────────────────────────────────────────────────────────────────
+   Cinematic camera controller — scroll-driven positions + mouse parallax
+   Responsive: Offsets globe for mobile screens to prevent text overlap
+   ───────────────────────────────────────────────────────────────── */
+function CinematicCamera({ scrollProgress }: { scrollProgress: number }) {
+  const { camera, mouse, size } = useThree();
+  const pos    = useRef(new THREE.Vector3(0, 0, 8));
+  const look   = useRef(new THREE.Vector3(0, 0, 0));
+  const mouseS = useRef({ x: 0, y: 0 });
 
   useFrame(() => {
-    scene.background = new THREE.Color(bgColor);
-    scene.fog = new THREE.FogExp2(fogColor, 0.04);
-  });
+    const sp = scrollProgress;
+    const isMobile = size.width < 768;
 
-  return null;
-}
+    // Smooth mouse parallax
+    mouseS.current.x = THREE.MathUtils.lerp(mouseS.current.x, mouse.x, 0.03);
+    mouseS.current.y = THREE.MathUtils.lerp(mouseS.current.y, mouse.y, 0.03);
 
-/* Mouse & Scroll-reactive Camera Controller */
-function DynamicCameraController({ scrollProgress }: { scrollProgress: number }) {
-  const { camera, mouse } = useThree();
-  const targetPos = useRef(new THREE.Vector3(0, 0, 8));
-  const targetLook = useRef(new THREE.Vector3(0, 0, 0));
-
-  useFrame(() => {
-    if (scrollProgress < 0.4) {
-      targetPos.current.set(mouse.x * 0.5, mouse.y * 0.4 + 0.2, 7.8);
-      targetLook.current.set(0, 0, 0);
-    } else if (scrollProgress < 0.75) {
-      targetPos.current.set(mouse.x * 0.8, mouse.y * 0.5, 6.5);
-      targetLook.current.set(0, 0, 0);
-    } else if (scrollProgress < 0.88) {
-      targetPos.current.set(mouse.x * 0.4, -0.2, 6.0);
-      targetLook.current.set(0, -0.6, 0);
+    /* Per-section camera choreography */
+    if (sp < 0.11) {
+      // HERO — wide shot, gentle mouse parallax
+      pos.current.set(mouseS.current.x * 0.6, mouseS.current.y * 0.4 + (isMobile ? 1.5 : 0.1), isMobile ? 9.5 : 8.0);
+      look.current.set(0, isMobile ? 1.0 : 0, 0);
+    } else if (sp < 0.22) {
+      // APPROACH — step closer, tilt up
+      pos.current.set(mouseS.current.x * 0.4, isMobile ? 1.8 : 0.6, isMobile ? 8.5 : 6.8);
+      look.current.set(0, isMobile ? 1.2 : 0.1, 0);
+    } else if (sp < 0.33) {
+      // SERVICES — strafe left, globe right
+      pos.current.set(mouseS.current.x * 0.3 + (isMobile ? 0 : 0.8), mouseS.current.y * 0.25 + (isMobile ? 2.0 : 0), isMobile ? 9.0 : 7.2);
+      look.current.set(0, isMobile ? 1.5 : 0, 0);
+    } else if (sp < 0.44) {
+      // PROOF — low angle, dramatic upward tilt
+      pos.current.set(mouseS.current.x * 0.3, isMobile ? 1.0 : -0.5, isMobile ? 8.5 : 6.5);
+      look.current.set(0, isMobile ? 1.5 : 0.3, 0);
+    } else if (sp < 0.55) {
+      // PROCESS — high overhead sweep
+      pos.current.set(mouseS.current.x * 0.2, isMobile ? 3.5 : 2.5, isMobile ? 9.0 : 7.5);
+      look.current.set(0, isMobile ? 1.0 : -0.5, 0);
+    } else if (sp < 0.66) {
+      // STATS — perfectly centered, pushed back
+      pos.current.set(mouseS.current.x * 0.1, mouseS.current.y * 0.1 + (isMobile ? 1.5 : 0), isMobile ? 11.0 : 8.5);
+      look.current.set(0, isMobile ? 1.0 : 0, 0);
+    } else if (sp < 0.77) {
+      // TESTIMONIALS — dynamic off-axis
+      pos.current.set(mouseS.current.x * 0.5 - (isMobile ? 0 : 0.5), mouseS.current.y * 0.4 - (isMobile ? -2.0 : 0.8), isMobile ? 9.0 : 7.0);
+      look.current.set(0, isMobile ? 1.5 : 0, 0);
+    } else if (sp < 0.88) {
+      // FAQ — far right drift
+      pos.current.set(mouseS.current.x * 0.4 + (isMobile ? 0 : 1.2), mouseS.current.y * 0.2 + (isMobile ? 2.5 : 0), isMobile ? 10.0 : 8.5);
+      look.current.set(0, isMobile ? 1.5 : 0, 0);
     } else {
-      targetPos.current.set(0, 4.5, 2.5);
-      targetLook.current.set(0, 0, 0);
+      // CTA — grand finale, centered and heroic
+      pos.current.set(mouseS.current.x * 0.5, mouseS.current.y * 0.5 + (isMobile ? 1.8 : 0.2), isMobile ? 9.5 : 7.0);
+      look.current.set(0, isMobile ? 1.0 : 0, 0);
     }
 
-    camera.position.lerp(targetPos.current, 0.05);
-    camera.lookAt(targetLook.current);
+    camera.position.lerp(pos.current, 0.038);
+    camera.lookAt(look.current);
   });
 
   return null;
 }
 
-/* Crimson & Cyberpunk Atmospheric Particles */
-function CrimsonAtmosphericParticles({ themeMode = "dark" }: { themeMode?: string }) {
-  const pointsRef = useRef<THREE.Points>(null);
+/* ─────────────────────────────────────────────────────────────────
+   Volumetric nebula dust — replaces childlike falling dots
+   Ultra-subtle, cinematic depth particles
+   ───────────────────────────────────────────────────────────────── */
+function NebulaDust({ themeMode = "dark" }: { themeMode?: string }) {
+  const ref = useRef<THREE.Points>(null);
+  const isCyberpunk = themeMode === "cyberpunk";
 
   const [positions, colors] = useMemo(() => {
-    const count = 1200;
-    const posArr = new Float32Array(count * 3);
-    const colArr = new Float32Array(count * 3);
+    const count = 700;
+    const pos = new Float32Array(count * 3);
+    const col = new Float32Array(count * 3);
 
-    let c1 = new THREE.Color("#ff1744");
-    let c2 = new THREE.Color("#ff4d8d");
-    let c3 = new THREE.Color("#ffffff");
-
-    if (themeMode === "cyberpunk") {
-      c1 = new THREE.Color("#00f0ff");
-      c2 = new THREE.Color("#ff0077");
-      c3 = new THREE.Color("#00ffff");
-    }
+    const c1 = new THREE.Color(isCyberpunk ? "#003344" : "#1a000a");
+    const c2 = new THREE.Color(isCyberpunk ? "#001122" : "#120005");
+    const c3 = new THREE.Color(isCyberpunk ? "#004455" : "#0d0003");
 
     for (let i = 0; i < count; i++) {
-      posArr[i * 3] = (Math.random() - 0.5) * 20;
-      posArr[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      posArr[i * 3 + 2] = (Math.random() - 0.5) * 20;
+      // Distribute in a wide shell around the globe
+      const theta = Math.random() * Math.PI * 2;
+      const phi   = Math.acos(2 * Math.random() - 1);
+      const r     = 5 + Math.random() * 10;
+      pos[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = r * Math.cos(phi);
+      pos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
 
       const pick = Math.random();
-      const col = pick < 0.5 ? c1 : pick < 0.8 ? c2 : c3;
-      colArr[i * 3] = col.r;
-      colArr[i * 3 + 1] = col.g;
-      colArr[i * 3 + 2] = col.b;
+      const c = pick < 0.5 ? c1 : pick < 0.8 ? c2 : c3;
+      col[i * 3]     = c.r;
+      col[i * 3 + 1] = c.g;
+      col[i * 3 + 2] = c.b;
     }
-    return [posArr, colArr];
-  }, [themeMode]);
+    return [pos, col];
+  }, [isCyberpunk]);
 
   useFrame((state) => {
-    if (!pointsRef.current) return;
+    if (!ref.current) return;
     const t = state.clock.elapsedTime;
-    pointsRef.current.rotation.y = t * 0.02;
-
-    const pos = pointsRef.current.geometry.attributes.position.array as Float32Array;
-    for (let i = 0; i < pos.length / 3; i++) {
-      pos[i * 3 + 1] -= 0.003;
-      if (pos[i * 3 + 1] < -10) pos[i * 3 + 1] = 10;
-    }
-    pointsRef.current.geometry.attributes.position.needsUpdate = true;
+    // Very slow, majestic drift rotation
+    ref.current.rotation.y = t * 0.006;
+    ref.current.rotation.x = Math.sin(t * 0.004) * 0.08;
   });
 
   return (
-    <points ref={pointsRef}>
+    <points ref={ref}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-color" args={[colors, 3]} />
+        <bufferAttribute attach="attributes-color"    args={[colors, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.035}
+        size={0.04}
         vertexColors
         transparent
-        opacity={0.7}
+        opacity={0.45}
         blending={THREE.AdditiveBlending}
+        depthWrite={false}
+        sizeAttenuation
       />
     </points>
   );
 }
 
-export default function IglooCanvas({ scrollProgress, themeMode = "dark", onSelectPortfolio }: IglooCanvasProps) {
+/* ─────────────────────────────────────────────────────────────────
+   Distant star field — tiny white pinpoints for depth
+   ───────────────────────────────────────────────────────────────── */
+function StarField() {
+  const positions = useMemo(() => {
+    const count = 1800;
+    const pos = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      const theta = Math.random() * Math.PI * 2;
+      const phi   = Math.acos(2 * Math.random() - 1);
+      const r     = 18 + Math.random() * 12;
+      pos[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = r * Math.cos(phi);
+      pos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+    }
+    return pos;
+  }, []);
+
+  return (
+    <points>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <pointsMaterial
+        size={0.022}
+        color="#ffffff"
+        transparent
+        opacity={0.55}
+        depthWrite={false}
+        sizeAttenuation
+      />
+    </points>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Main canvas export
+   ───────────────────────────────────────────────────────────────── */
+export default function IglooCanvas({ scrollProgress, themeMode = "light", onSelectPortfolio }: IglooCanvasProps) {
+  const isDark = themeMode === "dark";
+
   return (
     <div className="fixed inset-0 w-full h-full z-0 pointer-events-auto">
       <Canvas
-        camera={{ position: [0, 0, 8], fov: 48 }}
-        dpr={[1, 1.75]}
+        camera={{ position: [0, 0, 8], fov: 46, near: 0.1, far: 100 }}
+        dpr={[1, 1.8]}
         gl={{
           antialias: true,
-          alpha: true,
+          alpha: true, // Transparent background!
           powerPreference: "high-performance",
           toneMapping: THREE.ACESFilmicToneMapping,
+          toneMappingExposure: 1.1,
         }}
       >
         <Suspense fallback={null}>
-          <WebGLAtmosphere themeMode={themeMode} />
 
-          {/* Signature Crimson & Pink Lighting Rig */}
-          <ambientLight intensity={0.5} color="#ffffff" />
-          <directionalLight position={[3, 3, 3]} intensity={0.9} color="#ffffff" />
-          <directionalLight position={[-3, -2, -3]} intensity={0.4} color={themeMode === "cyberpunk" ? "#00f0ff" : "#ff4d8d"} />
-          <pointLight position={[0, 0, 4]} intensity={2.0} color={themeMode === "cyberpunk" ? "#ff0055" : "#ff1744"} />
-          <pointLight position={[-4, 3, 2]} intensity={1.2} color={themeMode === "cyberpunk" ? "#00ffff" : "#ff4d8d"} />
-          <pointLight position={[4, -3, 2]} intensity={1.0} color="#ff6b9d" />
 
-          <DynamicCameraController scrollProgress={scrollProgress} />
-          <CrimsonAtmosphericParticles themeMode={themeMode} />
+          {/* ── PREMIUM CINEMATIC LIGHTING RIG ─────────────────── */}
 
-          {/* 3D Visual Stages */}
-          <JenesisGlobeCore scrollProgress={scrollProgress} themeMode={themeMode} />
-          <PortfolioMonoliths
-            scrollProgress={scrollProgress}
-            onSelectPortfolio={onSelectPortfolio}
+          {/* Near-black ambient — mystery and depth */}
+          <ambientLight intensity={isDark ? 0.10 : 0.15} color="#ffffff" />
+
+          {/* Key light — cinematic top-right */}
+          <directionalLight
+            position={[6, 9, 4]}
+            intensity={isDark ? 1.1 : 1.3}
+            color="#ffffff"
+            castShadow={false}
           />
-          <ParticleHologramPedestal scrollProgress={scrollProgress} />
-          <SphericalPortal scrollProgress={scrollProgress} />
 
-          {/* Post-Processing Shaders (Crimson Bloom & Vignette) */}
+          {/* Fill light — soft opposite side */}
+          <directionalLight
+            position={[-5, -3, -2]}
+            intensity={0.22}
+            color="#1a0008"
+          />
+
+          {/* Rim / backlight — silhouette halo from behind globe */}
+          <pointLight
+            position={[0, -3, -7]}
+            intensity={isDark ? 3.5 : 2.8}
+            color="#8b0020"
+            distance={18}
+          />
+
+          {/* Gold accent fill — top-left */}
+          <pointLight
+            position={[-5, 4, 2]}
+            intensity={isDark ? 0.9 : 1.2}
+            color="#c8960c"
+            distance={14}
+          />
+
+          {/* Ground bounce */}
+          <pointLight
+            position={[0, -6, 2]}
+            intensity={0.5}
+            color="#0d0003"
+            distance={12}
+          />
+
+          {/* ── CAMERA CONTROLLER ────────────────────────────────── */}
+          <CinematicCamera scrollProgress={scrollProgress} />
+
+          {/* ── SCENE ELEMENTS ───────────────────────────────────── */}
+          <LiquidBackground themeMode={themeMode} />
+          <StarField />
+          <NebulaDust themeMode={themeMode} />
+
+          {/* ── GLOBE ────────────────────────────────────────────── */}
+          <JenesisGlobeCore
+            scrollProgress={scrollProgress}
+            themeMode={themeMode}
+          />
+
+          {/* ── CINEMATIC POST-PROCESSING ─────────────────────────── */}
           <EffectComposer multisampling={0}>
             <Bloom
-              luminanceThreshold={0.4}
-              luminanceSmoothing={0.4}
-              intensity={1.6}
+              luminanceThreshold={0.52}
+              luminanceSmoothing={0.5}
+              intensity={isDark ? 1.3 : 0.9}
               mipmapBlur
             />
-            <Vignette eskil={false} offset={0.15} darkness={0.7} />
+            <ChromaticAberration
+              offset={new THREE.Vector2(0.0005, 0.0005)}
+              radialModulation={false}
+              modulationOffset={0}
+            />
+            <Noise
+              opacity={isDark ? 0.045 : 0.022}
+            />
+            <Vignette
+              eskil={false}
+              offset={0.12}
+              darkness={isDark ? 0.82 : 0.55}
+            />
           </EffectComposer>
 
           <AdaptiveDpr pixelated />

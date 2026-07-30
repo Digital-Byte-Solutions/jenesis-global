@@ -3,7 +3,8 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import ScrollOverlay from "@/components/ScrollOverlay";
-import HUDOverlay, { ThemeMode } from "@/components/HUDOverlay";
+import HUDOverlay from "@/components/HUDOverlay";
+export type ThemeMode = "light" | "dark";
 import PortfolioModal from "@/components/PortfolioModal";
 import { PortfolioItem } from "@/lib/data";
 import { audioEngine } from "@/lib/AudioEngine";
@@ -13,22 +14,22 @@ const IglooCanvas = dynamic(() => import("@/components/IglooCanvas"), {
   ssr: false,
   loading: () => (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#050507] text-white font-mono">
-      <div className="w-12 h-12 border-2 border-[#ff1744] border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_25px_#ff1744]" />
-      <div className="text-xs tracking-widest text-[#ff4d8d] animate-pulse">
+      <div className="w-12 h-12 border-2 border-[var(--gold)] border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_25px_var(--shadow-gold)]" />
+      <div className="text-xs tracking-widest text-[var(--gold)] animate-pulse">
         INITIALIZING JENESIS WEBGL ENGINE...
       </div>
     </div>
   ),
 });
 
-const STAGES = 9;
+const STAGES = 10;
 const LOOP_VH = STAGES * 100; // 900vh per loop block
 
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [selectedPortfolio, setSelectedPortfolio] = useState<PortfolioItem | null>(null);
   const [soundActive, setSoundActive] = useState(false);
-  const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
+  const [themeMode, setThemeMode] = useState<ThemeMode>("light");
 
   const lenisRef = useRef<Lenis | null>(null);
   const rafIdRef = useRef<number>(0);
@@ -43,14 +44,11 @@ export default function Home() {
   const handleToggleTheme = useCallback(() => {
     audioEngine.playClickSound();
     setThemeMode((prev) => {
-      let next: ThemeMode = "dark";
-      if (prev === "dark") next = "light";
-      else if (prev === "light") next = "cyberpunk";
-      else next = "dark";
-
+      const next: ThemeMode = prev === "light" ? "dark" : "light";
       const root = document.documentElement;
       root.classList.remove("dark", "light", "cyberpunk");
       root.classList.add(next);
+      try { localStorage.setItem("jg-theme", next); } catch(e) {}
       return next;
     });
   }, []);
@@ -58,8 +56,21 @@ export default function Home() {
   const handleNavigateToSection = useCallback((index: number) => {
     if (!lenisRef.current || !oneLoopPxRef.current) return;
     const baseOffset = oneLoopPxRef.current; // Navigate within middle loop buffer
-    const targetPx = baseOffset + (index / STAGES) * oneLoopPxRef.current + 5;
+    const targetPx = baseOffset + ((index + 1) / STAGES) * oneLoopPxRef.current + 5;
     lenisRef.current.scrollTo(targetPx, { duration: 1.2 });
+  }, []);
+
+  // Restore persisted theme on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("jg-theme") as ThemeMode | null;
+      if (saved === "dark" || saved === "light") {
+        setThemeMode(saved);
+        const root = document.documentElement;
+        root.classList.remove("dark", "light", "cyberpunk");
+        root.classList.add(saved);
+      }
+    } catch(e) {}
   }, []);
 
   useEffect(() => {

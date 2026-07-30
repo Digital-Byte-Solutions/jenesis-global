@@ -2,90 +2,120 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===========================================
-   DESIGN TOKENS & DYNAMIC THEMES — Jenesis Global
-   =========================================== */
-:root {
-  --bg: #050507;
-  --bg-elevated: #0a0a0f;
-  --text-1: #ffffff;
-  --text-2: rgba(255, 255, 255, 0.7);
-  --text-3: rgba(255, 255, 255, 0.45);
-  --accent: #ff1744;
-  --accent-soft: #ff4d8d;
-  --accent-glow: #ff6b9d;
-  --line: rgba(255, 255, 255, 0.12);
-  --line-strong: rgba(255, 255, 255, 0.25);
-}
+/* ═══════════════════════════════════════════════════════════════
+   JENESIS GLOBAL — PREMIUM DESIGN SYSTEM
+   Brand palette: Navy #1a2744 · Gold #c8960c · Crimson #c40030
+   ═══════════════════════════════════════════════════════════════ */
 
-.dark {
-  --bg: #050507;
-  --bg-elevated: #0a0a0f;
-  --text-1: #ffffff;
-  --text-2: rgba(255, 255, 255, 0.7);
-  --text-3: rgba(255, 255, 255, 0.45);
-  --accent: #ff1744;
-  --accent-soft: #ff4d8d;
-  --accent-glow: #ff6b9d;
-  --line: rgba(255, 255, 255, 0.12);
-  --line-strong: rgba(255, 255, 255, 0.25);
-}
-
+/* ─────────────────────────────────────── LIGHT THEME (default) ─────────────────────────────────────── */
+:root,
 .light {
-  --bg: #f4f2f7;
-  --bg-elevated: #ffffff;
-  --text-1: #0e0914;
-  --text-2: rgba(14, 9, 20, 0.8);
-  --text-3: rgba(14, 9, 20, 0.55);
-  --accent: #d10037;
-  --accent-soft: #ff1744;
-  --accent-glow: #e4184a;
-  --line: rgba(14, 9, 20, 0.12);
-  --line-strong: rgba(14, 9, 20, 0.25);
+  /* Backgrounds */
+  --bg:          #f5f3ef;        /* warm ivory — premium paper */
+  --bg-2:        #eceae4;        /* slightly deeper surface */
+  --bg-elevated: #ffffff;        /* pure white cards */
+  --bg-glass:    rgba(255,255,255,0.88);
+
+  /* Text */
+  --text-1:  #171717;            /* dark slate — primary text */
+  --text-2:  rgba(23,23,23,0.72);
+  --text-3:  rgba(23,23,23,0.44);
+  --text-inv:#ffffff;
+
+  /* Brand accent */
+  --gold:        #c8960c;        /* logo amber/gold */
+  --gold-light:  #e8b340;
+  --gold-dim:    rgba(200,150,12,0.18);
+  --crimson:     #c40030;        /* logo red */
+  --crimson-soft:#e53050;
+  --crimson-dim: rgba(196,0,48,0.12);
+  --navy:        #1a2744;        /* logo navy */
+  --navy-soft:   #2a3d6a;
+
+  /* Semantic aliases (used by components) */
+  --accent:      var(--gold);
+  --accent-soft: var(--gold-light);
+  --accent-glow: #e8b340;
+  --accent-muted:var(--gold-dim);
+
+  /* Lines / dividers */
+  --line:        rgba(23,23,23,0.10);
+  --line-strong: rgba(23,23,23,0.22);
+  --line-gold:   rgba(200,150,12,0.30);
+
+  /* Shadows */
+  --shadow-sm:   0 2px 8px rgba(23,23,23,0.08);
+  --shadow-md:   0 8px 32px rgba(23,23,23,0.12);
+  --shadow-lg:   0 20px 60px rgba(23,23,23,0.16);
+  --shadow-glow: 0 0 40px rgba(200,150,12,0.18);
+  --shadow-gold: 0 0 32px rgba(200,150,12,0.25);
 }
 
-.cyberpunk {
-  --bg: #050012;
-  --bg-elevated: #0b0026;
-  --text-1: #00f0ff;
-  --text-2: rgba(0, 240, 255, 0.85);
-  --text-3: rgba(255, 0, 128, 0.7);
-  --accent: #ff0055;
-  --accent-soft: #00f0ff;
-  --accent-glow: #00ffff;
-  --line: rgba(0, 240, 255, 0.2);
-  --line-strong: rgba(0, 240, 255, 0.4);
+/* ─────────────────────────────────────── DARK THEME ─────────────────────────────────────── */
+.dark {
+  /* Backgrounds */
+  --bg:          #0c1020;        /* deep navy-black */
+  --bg-2:        #111828;
+  --bg-elevated: #161e30;
+  --bg-glass:    rgba(14,18,32,0.88);
+
+  /* Text */
+  --text-1:  #e8e4d8;            /* warm off-white — not harsh */
+  --text-2:  rgba(232,228,216,0.70);
+  --text-3:  rgba(232,228,216,0.40);
+  --text-inv:#1a2744;
+
+  /* Brand accent — same gold/crimson, slightly brighter in dark */
+  --gold:        #d4a417;
+  --gold-light:  #f0c040;
+  --gold-dim:    rgba(212,164,23,0.15);
+  --crimson:     #c40030;
+  --crimson-soft:#e53050;
+  --crimson-dim: rgba(196,0,48,0.18);
+  --navy:        #1a2744;
+  --navy-soft:   #2a3d6a;
+
+  --accent:      var(--gold);
+  --accent-soft: var(--gold-light);
+  --accent-glow: #f0c040;
+  --accent-muted:var(--gold-dim);
+
+  /* Lines */
+  --line:        rgba(200,180,140,0.10);
+  --line-strong: rgba(200,180,140,0.22);
+  --line-gold:   rgba(212,164,23,0.25);
+
+  /* Shadows */
+  --shadow-sm:   0 2px 8px rgba(0,0,0,0.35);
+  --shadow-md:   0 8px 32px rgba(0,0,0,0.50);
+  --shadow-lg:   0 20px 60px rgba(0,0,0,0.65);
+  --shadow-glow: 0 0 40px rgba(212,164,23,0.25);
+  --shadow-gold: 0 0 32px rgba(212,164,23,0.30);
 }
 
-/* ===========================================
-   BASE
-   =========================================== */
-* {
-  box-sizing: border-box;
-}
+/* ═══════════════════════════════════════════════════════════════
+   BASE RESET
+   ═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
   background: var(--bg) !important;
   color: var(--text-1) !important;
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
-  font-feature-settings: "ss01", "cv11";
+  font-family: var(--font-sans), "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-feature-settings: "ss01","cv11","calt";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE / Edge */
-  transition: background-color 0.4s ease, color 0.4s ease;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-/* Hide scrollbar for Chrome, Safari, Opera */
 html::-webkit-scrollbar,
 body::-webkit-scrollbar,
 ::-webkit-scrollbar {
@@ -95,179 +125,266 @@ body::-webkit-scrollbar,
 }
 
 ::selection {
-  background: rgba(255, 45, 85, 0.4);
-  color: var(--text-1);
+  background: var(--crimson-dim);
+  color: var(--crimson);
 }
 
-/* ===========================================
-   iOS LIQUID GLASSMORPHISM (Glassific UI)
-   =========================================== */
+/* ═══════════════════════════════════════════════════════════════
+   PREMIUM GLASSMORPHISM
+   Light: Frosted white glass · Dark: Deep navy glass
+   ═══════════════════════════════════════════════════════════════ */
 .liquid-glass {
-  position: relative;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.03) 50%,
-    rgba(15, 10, 18, 0.85) 100%
-  );
-  backdrop-filter: blur(28px) saturate(190%);
-  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  background: var(--bg-glass);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
   border: 1px solid var(--line);
-  box-shadow: 
-    0 16px 40px -10px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.25),
-    inset 0 -1px 0 0 rgba(0, 0, 0, 0.4);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-md),
+              inset 0 1.5px 0 rgba(255,255,255,0.5),
+              inset 0 -1px 0 rgba(0,0,0,0.04);
+  transition: box-shadow 0.35s ease, border-color 0.35s ease, transform 0.35s cubic-bezier(0.16,1,0.3,1);
 }
 
+.liquid-glass:hover {
+  border-color: var(--line-gold);
+  box-shadow: var(--shadow-lg), var(--shadow-gold),
+              inset 0 1.5px 0 rgba(255,255,255,0.6);
+}
+
+/* Light specific */
 .light .liquid-glass {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.9) 0%,
-    rgba(240, 235, 245, 0.85) 100%
-  );
-  border: 1px solid rgba(14, 9, 20, 0.15);
-  box-shadow: 
-    0 16px 40px -10px rgba(14, 9, 20, 0.12),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+  background: rgba(255,255,255,0.90);
+  border-color: rgba(200,150,12,0.15);
+  box-shadow: 0 4px 24px rgba(23,23,23,0.08),
+              0 1px 4px rgba(23,23,23,0.04),
+              inset 0 1.5px 0 rgba(255,255,255,0.95);
 }
 
-.cyberpunk .liquid-glass {
-  background: linear-gradient(
-    135deg,
-    rgba(0, 240, 255, 0.12) 0%,
-    rgba(5, 0, 18, 0.9) 100%
-  );
-  border: 1px solid rgba(0, 240, 255, 0.35);
-  box-shadow: 
-    0 16px 40px -10px rgba(0, 240, 255, 0.25),
-    inset 0 1px 0 0 rgba(0, 240, 255, 0.5);
+.light .liquid-glass:hover {
+  border-color: rgba(200,150,12,0.35);
+  box-shadow: 0 12px 40px rgba(23,23,23,0.12),
+              var(--shadow-gold),
+              inset 0 1.5px 0 rgba(255,255,255,0.95);
 }
 
+/* Dark specific */
+.dark .liquid-glass {
+  background: rgba(22,30,48,0.85);
+  border-color: rgba(200,150,12,0.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5),
+              inset 0 1.5px 0 rgba(255,255,255,0.07),
+              inset 0 -1px 0 rgba(0,0,0,0.4);
+}
+
+.dark .liquid-glass:hover {
+  border-color: rgba(200,150,12,0.30);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6), var(--shadow-gold),
+              inset 0 1.5px 0 rgba(255,255,255,0.09);
+}
+
+/* Pill variant */
 .liquid-glass-pill {
-  position: relative;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.12) 0%,
-    rgba(255, 255, 255, 0.04) 100%
-  );
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
   border: 1px solid var(--line);
-  box-shadow: 
-    0 8px 24px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
 }
 
 .light .liquid-glass-pill {
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(14, 9, 20, 0.15);
-  color: #0e0914 !important;
+  background: rgba(255,255,255,0.90);
+  border-color: rgba(23,23,23,0.12);
+  box-shadow: 0 2px 12px rgba(23,23,23,0.08);
 }
 
-.cyberpunk .liquid-glass-pill {
-  background: rgba(0, 240, 255, 0.1);
-  border: 1px solid rgba(0, 240, 255, 0.4);
+.dark .liquid-glass-pill {
+  background: rgba(22,30,48,0.80);
+  border-color: rgba(200,150,12,0.14);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.40);
 }
 
-/* ===========================================
-   TYPOGRAPHY
-   =========================================== */
+/* ═══════════════════════════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
 .font-serif {
   font-family: var(--font-serif), "Times New Roman", serif;
-  font-weight: 400;
   letter-spacing: -0.01em;
 }
 
 .font-mono {
-  font-family: var(--font-mono), monospace;
+  font-family: var(--font-mono), "SF Mono", "Fira Code", monospace;
 }
 
 .eyebrow {
   font-family: var(--font-mono), monospace;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--text-3);
 }
 
-.eyebrow-accent {
-  color: var(--accent);
+.eyebrow-gold  { color: var(--gold); }
+.eyebrow-accent{ color: var(--accent); }
+
+/* Gradient text utilities */
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 60%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Ticker */
-@keyframes ticker {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+.text-gradient-crimson {
+  background: linear-gradient(135deg, var(--crimson) 0%, var(--crimson-soft) 60%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.ticker-track {
-  animation: ticker 50s linear infinite;
-  display: flex;
-  width: max-content;
+/* ═══════════════════════════════════════════════════════════════
+   BUTTON SYSTEM
+   ═══════════════════════════════════════════════════════════════ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 100px;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  color: #171717;
+  font-family: var(--font-mono), monospace;
+  font-size: clamp(10px, 1.2vw, 12px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(200,150,12,0.38);
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
 }
+
+.btn-primary:hover {
+  transform: scale(1.04);
+  box-shadow: 0 10px 32px rgba(200,150,12,0.50);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 22px;
+  border-radius: 100px;
+  background: transparent;
+  color: var(--gold);
+  font-family: var(--font-mono), monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border: 1px solid var(--gold);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+
+.btn-secondary:hover {
+  background: var(--gold-dim);
+  transform: scale(1.04);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACCENT BARS & DIVIDERS
+   ═══════════════════════════════════════════════════════════════ */
+.accent-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-family: var(--font-mono), monospace;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.accent-bar::before,
+.accent-bar::after {
+  content: "";
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BACKGROUND TEXTURE — premium subtle pattern
+   ═══════════════════════════════════════════════════════════════ */
+.light body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(200,150,12,0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(200,150,12,0.04) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(23,23,23,0.03) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.dark body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(200,150,12,0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(200,150,12,0.06) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+@keyframes fadeIn {
+  from { opacity:0; transform: scale(0.97) translateY(4px); }
+  to   { opacity:1; transform: scale(1) translateY(0); }
+}
+.animate-fadeIn { animation: fadeIn 0.28s cubic-bezier(0.16,1,0.3,1) forwards; }
 
 @keyframes subtle-pulse {
-  0%,
-  100% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 1;
-  }
+  0%,100% { opacity:0.35; }
+  50%      { opacity:1; }
 }
-
 .live-dot {
-  width: 6px;
-  height: 6px;
+  width: 6px; height: 6px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 12px var(--accent);
-  animation: subtle-pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 10px var(--accent);
+  animation: subtle-pulse 2.2s ease-in-out infinite;
 }
 
-.scrollbar-hide::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
+@keyframes ticker {
+  0%  { transform: translateX(0); }
+  100%{ transform: translateX(-50%); }
 }
-.scrollbar-hide {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-/* ===========================================
-   SMOOTH SCROLL (Lenis)
-   =========================================== */
-html.lenis,
-html.lenis body {
-  height: auto;
+.ticker-track {
+  animation: ticker 50s linear infinite;
+  display: flex; width: max-content;
 }
 
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
+@keyframes shimmer {
+  0%  { background-position: -200% center; }
+  100%{ background-position: 200% center; }
 }
 
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
+/* ═══════════════════════════════════════════════════════════════
+   SCROLLBAR HIDE
+   ═══════════════════════════════════════════════════════════════ */
+.scrollbar-hide::-webkit-scrollbar { display:none !important; width:0 !important; }
+.scrollbar-hide { scrollbar-width: none; -ms-overflow-style: none; }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
+/* ═══════════════════════════════════════════════════════════════
+   LENIS SMOOTH SCROLL
+   ═══════════════════════════════════════════════════════════════ */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
 
-.animate-fadeIn {
-  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
