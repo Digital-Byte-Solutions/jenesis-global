@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import dynamic from "next/dynamic";
 import ScrollOverlay from "@/components/ScrollOverlay";
-import HUDOverlay from "@/components/HUDOverlay";
+import HUDOverlay, { ThemeMode } from "@/components/HUDOverlay";
 import PortfolioModal from "@/components/PortfolioModal";
 import { PortfolioItem } from "@/lib/data";
 import { audioEngine } from "@/lib/AudioEngine";
@@ -22,12 +22,13 @@ const IglooCanvas = dynamic(() => import("@/components/IglooCanvas"), {
 });
 
 const STAGES = 9;
-const LOOP_VH = STAGES * 100; // 900vh per loop
+const LOOP_VH = STAGES * 100; // 900vh per loop block
 
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [selectedPortfolio, setSelectedPortfolio] = useState<PortfolioItem | null>(null);
   const [soundActive, setSoundActive] = useState(false);
+  const [themeMode, setThemeMode] = useState<ThemeMode>("dark");
 
   const lenisRef = useRef<Lenis | null>(null);
   const rafIdRef = useRef<number>(0);
@@ -39,9 +40,25 @@ export default function Home() {
     setSoundActive(newState);
   }, []);
 
+  const handleToggleTheme = useCallback(() => {
+    audioEngine.playClickSound();
+    setThemeMode((prev) => {
+      let next: ThemeMode = "dark";
+      if (prev === "dark") next = "light";
+      else if (prev === "light") next = "cyberpunk";
+      else next = "dark";
+
+      const root = document.documentElement;
+      root.classList.remove("dark", "light", "cyberpunk");
+      root.classList.add(next);
+      return next;
+    });
+  }, []);
+
   const handleNavigateToSection = useCallback((index: number) => {
     if (!lenisRef.current || !oneLoopPxRef.current) return;
-    const targetPx = (index / STAGES) * oneLoopPxRef.current + 5;
+    const baseOffset = oneLoopPxRef.current; // Navigate within middle loop buffer
+    const targetPx = baseOffset + (index / STAGES) * oneLoopPxRef.current + 5;
     lenisRef.current.scrollTo(targetPx, { duration: 1.2 });
   }, []);
 
@@ -61,20 +78,40 @@ export default function Home() {
     });
     lenisRef.current = lenis;
 
+    // Start at middle loop block (oneLoopPx) so scrolling up is immediately enabled
+    const oneLoop = oneLoopPxRef.current;
+    if (oneLoop > 0) {
+      lenis.scrollTo(oneLoop, { immediate: true });
+    }
+
     const onScroll = (e: { scroll: number }) => {
       if (isResettingRef.current) return;
 
-      const oneLoop = oneLoopPxRef.current;
+      const loop = oneLoopPxRef.current;
+      if (loop <= 0) return;
+
       const raw = e.scroll;
 
-      if (raw >= oneLoop && oneLoop > 0) {
+      // Downward infinite loop teleportation (bottom -> top)
+      if (raw >= loop * 2 - 10) {
         isResettingRef.current = true;
-        lenis.scrollTo(raw - oneLoop, { immediate: true });
+        lenis.scrollTo(raw - loop, { immediate: true });
         requestAnimationFrame(() => { isResettingRef.current = false; });
         return;
       }
 
-      const normalized = oneLoop > 0 ? Math.min(raw / oneLoop, 1) : 0;
+      // Upward infinite loop teleportation (above top of Hero -> wrap to bottom Contact)
+      if (raw <= 10) {
+        isResettingRef.current = true;
+        lenis.scrollTo(raw + loop, { immediate: true });
+        requestAnimationFrame(() => { isResettingRef.current = false; });
+        return;
+      }
+
+      // Continuous normalized progress calculation [0.0 to 1.0)
+      const offset = ((raw % loop) + loop) % loop;
+      const normalized = offset / loop;
+
       setScrollProgress(normalized);
       audioEngine.updateScrollPitch(normalized);
     };
@@ -95,21 +132,24 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative bg-[#050507] text-white selection:bg-[#ff1744] selection:text-white">
+    <main className="relative selection:bg-[#ff1744] selection:text-white transition-colors duration-500">
       {/* ── Fixed WebGL 3D Canvas ─────────────────────────────── */}
       <IglooCanvas
         scrollProgress={scrollProgress}
+        themeMode={themeMode}
         onSelectPortfolio={(item) => setSelectedPortfolio(item)}
       />
 
       {/* ── igloo-style Text Overlay Panels ──────────────────── */}
       <ScrollOverlay scrollProgress={scrollProgress} />
 
-      {/* ── HUD Telemetry (right dot navbar + sound toggle) ───── */}
+      {/* ── HUD Telemetry (right dot navbar + theme + sound) ─── */}
       <HUDOverlay
         scrollProgress={scrollProgress}
         soundActive={soundActive}
+        themeMode={themeMode}
         onToggleSound={handleToggleSound}
+        onToggleTheme={handleToggleTheme}
         onNavigateToSection={handleNavigateToSection}
       />
 
@@ -119,7 +159,8 @@ export default function Home() {
         onClose={() => setSelectedPortfolio(null)}
       />
 
-      {/* ── Infinite Scroll height drivers ───────────────────── */}
+      {/* ── 3-Loop Buffer height drivers for 360° bi-directional infinite scroll ───── */}
+      <div style={{ height: `${LOOP_VH}vh` }} aria-hidden="true" />
       <div style={{ height: `${LOOP_VH}vh` }} aria-hidden="true" />
       <div style={{ height: `${LOOP_VH}vh` }} aria-hidden="true" />
     </main>

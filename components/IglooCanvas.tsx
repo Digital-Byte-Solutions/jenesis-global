@@ -13,7 +13,28 @@ import { PortfolioItem } from "@/lib/data";
 
 interface IglooCanvasProps {
   scrollProgress: number;
+  themeMode?: "dark" | "light" | "cyberpunk";
   onSelectPortfolio: (item: PortfolioItem) => void;
+}
+
+/* Dynamic WebGL Atmosphere: ALWAYS keep dark obsidian background for the globe */
+function WebGLAtmosphere({ themeMode = "dark" }: { themeMode?: string }) {
+  const { scene } = useThree();
+
+  const [bgColor, fogColor] = useMemo(() => {
+    if (themeMode === "cyberpunk") {
+      return ["#050012", "#050012"];
+    }
+    // In light and dark modes, keep signature dark obsidian space background for the globe
+    return ["#050507", "#050507"];
+  }, [themeMode]);
+
+  useFrame(() => {
+    scene.background = new THREE.Color(bgColor);
+    scene.fog = new THREE.FogExp2(fogColor, 0.04);
+  });
+
+  return null;
 }
 
 /* Mouse & Scroll-reactive Camera Controller */
@@ -44,17 +65,24 @@ function DynamicCameraController({ scrollProgress }: { scrollProgress: number })
   return null;
 }
 
-/* Crimson & Pink Star Field Snowfall System */
-function CrimsonAtmosphericParticles() {
+/* Crimson & Cyberpunk Atmospheric Particles */
+function CrimsonAtmosphericParticles({ themeMode = "dark" }: { themeMode?: string }) {
   const pointsRef = useRef<THREE.Points>(null);
 
   const [positions, colors] = useMemo(() => {
     const count = 1200;
     const posArr = new Float32Array(count * 3);
     const colArr = new Float32Array(count * 3);
-    const c1 = new THREE.Color("#ff1744");
-    const c2 = new THREE.Color("#ff4d8d");
-    const c3 = new THREE.Color("#ffffff");
+
+    let c1 = new THREE.Color("#ff1744");
+    let c2 = new THREE.Color("#ff4d8d");
+    let c3 = new THREE.Color("#ffffff");
+
+    if (themeMode === "cyberpunk") {
+      c1 = new THREE.Color("#00f0ff");
+      c2 = new THREE.Color("#ff0077");
+      c3 = new THREE.Color("#00ffff");
+    }
 
     for (let i = 0; i < count; i++) {
       posArr[i * 3] = (Math.random() - 0.5) * 20;
@@ -68,7 +96,7 @@ function CrimsonAtmosphericParticles() {
       colArr[i * 3 + 2] = col.b;
     }
     return [posArr, colArr];
-  }, []);
+  }, [themeMode]);
 
   useFrame((state) => {
     if (!pointsRef.current) return;
@@ -100,7 +128,7 @@ function CrimsonAtmosphericParticles() {
   );
 }
 
-export default function IglooCanvas({ scrollProgress, onSelectPortfolio }: IglooCanvasProps) {
+export default function IglooCanvas({ scrollProgress, themeMode = "dark", onSelectPortfolio }: IglooCanvasProps) {
   return (
     <div className="fixed inset-0 w-full h-full z-0 pointer-events-auto">
       <Canvas
@@ -114,19 +142,21 @@ export default function IglooCanvas({ scrollProgress, onSelectPortfolio }: Igloo
         }}
       >
         <Suspense fallback={null}>
+          <WebGLAtmosphere themeMode={themeMode} />
+
           {/* Signature Crimson & Pink Lighting Rig */}
           <ambientLight intensity={0.5} color="#ffffff" />
           <directionalLight position={[3, 3, 3]} intensity={0.9} color="#ffffff" />
-          <directionalLight position={[-3, -2, -3]} intensity={0.4} color="#ff4d8d" />
-          <pointLight position={[0, 0, 4]} intensity={2.0} color="#ff1744" />
-          <pointLight position={[-4, 3, 2]} intensity={1.2} color="#ff4d8d" />
+          <directionalLight position={[-3, -2, -3]} intensity={0.4} color={themeMode === "cyberpunk" ? "#00f0ff" : "#ff4d8d"} />
+          <pointLight position={[0, 0, 4]} intensity={2.0} color={themeMode === "cyberpunk" ? "#ff0055" : "#ff1744"} />
+          <pointLight position={[-4, 3, 2]} intensity={1.2} color={themeMode === "cyberpunk" ? "#00ffff" : "#ff4d8d"} />
           <pointLight position={[4, -3, 2]} intensity={1.0} color="#ff6b9d" />
 
           <DynamicCameraController scrollProgress={scrollProgress} />
-          <CrimsonAtmosphericParticles />
+          <CrimsonAtmosphericParticles themeMode={themeMode} />
 
           {/* 3D Visual Stages */}
-          <JenesisGlobeCore scrollProgress={scrollProgress} />
+          <JenesisGlobeCore scrollProgress={scrollProgress} themeMode={themeMode} />
           <PortfolioMonoliths
             scrollProgress={scrollProgress}
             onSelectPortfolio={onSelectPortfolio}

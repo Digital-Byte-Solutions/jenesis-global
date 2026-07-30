@@ -2,22 +2,21 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "JENESIS GLOBAL // Autonomous Engine & Strategic Advisory",
+  title: "Jenesis Global — Omni-Channel Revenue Engine",
   description:
-    "Jenesis Global — Architecting high-stakes digital ecosystems, enterprise AI infrastructure, and next-generation capital strategies at the intersection of Strategy, AI, and Capital.",
+    "We help brands grow revenue through an omni-channel approach. Uniting Performance Marketing, Web & App Engineering, Enterprise AI Systems, and Search Engine Dominance.",
   keywords: [
     "Jenesis Global",
-    "WebGL",
-    "Igloo Inc Clone",
-    "AI Systems",
-    "Strategic Advisory",
-    "Venture Capital",
-    "Enterprise Infrastructure",
+    "Omni-Channel Revenue Engine",
+    "Performance Marketing",
+    "Web & App Engineering",
+    "Enterprise AI Systems",
+    "SEO AEO Optimization",
   ],
 };
 
 export const viewport: Viewport = {
-  themeColor: "#07090e",
+  themeColor: "#050507",
   width: "device-width",
   initialScale: 1,
 };
@@ -34,7 +33,7 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body className="bg-[#07090e] text-white antialiased selection:bg-[#00f0ff] selection:text-black">
+      <body className="bg-[#050507] text-white antialiased selection:bg-[#ff1744] selection:text-white">
         {children}
       </body>
     </html>
