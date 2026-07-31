@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Jenesis Global — Omni-Channel Revenue Engine",
+  title: "Jenesis Global — We Help Brands Grow Revenue Through an Omni-Channel Approach",
   description:
     "We help brands grow revenue through an omni-channel approach. Uniting Performance Marketing, Web & App Engineering, Enterprise AI Systems, and Search Engine Dominance.",
   keywords: [
@@ -13,6 +13,11 @@ export const metadata: Metadata = {
     "Enterprise AI Systems",
     "SEO AEO Optimization",
   ],
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export const viewport: Viewport = {
@@ -38,6 +43,8 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className="light">
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+        <link rel="icon" href="/logo.png" type="image/png" sizes="any" />
+        <link rel="apple-touch-icon" href="/logo.png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

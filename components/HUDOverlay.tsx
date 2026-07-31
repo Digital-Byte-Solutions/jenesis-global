@@ -68,29 +68,12 @@ export default function HUDOverlay({
           onMouseEnter={() => audioEngine.playHoverSound()}
           className="flex items-center gap-3 px-4 py-2.5 rounded-2xl liquid-glass-pill hover:scale-[1.03] transition-all cursor-pointer"
         >
-          {/* SVG Logo mark — J + gold orbital arc + constellation + red dot */}
-          <svg width="34" height="34" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
-            {/* Gold orbital arc — solid main sweep */}
-            <path d="M 12 34 A 22 22 0 0 1 50 18" stroke="#c8960c" strokeWidth="2.4" strokeLinecap="round" fill="none" opacity="0.95" />
-            {/* Dashed completion arc */}
-            <path d="M 12 34 A 22 22 0 1 0 52 46" stroke="#c8960c" strokeWidth="1.3" strokeLinecap="round" strokeDasharray="2.5 4" fill="none" opacity="0.40" />
-            {/* Triangle constellation lines */}
-            <line x1="23" y1="29" x2="37" y2="29" stroke="#c8960c" strokeWidth="0.9" opacity="0.70" />
-            <line x1="23" y1="29" x2="30" y2="20" stroke="#c8960c" strokeWidth="0.9" opacity="0.70" />
-            <line x1="37" y1="29" x2="30" y2="20" stroke="#c8960c" strokeWidth="0.9" opacity="0.70" />
-            {/* Constellation nodes */}
-            <circle cx="23" cy="29" r="1.6" fill="#c8960c" />
-            <circle cx="37" cy="29" r="1.6" fill="#c8960c" />
-            <circle cx="30" cy="20" r="1.6" fill="#c8960c" />
-            {/* J letterform */}
-            <path d="M 38 11 L 38 43 Q 38 55 26 55 Q 19 55 17 51" stroke={isDark ? "#c8d8f8" : "#171717"} strokeWidth="6.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-            <line x1="30" y1="11" x2="45" y2="11" stroke={isDark ? "#c8d8f8" : "#171717"} strokeWidth="6.5" strokeLinecap="round" />
-            {/* Crimson sweep arc */}
-            <path d="M 37 43 Q 48 50 50 38" stroke="var(--gold)" strokeWidth="2.4" strokeLinecap="round" fill="none" opacity="0.92" />
-            {/* Red dot — logo signature */}
-            <circle cx="44" cy="7" r="4.5" fill="var(--gold)" />
-            <circle cx="44" cy="7" r="7" fill="var(--gold)" opacity="0.18" />
-          </svg>
+          {/* Brand Logo Image */}
+          <img
+            src="/logo.png"
+            alt="Jenesis Global Logo"
+            className="w-8 h-8 object-contain flex-shrink-0"
+          />
 
           <div className="flex flex-col leading-tight gap-0.5">
             <span

@@ -149,6 +149,10 @@ class SoundManager {
       play();
     }
   }
+
+  public playModalSound() {
+    this.playClickSound(1200, 0.12);
+  }
 }
 
 export const audioEngine = new SoundManager();
